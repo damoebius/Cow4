@@ -1,5 +1,5 @@
 package com.tamina.cow4.model;
-class Map {
+class GameMap {
 
     public var cells:Array<Cell>;
 
