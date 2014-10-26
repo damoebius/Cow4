@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.ui.MapUI;
 import js.html.HtmlElement;
 import js.Browser;
 import js.html.CanvasElement;
@@ -9,6 +10,7 @@ import org.tamina.log.QuickLogger;
     private static var _instance:MapEditor;
 
     private var _applicationCanvas:CanvasElement;
+    private var _stage:MapUI;
 
     public function new( ) {
         Console.start();
@@ -28,6 +30,6 @@ import org.tamina.log.QuickLogger;
         _applicationCanvas.width = contentWidth;
         _applicationCanvas.height = contentHeight;
         QuickLogger.info("canvas initialized");
-
+        _stage = new MapUI(_applicationCanvas,contentWidth,contentHeight);
     }
 }
