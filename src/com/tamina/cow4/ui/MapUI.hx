@@ -9,10 +9,12 @@ import js.html.CanvasElement;
 import createjs.easeljs.Stage;
 class MapUI extends Stage {
     private static var FPS:Float = 30.0;
+    private static var CELL_WIDTH:Int = 20;
+    private static var CELL_HEIGHT:Int = 20;
 
     private var _width:Int;
     private var _height:Int;
-    private var _backgroundUI:Shape;
+    private var _backgroundShape:Shape;
     private var _cellsContainer:Container;
     private var _data:GameMap;
 
@@ -23,11 +25,11 @@ class MapUI extends Stage {
 
         _width = width;
         _height = height;
-        _backgroundUI = new Shape();
-        _backgroundUI.graphics.beginFill("#333333");
-        _backgroundUI.graphics.drawRect(0, 0, _width, _height);
-        _backgroundUI.graphics.endFill();
-        addChild(_backgroundUI);
+        _backgroundShape = new Shape();
+        _backgroundShape.graphics.beginFill("#333333");
+        _backgroundShape.graphics.drawRect(0, 0, _width, _height);
+        _backgroundShape.graphics.endFill();
+        addChild(_backgroundShape);
 
         _cellsContainer = new Container();
         addChild(_cellsContainer);
@@ -39,7 +41,7 @@ class MapUI extends Stage {
     }
 
     private function drawMap():Void{
-        var cell = new CellSprite(_data.cells[0]);
+        var cell = new CellSprite(_data.cells[0], CELL_WIDTH, CELL_HEIGHT);
         _cellsContainer.addChild(cell);
     }
 
