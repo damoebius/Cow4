@@ -1,0 +1,28 @@
+{
+  "name": "Cow4",
+  "description": "Code of war 4",
+  "keywords": [
+    "tamina",
+    "ttfx"
+  ],
+  "author": "TTFX",
+  "version": "0.0.1",
+  "license": "GPL",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "main": "",
+  "preferGlobal": false,
+  "homepage": "http://www.ttfx.fr",
+  "bugs": "https://github.com/damoebius/Cow4/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damoebius/Cow4"
+  },
+  "dependencies": {
+     "haxe" : ">=0.1.9",
+     "taminahx" : ">=0.1.0",
+     "mconsole-npm" : ">=1.6.1",
+     "msignal" : ">=1.2.3"
+  }
+}
