@@ -21,7 +21,7 @@ class MapUI extends Stage {
     public function new(display:CanvasElement, width:Int, height:Int ) {
         super(display);
 
-        _data = Mock.instance.getTestMap();
+        _data = Mock.instance.getTestMap(15, 15);
 
         _width = width;
         _height = height;
@@ -41,8 +41,11 @@ class MapUI extends Stage {
     }
 
     private function drawMap():Void{
-        var cell = new CellSprite(_data.cells[0], CELL_WIDTH, CELL_HEIGHT);
-        _cellsContainer.addChild(cell);
+        for(cellModel in _data.cells){
+            _cellsContainer.addChild(new CellSprite(cellModel, CELL_WIDTH, CELL_HEIGHT));
+        }
+
+
     }
 
     private function tickerHandler():Void {
