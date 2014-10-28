@@ -1,4 +1,6 @@
 package com.tamina.cow4.ui;
+import org.tamina.geom.Point;
+import com.tamina.cow4.model.Cell;
 import com.tamina.cow4.model.GameMap;
 import createjs.easeljs.Container;
 import com.tamina.cow4.data.Mock;
@@ -17,8 +19,9 @@ class MapUI extends Stage {
     private var _backgroundShape:Shape;
     private var _cellsContainer:Container;
     private var _data:GameMap;
+    private var _cellsSprite:Array<CellSprite>;
 
-    public function new(display:CanvasElement, width:Int, height:Int ) {
+    public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
 
         _data = Mock.instance.getTestMap(15, 15);
@@ -36,19 +39,46 @@ class MapUI extends Stage {
 
         Ticker.setFPS(FPS);
         Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
-
-        drawMap();
+        _cellsSprite = new Array<CellSprite>();
+        drawCell(_data.cells[0], new Point(CELL_WIDTH, CELL_HEIGHT));
     }
 
-    private function drawMap():Void{
-        for(cellModel in _data.cells){
-            _cellsContainer.addChild(new CellSprite(cellModel, CELL_WIDTH, CELL_HEIGHT));
+    private function drawCell( data:Cell, position:Point ):Void {
+        var sprite = new CellSprite(data, CELL_WIDTH, CELL_HEIGHT);
+        sprite.x = position.x;
+        sprite.y = position.y;
+        _cellsContainer.addChild(sprite);
+        _cellsSprite.push(sprite);
+
+        if ( data.top != null && !cellDrawn(data.top)) {
+            drawCell(data.top, new Point(position.x, position.y - CELL_HEIGHT));
         }
 
+        if ( data.bottom != null && !cellDrawn(data.bottom)) {
+            drawCell(data.bottom, new Point(position.x, position.y + CELL_HEIGHT));
+        }
 
+        if ( data.left != null && !cellDrawn(data.left)) {
+            drawCell(data.left, new Point(position.x - CELL_WIDTH, position.y));
+        }
+
+        if ( data.right != null && !cellDrawn(data.right)) {
+            drawCell(data.right, new Point(position.x + CELL_WIDTH, position.y));
+        }
     }
 
-    private function tickerHandler():Void {
+    private function cellDrawn( target:Cell):Bool {
+        var result:Bool = false;
+        for(i in 0..._cellsSprite.length){
+            if( _cellsSprite[i].data.id == target.id){
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+    private function tickerHandler( ):Void {
         this.update();
     }
 }

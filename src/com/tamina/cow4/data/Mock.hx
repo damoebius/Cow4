@@ -38,13 +38,23 @@ class Mock {
         var cell = new Cell();
         if ( cellCursor % this.column == 0 ){
             cell.top = old;
+            if(old != null){
+                old.bottom = cell;
+            }
+
             goRight = (cellCursor / this.column) % 2 == 0;
         }
         else if (goRight){
             cell.left = old;
+            if(old != null){
+                old.right = cell;
+            }
         }
         else  {
             cell.right = old;
+            if(old != null){
+                old.left = cell;
+            }
         }
 
         return cell;

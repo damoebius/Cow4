@@ -5,6 +5,8 @@ import com.tamina.cow4.model.Cell;
 
 class CellSprite extends Container {
 
+    public var data(get,null):Cell;
+
     private var _backgroundShape:Shape;
     private var _data:Cell;
     private var _width:Int;
@@ -42,5 +44,9 @@ class CellSprite extends Container {
             _backgroundShape.graphics.lineTo(_width, _height);
         }
         _backgroundShape.graphics.endStroke();
+    }
+
+    private function get_data():Cell{
+        return _data;
     }
 }
