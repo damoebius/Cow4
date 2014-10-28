@@ -10,9 +10,9 @@ import createjs.easeljs.Shape;
 import js.html.CanvasElement;
 import createjs.easeljs.Stage;
 class MapUI extends Stage {
-    private static var FPS:Float = 30.0;
-    private static var CELL_WIDTH:Int = 20;
-    private static var CELL_HEIGHT:Int = 20;
+    private static inline var FPS:Float = 30.0;
+    private static inline var CELL_WIDTH:Int = 20;
+    private static inline var CELL_HEIGHT:Int = 20;
 
     private var _width:Int;
     private var _height:Int;
@@ -23,7 +23,7 @@ class MapUI extends Stage {
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
-
+        enableMouseOver();
         _data = Mock.instance.getTestMap(15, 15);
 
         _width = width;
