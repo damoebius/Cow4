@@ -18,18 +18,22 @@ class MockTest extends TestCase {
         var cell:Cell = Reflect.callMethod(mock, 'fillCell', [null, 1]);
         assertTrue(cell.left == null);
 
-        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [new Cell(), 5]);
-        assertTrue(cell.left == new Cell());
+        var cellCase5 = new Cell();
+        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [cellCase5, 5]);
+        assertTrue(cell.left == cellCase5);
 
-        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [new Cell(), 11]);
-        assertTrue(cell.top == new Cell());
+        var cellCase11 = new Cell();
+        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [cellCase11, 11]);
+        assertTrue(cell.top == cellCase11);
         assertFalse(Reflect.field(mock, 'goRight'));
 
-        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [new Cell(), 15]);
-        assertTrue(cell.right == new Cell());
+        var cellCase15 = new Cell();
+        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [cellCase15, 15]);
+        assertTrue(cell.right == cellCase15);
 
-        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [new Cell(), 21]);
-        assertTrue(cell.top == new Cell());
+        var cellCase21 = new Cell();
+        var cell:Cell = Reflect.callMethod(mock, 'fillCell', [cellCase21, 21]);
+        assertTrue(cell.top == cellCase21);
         assertTrue(Reflect.field(mock, 'goRight'));
 
     }
