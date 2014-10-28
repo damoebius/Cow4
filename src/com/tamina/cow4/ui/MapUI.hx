@@ -23,7 +23,6 @@ class MapUI extends Stage {
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
-        enableMouseOver();
         _data = Mock.instance.getTestMap(15, 15);
 
         _width = width;

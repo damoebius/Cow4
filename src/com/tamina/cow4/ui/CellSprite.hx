@@ -7,7 +7,7 @@ import com.tamina.cow4.model.Cell;
 
 class CellSprite extends Container {
 
-    public var data(get,null):Cell;
+    public var data(get, null):Cell;
 
     private var _backgroundShape:Shape;
     private var _topWall:HWallSprite;
@@ -34,41 +34,40 @@ class CellSprite extends Container {
     private function drawWalls( ):Void {
         _topWall = new HWallSprite(_width);
         _topWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
-        if(_data.top != null){
-            _topWall.hide();
-        }
+        _topWall.display = (_data.top == null);
         addChild(_topWall);
 
         _bottomWall = new HWallSprite(_width);
-        _bottomWall.y = _height;
+        _bottomWall.y = _height - 4;
         _bottomWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
-        if(_data.bottom != null){
-            _bottomWall.hide();
-        }
+        _bottomWall.display = (_data.bottom == null);
         addChild(_bottomWall);
 
         _leftWall = new VWallSprite(_height);
         _leftWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
-        if(_data.left != null){
-            _leftWall.hide();
-        }
+        _leftWall.display = (_data.left == null);
         addChild(_leftWall);
 
         _rightWall = new VWallSprite(_height);
         _rightWall.x = _width;
         _rightWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
-        if(_data.right != null){
-            _rightWall.hide();
-        }
+        _rightWall.display = (_data.right == null);
         addChild(_rightWall);
     }
 
-    private function wall_clickHandler(evt:MouseEvent):Void{
-        trace('click');
-        // switcher sur evt.target et changer la valeur
+    private function wall_clickHandler( evt:MouseEvent ):Void {
+        if ( evt.currentTarget == _bottomWall ) {
+            _bottomWall.display = !_bottomWall.display;
+        } else if ( evt.currentTarget == _topWall ) {
+            _topWall.display = !_topWall.display;
+        } else if ( evt.currentTarget == _leftWall ) {
+            _leftWall.display = !_leftWall.display;
+        } else if ( evt.currentTarget == _rightWall ) {
+            _rightWall.display = !_rightWall.display;
+        }
     }
 
-    private function get_data():Cell{
+    private function get_data( ):Cell {
         return _data;
     }
 }

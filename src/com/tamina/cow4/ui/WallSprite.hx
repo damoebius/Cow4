@@ -7,12 +7,13 @@ class WallSprite extends Container{
 
     private static inline var NORMAL_COLOR:String="#00FF00";
     private static inline var HIDEN_COLOR:String="#FFFFFF";
-    private static inline var OVER_COLOR:String="#FF0000";
 
     private var _color:String;
 
     private var _backgroundShape:Shape;
     private var _size:Point;
+    private var _display:Bool = true;
+    public var display(get,set):Bool;
 
     public function new(size:Point) {
         super();
@@ -20,25 +21,28 @@ class WallSprite extends Container{
         _backgroundShape = new Shape();
         addChild(_backgroundShape);
         drawWall(NORMAL_COLOR);
-        _backgroundShape.addEventListener('mouseover', mouseOverHandler);
-        _backgroundShape.addEventListener('mouseout', mouseOutHandler);
     }
 
-    public function hide():Void{
-        drawWall(HIDEN_COLOR);
+    private function get_display():Bool{
+        return _display;
     }
+
+    private function set_display(value:Bool):Bool{
+        _display = value;
+        if(_display){
+            _backgroundShape.alpha = 1;
+        }    else {
+            _backgroundShape.alpha = 0.05;
+        }
+        return _display;
+    }
+
 
     private function drawWall(color:String=NORMAL_COLOR):Void{
         _backgroundShape.graphics.clear();
         _backgroundShape.graphics.beginFill(color);
         _backgroundShape.graphics.drawRect(0,0,_size.x,_size.y);
+        _backgroundShape.graphics.endFill();
     }
 
-    private function mouseOverHandler(evt:MouseEvent):Void{
-        drawWall(OVER_COLOR);
-    }
-
-    private function mouseOutHandler(evt:MouseEvent):Void{
-        drawWall(NORMAL_COLOR);
-    }
 }
