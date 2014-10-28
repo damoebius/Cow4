@@ -22,7 +22,7 @@ class Mock {
         var result = new GameMap();
         var oldCell = null;
         QuickLogger.debug("Nombre total de cellules : " + Std.string(this.row * this.column));
-        for ( cellCursor in 1...(this.row * this.column)+1){
+        for ( cellCursor in 0...(this.row * this.column)){
             oldCell = retrieveCellAndSave(result, oldCell, cellCursor);
         }
         return result;
