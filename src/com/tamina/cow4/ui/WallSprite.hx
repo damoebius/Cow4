@@ -32,7 +32,7 @@ class WallSprite extends Container{
         if(_display){
             _backgroundShape.alpha = 1;
         }    else {
-            _backgroundShape.alpha = 0.05;
+            _backgroundShape.alpha = 0.1;
         }
         return _display;
     }

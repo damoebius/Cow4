@@ -20,55 +20,55 @@ class Mock {
         this._rowNumber = row;
 
         var result = new GameMap();
-        var oldCell = null;
+        var previousCell:Cell = null;
+        var currentCell:Cell = null;
         QuickLogger.debug("Nombre total de cellules : " + Std.string(this._rowNumber * this._columnNumber));
         for ( rowIndex in 0...this._rowNumber ) {
             result.cells.push(new Array<Cell>());
             if ( _goRight ) {
-                for ( columnIndex in 0...this._columnNumber ) {
-                    var currentCell = fillCell(oldCell, (rowIndex + 1 ) * columnIndex);
-                    result.cells[rowIndex].push(currentCell);
-                    oldCell = currentCell;
+                currentCell = new Cell();
+                currentCell.top = previousCell;
+                if(previousCell != null){
+                   previousCell.bottom = currentCell;
                 }
+                result.cells[rowIndex].push(currentCell);
+                previousCell = currentCell;
+                for ( columnIndex in 1...this._columnNumber ) {
+                    currentCell = new Cell();
+                    currentCell.left = previousCell;
+                    if(previousCell != null){
+                        previousCell.right = currentCell;
+                    }
+                    result.cells[rowIndex].push(currentCell);
+                    previousCell = currentCell;
+                }
+                _goRight = false;
             } else {
-                var columnIndex = _columnNumber;
-                while ( columnIndex > 0 ) {
-                    var currentCell = fillCell(oldCell, (rowIndex + 1 ) * columnIndex);
+                var columnIndex = _columnNumber - 1;
+                currentCell = new Cell();
+                currentCell.top = previousCell;
+                if(previousCell != null){
+                    previousCell.bottom = currentCell;
+                }
+                result.cells[rowIndex][columnIndex] = currentCell;
+                previousCell = currentCell;
+                columnIndex--;
+                while ( columnIndex >= 0 ) {
+                    currentCell = new Cell();
+                    currentCell.right = previousCell;
+                    if(previousCell != null){
+                        previousCell.left = currentCell;
+                    }
                     result.cells[rowIndex][columnIndex] = currentCell;
-                    oldCell = currentCell;
+                    previousCell = currentCell;
                     columnIndex--;
                 }
+                _goRight = true;
             }
 
 
         }
         return result;
-    }
-
-    private function fillCell( old:Cell, cellCursor:Int ):Cell {
-        var cell = new Cell();
-        if ( cellCursor % this._columnNumber == 0 ) {
-            cell.top = old;
-            if ( old != null ) {
-                old.bottom = cell;
-            }
-
-            _goRight = (cellCursor / this._columnNumber) % 2 == 0;
-        }
-        else if ( _goRight ) {
-            cell.left = old;
-            if ( old != null ) {
-                old.right = cell;
-            }
-        }
-        else {
-            cell.right = old;
-            if ( old != null ) {
-                old.left = cell;
-            }
-        }
-
-        return cell;
     }
 
     private static function get_instance( ):Mock {

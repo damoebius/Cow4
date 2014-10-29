@@ -6,6 +6,7 @@ class HWallSprite extends WallSprite {
 
     public function new(width:Int) {
         super(new Point(width,4));
+        _backgroundShape.y = -2;
     }
 
 }

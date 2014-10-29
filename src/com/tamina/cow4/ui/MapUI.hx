@@ -14,11 +14,12 @@ class MapUI extends Stage {
     private static inline var CELL_WIDTH:Int = 20;
     private static inline var CELL_HEIGHT:Int = 20;
 
+    private static var  _data:GameMap;
+
     private var _width:Int;
     private var _height:Int;
     private var _backgroundShape:Shape;
     private var _cellsContainer:Container;
-    private var _data:GameMap;
     private var _cellsSprite:Array<CellSprite>;
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
@@ -40,6 +41,10 @@ class MapUI extends Stage {
         Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
         _cellsSprite = new Array<CellSprite>();
         drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
+    }
+
+    public static function getMap():GameMap{
+        return _data;
     }
 
     private function drawCell( data:Cell, position:Point ):Void {
