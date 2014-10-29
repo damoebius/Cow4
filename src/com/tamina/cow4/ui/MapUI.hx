@@ -39,7 +39,7 @@ class MapUI extends Stage {
         Ticker.setFPS(FPS);
         Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
         _cellsSprite = new Array<CellSprite>();
-        drawCell(_data.cells[0], new Point(CELL_WIDTH, CELL_HEIGHT));
+        drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
     }
 
     private function drawCell( data:Cell, position:Point ):Void {
