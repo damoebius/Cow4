@@ -1,4 +1,6 @@
 package com.tamina.cow4.ui;
+import haxe.Timer;
+import com.tamina.cow4.events.NotificationBus;
 import org.tamina.geom.Point;
 import com.tamina.cow4.model.Cell;
 import com.tamina.cow4.model.GameMap;
@@ -14,17 +16,21 @@ class MapUI extends Stage {
     private static inline var CELL_WIDTH:Int = 20;
     private static inline var CELL_HEIGHT:Int = 20;
 
-    private static var  _data:GameMap;
+    private static var _data:GameMap;
 
     private var _width:Int;
     private var _height:Int;
     private var _backgroundShape:Shape;
     private var _cellsContainer:Container;
     private var _cellsSprite:Array<CellSprite>;
+    private var _updateDisplay:Bool = true;
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
-        _data = Mock.instance.getTestMap(15, 15);
+        _data = Mock.instance.getTestMap(20, 20);
+
+        NotificationBus.instance.startUpdateDisplay.add(startUpdateDisplayHandler);
+        NotificationBus.instance.stopUpdateDisplay.add(stopUpdateDisplayHandler);
 
         _width = width;
         _height = height;
@@ -41,10 +47,21 @@ class MapUI extends Stage {
         Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
         _cellsSprite = new Array<CellSprite>();
         drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
+        stopUpdateDisplayHandler();
     }
 
-    public static function getMap():GameMap{
+    public static function getMap( ):GameMap {
         return _data;
+    }
+
+    private function startUpdateDisplayHandler():Void{
+        _updateDisplay = true;
+    }
+
+    private function stopUpdateDisplayHandler():Void{
+        Timer.delay( function ():Void{
+            _updateDisplay = false;
+        }, 500);
     }
 
     private function drawCell( data:Cell, position:Point ):Void {
@@ -54,27 +71,27 @@ class MapUI extends Stage {
         _cellsContainer.addChild(sprite);
         _cellsSprite.push(sprite);
 
-        if ( data.top != null && !cellDrawn(data.top)) {
+        if ( data.top != null && !cellDrawn(data.top) ) {
             drawCell(data.top, new Point(position.x, position.y - CELL_HEIGHT));
         }
 
-        if ( data.bottom != null && !cellDrawn(data.bottom)) {
+        if ( data.bottom != null && !cellDrawn(data.bottom) ) {
             drawCell(data.bottom, new Point(position.x, position.y + CELL_HEIGHT));
         }
 
-        if ( data.left != null && !cellDrawn(data.left)) {
+        if ( data.left != null && !cellDrawn(data.left) ) {
             drawCell(data.left, new Point(position.x - CELL_WIDTH, position.y));
         }
 
-        if ( data.right != null && !cellDrawn(data.right)) {
+        if ( data.right != null && !cellDrawn(data.right) ) {
             drawCell(data.right, new Point(position.x + CELL_WIDTH, position.y));
         }
     }
 
-    private function cellDrawn( target:Cell):Bool {
+    private function cellDrawn( target:Cell ):Bool {
         var result:Bool = false;
-        for(i in 0..._cellsSprite.length){
-            if( _cellsSprite[i].data.id == target.id){
+        for ( i in 0..._cellsSprite.length ) {
+            if ( _cellsSprite[i].data.id == target.id ) {
                 result = true;
                 break;
             }
@@ -83,6 +100,8 @@ class MapUI extends Stage {
     }
 
     private function tickerHandler( ):Void {
-        this.update();
+        if ( _updateDisplay ) {
+            this.update();
+        }
     }
 }
