@@ -1,4 +1,6 @@
 package com.tamina.cow4;
+import haxe.Serializer;
+import haxe.Json;
 import com.tamina.cow4.ui.MapUI;
 import js.html.HtmlElement;
 import js.Browser;
@@ -18,6 +20,7 @@ import org.tamina.log.QuickLogger;
     }
 
     static function main() {
+        Serializer.USE_CACHE = true;
         _instance = new MapEditor();
         untyped __js__("window.MapEditor = com.tamina.cow4.MapEditor._instance");
     }
@@ -31,5 +34,11 @@ import org.tamina.log.QuickLogger;
         _applicationCanvas.height = contentHeight;
         QuickLogger.info("canvas initialized");
         _stage = new MapUI(_applicationCanvas,contentWidth,contentHeight);
+    }
+
+    public function export():String{
+        QuickLogger.info('exporting data');
+        var exportedData = Serializer.run( MapUI.getMap().toGameMapVO() );
+        return exportedData;
     }
 }

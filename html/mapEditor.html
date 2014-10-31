@@ -3,13 +3,30 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Map Editor</title>
+    <link href="mapEditor.css" rel="stylesheet" media="all" type="text/css">
 </head>
 <body>
+<div class="mainContainer">
+    <div id="mapIOContainer">
+        <div style="width: 100%">
+            <button>import</button>
+            <button style="margin-left: 400px" onclick="exportModel()">export</button>
+        </div>
+        <textarea id="mapDataArea"></textarea>
+    </div>
     <div id="mapEditorContainer"></div>
-    <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
-    <script src="js/release/MapEditor.js"></script>
-    <script>
-         MapEditor.init('mapEditorContainer',600,600);
-    </script>
+</div>
+<script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
+<script src="js/release/MapEditor.js"></script>
+<script>
+
+    var mapDataArea = document.getElementById('mapDataArea');
+
+    var exportModel = function(){
+       mapDataArea.innerHTML = MapEditor.export();
+    }
+
+    MapEditor.init('mapEditorContainer', 600, 600);
+</script>
 </body>
 </html>

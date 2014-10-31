@@ -1,4 +1,5 @@
 package com.tamina.cow4.model;
+import com.tamina.cow4.model.vo.CellVO;
 import msignal.Signal.Signal0;
 import org.tamina.utils.UID;
 class Cell {
@@ -20,6 +21,10 @@ class Cell {
     public function new() {
         this.id = UID.getUID();
         changeSignal = new Signal0();
+    }
+
+    public function toCellVO():CellVO{
+        return new CellVO(id);
     }
 
     private function get_top():Cell {

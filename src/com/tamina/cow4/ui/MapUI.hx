@@ -27,7 +27,7 @@ class MapUI extends Stage {
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
-        _data = Mock.instance.getTestMap(20, 20);
+        _data = Mock.instance.getTestMap(25, 25);
 
         NotificationBus.instance.startUpdateDisplay.add(startUpdateDisplayHandler);
         NotificationBus.instance.stopUpdateDisplay.add(stopUpdateDisplayHandler);
