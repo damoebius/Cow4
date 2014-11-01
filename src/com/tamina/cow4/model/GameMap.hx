@@ -26,6 +26,37 @@ class GameMap {
         return cells[row][column];
     }
 
+    public static function fromGameMapVO(value:Array<Array<CellVO>>):GameMap{
+        var result = new GameMap();
+        for(i in 0...value.length){
+            result.cells.push( new Array<Cell>());
+            for(j in 0...value[i].length){
+                result.cells[i].push( Cell.fromCellVO(   value[i][j]) );
+            }
+        }
+
+        for(i in 0...result.cells.length){
+            for(j in 0...result.cells[i].length){
+                var cell = result.cells[i][j];
+                var cellVO = value[i][j];
+                if(cellVO.top != null) {
+                    cell.top = result.cells[i-1][j];
+                }
+                if(cellVO.bottom != null) {
+                    cell.bottom = result.cells[i+1][j];
+                }
+                if(cellVO.left != null) {
+                    cell.left = result.cells[i][j-1];
+                }
+                if(cellVO.right != null) {
+                    cell.right = result.cells[i][j+1];
+                }
+            }
+        }
+
+        return result;
+    }
+
     public function toGameMapVO():Array<Array<CellVO>>{
         var result = new Array<Array<CellVO>>();
         // on construit la matrice
@@ -44,7 +75,7 @@ class GameMap {
                     cellVO.top = result[i-1][j];
                 }
                 if(cell.bottom != null) {
-                    cellVO.top = result[i+1][j];
+                    cellVO.bottom = result[i+1][j];
                 }
                 if(cell.left != null) {
                     cellVO.left = result[i][j-1];

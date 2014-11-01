@@ -9,7 +9,7 @@
 <div class="mainContainer">
     <div id="mapIOContainer">
         <div style="width: 100%">
-            <button>import</button>
+            <button onclick="importModel()">import</button>
             <button style="margin-left: 400px" onclick="exportModel()">export</button>
         </div>
         <textarea id="mapDataArea"></textarea>
@@ -23,7 +23,11 @@
     var mapDataArea = document.getElementById('mapDataArea');
 
     var exportModel = function(){
-       mapDataArea.innerHTML = MapEditor.export();
+       mapDataArea.innerHTML = MapEditor.exportModel();
+    }
+
+    var importModel = function(){
+        MapEditor.importModel(mapDataArea.innerHTML);
     }
 
     MapEditor.init('mapEditorContainer', 600, 600);

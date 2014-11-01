@@ -1,6 +1,9 @@
 package com.tamina.cow4;
+import com.tamina.cow4.model.GameMap;
+import com.tamina.cow4.data.Mock;
+import com.tamina.cow4.model.vo.CellVO;
 import haxe.Serializer;
-import haxe.Json;
+import haxe.Unserializer;
 import com.tamina.cow4.ui.MapUI;
 import js.html.HtmlElement;
 import js.Browser;
@@ -34,11 +37,18 @@ import org.tamina.log.QuickLogger;
         _applicationCanvas.height = contentHeight;
         QuickLogger.info("canvas initialized");
         _stage = new MapUI(_applicationCanvas,contentWidth,contentHeight);
+        _stage.data = Mock.instance.getTestMap(25, 25);
     }
 
-    public function export():String{
+    public function exportModel():String{
         QuickLogger.info('exporting data');
         var exportedData = Serializer.run( MapUI.getMap().toGameMapVO() );
         return exportedData;
+    }
+
+    public function importModel(model:String):Void{
+        QuickLogger.info('importing data');
+        var importedModel:Array<Array<CellVO>> = cast Unserializer.run( model );
+        _stage.data = GameMap.fromGameMapVO(importedModel);
     }
 }

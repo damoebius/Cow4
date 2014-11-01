@@ -27,6 +27,12 @@ class Cell {
         return new CellVO(id);
     }
 
+    public static function fromCellVO(value:CellVO):Cell{
+        var result = new Cell();
+        result.id = value.id;
+        return result;
+    }
+
     private function get_top():Cell {
         return _top;
     }

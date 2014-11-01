@@ -5,8 +5,7 @@ import createjs.easeljs.Shape;
 import createjs.easeljs.Container;
 class WallSprite extends Container{
 
-    private static inline var NORMAL_COLOR:String="#00FF00";
-    private static inline var HIDEN_COLOR:String="#FFFFFF";
+    private static inline var NORMAL_COLOR:String="#000000";
 
     private var _color:String;
 

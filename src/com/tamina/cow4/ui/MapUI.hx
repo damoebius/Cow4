@@ -18,6 +18,8 @@ class MapUI extends Stage {
 
     private static var _data:GameMap;
 
+    public var data(get,set):GameMap;
+
     private var _width:Int;
     private var _height:Int;
     private var _backgroundShape:Shape;
@@ -27,7 +29,7 @@ class MapUI extends Stage {
 
     public function new( display:CanvasElement, width:Int, height:Int ) {
         super(display);
-        _data = Mock.instance.getTestMap(25, 25);
+        //_data = Mock.instance.getTestMap(25, 25);
 
         NotificationBus.instance.startUpdateDisplay.add(startUpdateDisplayHandler);
         NotificationBus.instance.stopUpdateDisplay.add(stopUpdateDisplayHandler);
@@ -38,19 +40,31 @@ class MapUI extends Stage {
         _backgroundShape.graphics.beginFill("#333333");
         _backgroundShape.graphics.drawRect(0, 0, _width, _height);
         _backgroundShape.graphics.endFill();
-        addChild(_backgroundShape);
+        //addChild(_backgroundShape);
 
         _cellsContainer = new Container();
         addChild(_cellsContainer);
 
         Ticker.setFPS(FPS);
         Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
-        _cellsSprite = new Array<CellSprite>();
-        drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
-        stopUpdateDisplayHandler();
     }
 
     public static function getMap( ):GameMap {
+        return _data;
+    }
+
+    private function get_data():GameMap{
+    startUpdateDisplayHandler();
+        return _data;
+    }
+
+    private function set_data(value:GameMap):GameMap{
+        _data = value;
+        startUpdateDisplayHandler();
+        _cellsSprite = new Array<CellSprite>();
+        _cellsContainer.removeAllChildren();
+        drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
+        stopUpdateDisplayHandler();
         return _data;
     }
 
