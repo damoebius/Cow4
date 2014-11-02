@@ -22,8 +22,22 @@
 
 	</target>
 
+    <target name="compile-server">
+        <mkdir dir="${output.js}"/>
 
-	<target name="compile-all" depends="compile-mapeditor"/>
+        <exec executable="node" dir="${basedir}" failonerror="true">
+            <arg line="node_modules/haxe/bin/haxe-cli.js"/>
+            <arg line="-cp src -js ${output.js}/Server.js -main com.tamina.cow4.Server"/>
+            <arg line="-use nodejs"/>
+            <arg line="-lib msignal"/>
+            <arg line="-lib mconsole-npm"/>
+            <arg line="-lib taminahx"/>
+        </exec>
+
+    </target>
+
+
+	<target name="compile-all" depends="compile-mapeditor, compile-server"/>
 
 	<target name="copy-static-resources">
 		<copy todir="${output}">
