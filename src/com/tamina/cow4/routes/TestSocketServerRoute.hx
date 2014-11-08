@@ -1,4 +1,10 @@
 package com.tamina.cow4.routes;
+import haxe.Json;
+import com.tamina.cow4.socket.message.ErrorCode;
+import com.tamina.cow4.socket.message.Error;
+import com.tamina.cow4.socket.message.ID;
+import com.tamina.cow4.socket.message.SocketMessage;
+import com.tamina.cow4.socket.message.Authenticate;
 import nodejs.net.TCPSocket;
 import com.tamina.cow4.config.Config;
 import nodejs.net.Net;
@@ -22,14 +28,30 @@ class TestSocketServerRoute extends Route {
     }
 
     private function connectionHandler():Void{
-        _log += 'CONNECTED <br/> Sending message...';
+        _log += 'CONNECTED <br/> Sending Auth message...';
         _socket.on(TCPSocketEventType.Data, socket_dataHandler);
-        _socket.write('ping');
+        _socket.write( new Authenticate('TestIA','http://images.groups.adobe.com/1332a08/logo100x100.gif').serialize());
     }
 
     private function socket_dataHandler(data:String):Void{
         _log += 'Data recevied <br/>';
+        var message:SocketMessage = Json.parse( data );
+        if(message.type != null){
+            switch( message.type){
+                case ID.MESSAGE_TYPE:
+                    var idMessage:ID = cast message;
+                    _log += 'identification ' + idMessage;
+                case Error.MESSAGE_TYPE:
+                    var errorMessage:Error = cast message;
+                    _log += 'ERROR ' +errorMessage.message +  ' <br/>';
+                default: _log += 'type de message inconnu <br/>';
+
+            }
+
+        } else {
+            _log += ' MESSAGE inconnu <br/>';
+        }
         _response.send(_log);
-        _socket.destroy();
+        //_socket.destroy();
     }
 }
