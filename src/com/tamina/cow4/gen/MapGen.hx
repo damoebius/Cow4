@@ -16,27 +16,34 @@ class MapGen {
 
     private var _map :Array<Array<Cell>>;
 
-    function getMap(width:Int, height:Int, startPos:Point){
+    function getMap(width:Int, height:Int, startPos:Point):Cell{
         initMapAndStartCell(width, height, startPos);
         generate(startCell);
+        return startCell;
     }
 
     function generate(actualCell:Cell){
         if (actualCell == startCell && !actualCell.visited ) return;
         actualCell.visited = true;
-        // Puis on regarde quelles sont les cellules voisines possibles et non visitées
-        var possibleNeigtboardCells = getPossibleNeigtboardCells(actualCell);
-        var nextCell = possibleNeigtboardCells[Std.random(possibleNeigtboardCells.length - 1)];
 
-        actualCell.nexts.push(nextCell);
-        nextCell.previous.push(actualCell);
-        actualCell = nextCell;
-
+        var nextCell = getNextCell(actualCell);
+        actualCell = openWall(actualCell, nextCell);
         generate(actualCell);
     }
 
-    function getPossibleNeigtboardCells(x:Int, y:Int):Array<Cell>{
+    function openWall(actualCell:Cell, nextCell:Cell):Cell{
+        actualCell.nexts.push(nextCell);
+        nextCell.previous.push(actualCell);
+        return nextCell;
+    }
 
+    function getPossibleNeigtboardCells(cell:Cell):Array<Cell>{
+
+    }
+
+    function getNextCell(actualCell:Cell):Cell{
+        var possibleNeigtboardCells = getPossibleNeigtboardCells(actualCell);
+        return possibleNeigtboardCells[Std.random(possibleNeigtboardCells.length - 1)];
     }
 
     function initMapAndStartCell(width:Int, height:Int, startPos:Point){
