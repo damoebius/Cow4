@@ -1,85 +1,57 @@
-import org.tamina.log.QuickLogger;
+import com.tamina.cow4.gen.Cell;
 import createjs.easeljs.Point;
 
 
 class MapGen {
 
-    private static inline var NB_DIRECTION_MAX  :Int    = 4;
-    private static inline var END_POS           :Point  = new Point( MAX_WIDTH, MAX_HEIGHT );
-    private static inline var MAX_WIDTH         :Int    = 10;
-    private static inline var MAX_HEIGHT        :Int    = 10;
-
-    private static inline var MAP               :Array<Array<Int>>; //TODO init map with all wall
-
     // Possibles directions
-    private static inline var UP    :Int = 0;
-    private static inline var RIGHT :Int = 1;
-    private static inline var DOWN  :Int = 2;
-    private static inline var LEFT  :Int = 3;
+    private static var UP    :Int = 0;
+    private static var RIGHT :Int = 1;
+    private static var DOWN  :Int = 2;
+    private static var LEFT  :Int = 3;
 
+    private var _width  :Int;
+    private var _height :Int;
+    private var startCell:Cell;
 
-    function generate(actualPosition:Point, oldPositions:Array<Point>):Array<Array<Int>>{
-        // init possible direction
-        var possibleBoxes = getAllPossibleBoxes( actualPosition, oldPositions);
+    private var _map :Array<Array<Cell>>;
 
-        var nbPossibeBoxes = NB_DIRECTION_MAX;
-        for (i in 0...NB_DIRECTION_MAX){
-            if (possibleBoxes[i] == false){
-                nbPossibeBoxes--;
-            }
-        }
-
-        if (nbPossibeBoxes == 0) {
-            if (actualPosition != END_POS){
-                generate( oldPositions.pop(), oldPositions);
-            }else{
-                return MAP;
-            }
-        }else{
-            var randWall = Std.random(NB_DIRECTION_MAX);
-            while (!possibleBoxes[randWall]){
-                randWall = Std.random(NB_DIRECTION_MAX);
-            }
-            switch(randWall){
-                case UP:
-                    MAP[actualPosition.x][actualPosition.y - 1] = 0;
-                    oldPositions.push(actualPosition);
-                    actualPosition = new Point(actualPosition.x, actualPosition.y - 1);
-                    break;
-                case RIGHT:
-                    MAP[actualPosition.x + 1][actualPosition.y] = 0;
-                    oldPositions.push(actualPosition);
-                    actualPosition = new Point(actualPosition.x + 1, actualPosition.y);
-                    break;
-                case DOWN:
-                    MAP[actualPosition.x][actualPosition.y + 1] = 0;
-                    oldPositions.push(actualPosition);
-                    actualPosition = new Point(actualPosition.x, actualPosition.y + 1);
-                    break;
-                case LEFT:
-                    MAP[actualPosition.x - 1][actualPosition.y] = 0;
-                    oldPositions.push(actualPosition);
-                    actualPosition = new Point(actualPosition.x - 1, actualPosition.y);
-                    break;
-            }
-            generate( actualPosition, oldPositions );
-        }
+    function getMap(width:Int, height:Int, startPos:Point):Cell{
+        initMapAndStartCell(width, height, startPos);
+        generate(startCell);
+        return startCell;
     }
 
-    function getAllPossibleBoxes( actualPos:Point, oldPos:Array<Point> ):Array<Bool>{
-        var possibleBoxes:Array<Bool> = [for (i in 0...NB_DIRECTION_MAX){ return false; }];
-       /**  TODO **/
-        return possibleBoxes;
+    function generate(actualCell:Cell){
+        if (actualCell == startCell && !actualCell.visited ) return;
+        actualCell.visited = true;
+
+        var nextCell = getNextCell(actualCell);
+        actualCell = openWall(actualCell, nextCell);
+        generate(actualCell);
     }
 
-   function isSurroundedByWalls(wallPosition:Point, excludedWallPosition:Point, possibleWalls:Array<Bool>):Bool{
-       return (
-           (!possibleWalls[RIGHT]  || MAP[wallPosition.x + 1][wallPosition.y] == 1 || wallPosition.x + 1 == excludedWallPosition.x) &&
-           (!possibleWalls[LEFT]   || MAP[wallPosition.x - 1][wallPosition.y] == 1 || wallPosition.x - 1 == excludedWallPosition.x) &&
-           (!possibleWalls[DOWN]   || MAP[wallPosition.x][wallPosition.y + 1] == 1 || wallPosition.y + 1 == excludedWallPosition.y) &&
-           (!possibleWalls[UP]     || MAP[wallPosition.x][wallPosition.y - 1] == 1 || wallPosition.y - 1 == excludedWallPosition.y)
-       );
-   }
+    function openWall(actualCell:Cell, nextCell:Cell):Cell{
+        actualCell.nexts.push(nextCell);
+        nextCell.previous.push(actualCell);
+        return nextCell;
+    }
+
+    function getPossibleNeigtboardCells(cell:Cell):Array<Cell>{
+
+    }
+
+    function getNextCell(actualCell:Cell):Cell{
+        var possibleNeigtboardCells = getPossibleNeigtboardCells(actualCell);
+        return possibleNeigtboardCells[Std.random(possibleNeigtboardCells.length - 1)];
+    }
+
+    function initMapAndStartCell(width:Int, height:Int, startPos:Point){
+        this._width     = width;
+        this._height    = height;
+        this._map       = [for(x in 0..._width) for(y in 0..._height) _map[x][y] = new Cell(new Point(x, y))];
+        this.startCell  = _map[startPos.x][startPos.y];
+    }
 
 }
 
