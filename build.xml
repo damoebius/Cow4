@@ -6,10 +6,10 @@
 
 	<target name="clean">
 		<delete dir="${output}"/>
+        <mkdir dir="${output.js}"/>
 	</target>
 
 	<target name="compile-mapeditor">
-		<mkdir dir="${output.js}"/>
 
         <exec executable="node" dir="${basedir}" failonerror="true">
             <arg line="node_modules/haxe/bin/haxe-cli.js"/>
@@ -23,7 +23,6 @@
 	</target>
 
     <target name="compile-server">
-        <mkdir dir="${output.js}"/>
 
         <exec executable="node" dir="${basedir}" failonerror="true">
             <arg line="node_modules/haxe/bin/haxe-cli.js"/>
@@ -36,8 +35,20 @@
 
     </target>
 
+    <target name="compile-frontend">
 
-	<target name="compile-all" depends="compile-mapeditor, compile-server"/>
+        <exec executable="node" dir="${basedir}" failonerror="true">
+            <arg line="node_modules/haxe/bin/haxe-cli.js"/>
+            <arg line="-cp src -js ${output.js}/Frontend.js -main com.tamina.cow4.Frontend"/>
+            <arg line="-lib msignal"/>
+            <arg line="-lib mconsole-npm"/>
+            <arg line="-lib taminahx"/>
+        </exec>
+
+    </target>
+
+
+	<target name="compile-all" depends="compile-mapeditor, compile-server, compile-frontend"/>
 
 	<target name="copy-static-resources">
 		<copy todir="${output}">
@@ -45,11 +56,17 @@
 				<include name="**/*"/>
 			</fileset>
 		</copy>
+
+        <copy todir="${output}/server/js">
+                <fileset dir="${output.js}">
+                    <include name="Frontend.js"/>
+                </fileset>
+        </copy>
 	</target>
 
 
 
-    <target name="deploy-local" depends="clean, copy-static-resources, compile-all">
+    <target name="deploy-local" depends="clean, compile-all, copy-static-resources">
 
     </target>
 </project>
