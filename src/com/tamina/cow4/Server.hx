@@ -1,4 +1,6 @@
 package com.tamina.cow4;
+import com.tamina.cow4.routes.Routes;
+import com.tamina.cow4.routes.IAListRoute;
 import com.tamina.cow4.routes.TestSocketServerRoute;
 import com.tamina.cow4.socket.SocketServer;
 import nodejs.net.TCPServer;
@@ -24,7 +26,10 @@ class Server {
         _express.get('/', mainRoute.succesHandler);
 
         var testSocketServerRoute = new TestSocketServerRoute();
-        _express.get('/SOCKET/TEST',testSocketServerRoute.succesHandler);
+        _express.get('/'+Routes.SOCKET_TEST,testSocketServerRoute.succesHandler);
+
+        var iaListRoute = new IAListRoute();
+        _express.get('/'+Routes.IAList,iaListRoute.succesHandler);
 
         trace('server listening on ' + Config.APP_PORT);
 

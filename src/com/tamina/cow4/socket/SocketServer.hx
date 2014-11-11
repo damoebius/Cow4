@@ -4,11 +4,12 @@ import nodejs.net.Net;
 import nodejs.net.TCPServer;
 class SocketServer {
 
+    public static var connections:Array<IA>;
+
     private var _server:TCPServer;
-    private var _connections:Array<IA>;
 
     public function new( port:Int ) {
-        _connections = new Array<IA>();
+        connections = new Array<IA>();
         _server = Net.createServer( socketServer_connectionHandler);
         _server.listen(port,socketServer_createHandler);
     }
@@ -16,7 +17,7 @@ class SocketServer {
     private function socketServer_connectionHandler(c:TCPSocket):Void{
         trace('[socket server] new connection ');
         var ia = new IA(c);
-        _connections.push(ia);
+        connections.push(ia);
 
     }
 

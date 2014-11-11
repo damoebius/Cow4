@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import org.tamina.utils.ClassUtils;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.data.Mock;
 import com.tamina.cow4.model.vo.CellVO;
@@ -25,7 +26,7 @@ import org.tamina.log.QuickLogger;
     static function main() {
         Serializer.USE_CACHE = true;
         _instance = new MapEditor();
-        untyped __js__("window.MapEditor = com.tamina.cow4.MapEditor._instance");
+        ClassUtils.expose(_instance,'MapEditor');
     }
 
     public function init(targetContentId:String, contentWidth:Int, contentHeight:Int):Void {

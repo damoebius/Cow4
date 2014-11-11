@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.model.IAInfo;
 import haxe.Json;
 import com.tamina.cow4.socket.message.ID;
 import org.tamina.net.URL;
@@ -13,9 +14,10 @@ class IA {
     public var id:Float;
     public var name:String;
     public var avatar:URL;
+    public var isLoggued:Bool = false;
 
     private var _socket:TCPSocket;
-    private var _loggued:Bool = false;
+
 
     public function new( c:TCPSocket ) {
         id = UID.getUID();
@@ -23,6 +25,10 @@ class IA {
         _socket.on(TCPSocketEventType.Connect,socketServer_connectHandler);
         _socket.on(TCPSocketEventType.End,socketServer_endHandler);
         _socket.on(TCPSocketEventType.Data,socketServer_dataHandler);
+    }
+
+    public function toInfo():IAInfo{
+        return new IAInfo(id,name,avatar.path);
     }
 
     private function socketServer_dataHandler(data:String):Void{
@@ -33,10 +39,10 @@ class IA {
                 case Authenticate.MESSAGE_TYPE:
                 trace('demande dauthentifiction');
                 var auth:Authenticate = cast message;
-                if(_loggued){
+                if(isLoggued){
                     _socket.write( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié').serialize());
                 } else {
-                    _loggued = true;
+                    isLoggued = true;
                     name = auth.name;
                     avatar = new URL(auth.avatar);
                     _socket.write( new ID( this.id ).serialize());

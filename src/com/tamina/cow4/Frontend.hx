@@ -1,4 +1,7 @@
 package com.tamina.cow4;
+import org.tamina.net.URL;
+import org.tamina.net.BaseRequest;
+import org.tamina.utils.ClassUtils;
 import com.tamina.cow4.view.HomeView;
 import org.tamina.log.QuickLogger;
 @:expose class Frontend {
@@ -14,14 +17,14 @@ import org.tamina.log.QuickLogger;
         QuickLogger.info("instantiation de l'application ");
     }
 
-    public function init():Void{
-
+    public function init(endpoint:String):Void{
+        BaseRequest.endpoint =  new URL(endpoint);
         _homeView = new HomeView(MODULE_NAME);
 
     }
 
     static function main() {
         _instance = new Frontend();
-        untyped __js__("window.Frontend = com.tamina.cow4.Frontend._instance");
+        ClassUtils.expose(_instance,'Frontend');
     }
 }

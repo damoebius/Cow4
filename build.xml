@@ -66,7 +66,7 @@
 
 
 
-    <target name="deploy-local" depends="clean, compile-all, copy-static-resources">
+    <target name="deploy-local" depends="compile-all, copy-static-resources">
 
     </target>
 </project>

@@ -1,0 +1,14 @@
+.iaItem{
+   display: flex;
+    padding: 5px;
+}
+
+.ia_image{
+    width: 20px;
+    height: 20px;
+    padding-right: 5px;
+}
+
+.ia_fight_checkbox{
+    padding-right: 5px;
+}
