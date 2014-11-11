@@ -10,18 +10,29 @@ class SocketServer {
 
     public function new( port:Int ) {
         connections = new Array<IA>();
-        _server = Net.createServer( socketServer_connectionHandler);
-        _server.listen(port,socketServer_createHandler);
+        _server = Net.createServer(socketServer_connectionHandler);
+        _server.listen(port, socketServer_createHandler);
     }
 
-    private function socketServer_connectionHandler(c:TCPSocket):Void{
+    private function socketServer_connectionHandler( c:TCPSocket ):Void {
         trace('[socket server] new connection ');
         var ia = new IA(c);
+        ia.exitSignal.addOnce(iaCloseHandler);
         connections.push(ia);
 
     }
 
-    private function socketServer_createHandler(c:Dynamic):Void{
+    private function iaCloseHandler( id:Float ):Void {
+        for ( i in 0...connections.length ) {
+            var c = connections[i];
+            if(c.id == id){
+                connections.remove(c);
+                break;
+            }
+        }
+    }
+
+    private function socketServer_createHandler( c:Dynamic ):Void {
         trace('[socket server] ready');
     }
 }

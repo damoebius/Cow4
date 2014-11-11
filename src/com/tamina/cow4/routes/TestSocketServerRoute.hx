@@ -1,4 +1,5 @@
 package com.tamina.cow4.routes;
+import haxe.Timer;
 import haxe.Json;
 import com.tamina.cow4.socket.message.ErrorCode;
 import com.tamina.cow4.socket.message.Error;
@@ -11,6 +12,8 @@ import nodejs.net.Net;
 import nodejs.express.ExpressResponse;
 import nodejs.express.ExpressRequest;
 class TestSocketServerRoute extends Route {
+
+    private static inline var ALIVE_DURATION:Int = 10*60*1000;
 
     private var _socket:TCPSocket;
     private var _response:ExpressResponse;
@@ -31,6 +34,11 @@ class TestSocketServerRoute extends Route {
         _log += 'CONNECTED <br/> Sending Auth message...';
         _socket.on(TCPSocketEventType.Data, socket_dataHandler);
         _socket.write( new Authenticate('TestIA','http://images.groups.adobe.com/1332a08/logo100x100.gif').serialize());
+        Timer.delay(quit,ALIVE_DURATION);
+    }
+
+    private function quit():Void{
+        _socket.destroy();
     }
 
     private function socket_dataHandler(data:String):Void{
