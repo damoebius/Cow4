@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.routes.PlayRoute;
 import com.tamina.cow4.routes.Routes;
 import com.tamina.cow4.routes.IAListRoute;
 import com.tamina.cow4.routes.TestSocketServerRoute;
@@ -30,6 +31,9 @@ class Server {
 
         var iaListRoute = new IAListRoute();
         _express.get('/'+Routes.IAList,iaListRoute.succesHandler);
+
+        var playRoute = new PlayRoute();
+        _express.get('/'+Routes.Play,playRoute.succesHandler);
 
         trace('server listening on ' + Config.APP_PORT);
 

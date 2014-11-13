@@ -1,4 +1,6 @@
 package com.tamina.cow4;
+import com.tamina.cow4.view.PlayView;
+import com.tamina.cow4.view.ViewName;
 import org.tamina.net.URL;
 import org.tamina.net.BaseRequest;
 import org.tamina.utils.ClassUtils;
@@ -11,15 +13,22 @@ import org.tamina.log.QuickLogger;
     private static var _instance:Frontend;
 
     private var _homeView:HomeView;
+    private var _playView:PlayView;
 
     public function new( ) {
         Console.start();
         QuickLogger.info("instantiation de l'application ");
     }
 
-    public function init(endpoint:String):Void{
+    public function init(endpoint:String,viewName:ViewName=ViewName.Home):Void{
         BaseRequest.endpoint =  new URL(endpoint);
-        _homeView = new HomeView(MODULE_NAME);
+        switch(viewName){
+            case ViewName.Home:
+                _homeView = new HomeView(MODULE_NAME);
+            case ViewName.Play:
+                _playView = new PlayView(MODULE_NAME);
+        }
+
 
     }
 
