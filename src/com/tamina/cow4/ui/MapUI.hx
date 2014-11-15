@@ -1,104 +1,68 @@
 package com.tamina.cow4.ui;
 import haxe.Timer;
-import com.tamina.cow4.events.NotificationBus;
-import org.tamina.geom.Point;
 import com.tamina.cow4.model.Cell;
-import com.tamina.cow4.model.GameMap;
+import org.tamina.geom.Point;
 import createjs.easeljs.Container;
-import com.tamina.cow4.data.Mock;
-import createjs.easeljs.Ticker;
-import org.tamina.events.CreateJSEvent;
-import createjs.easeljs.Shape;
 import js.html.CanvasElement;
+import com.tamina.cow4.model.GameMap;
 import createjs.easeljs.Stage;
-class MapUI extends Stage {
-    private static inline var FPS:Float = 30.0;
-    private static inline var CELL_WIDTH:Int = 20;
-    private static inline var CELL_HEIGHT:Int = 20;
 
-    private static var _data:GameMap;
+@:generic class MapUI<T:CellSprite> extends Stage {
 
-    public var data(get,set):GameMap;
+    private var _data:GameMap;
 
-    private var _width:Int;
-    private var _height:Int;
-    private var _backgroundShape:Shape;
+    private var _cellsSprite:Array<T>;
     private var _cellsContainer:Container;
-    private var _cellsSprite:Array<CellSprite>;
-    private var _updateDisplay:Bool = true;
+    private var _fps:Float=30.0;
+    private var CellSpriteClass:Class<T>;
 
-    public function new( display:CanvasElement, width:Int, height:Int ) {
+
+    public var data(get, set):GameMap;
+
+    public function new(cellSpriteClass:Class<T>, display:CanvasElement, fps:Float ) {
         super(display);
-        //_data = Mock.instance.getTestMap(25, 25);
-
-        NotificationBus.instance.startUpdateDisplay.add(startUpdateDisplayHandler);
-        NotificationBus.instance.stopUpdateDisplay.add(stopUpdateDisplayHandler);
-
-        _width = width;
-        _height = height;
-        _backgroundShape = new Shape();
-        _backgroundShape.graphics.beginFill("#333333");
-        _backgroundShape.graphics.drawRect(0, 0, _width, _height);
-        _backgroundShape.graphics.endFill();
-        //addChild(_backgroundShape);
-
+        CellSpriteClass = cellSpriteClass;
+        _fps = fps;
         _cellsContainer = new Container();
         addChild(_cellsContainer);
 
-        Ticker.setFPS(FPS);
-        Ticker.addEventListener(CreateJSEvent.TICKER_TICK, tickerHandler);
+        var t = new Timer( Math.round(1000/30));
+        t.run = tickerHandler;
     }
 
-    public static function getMap( ):GameMap {
+    private function get_data( ):GameMap {
         return _data;
     }
 
-    private function get_data():GameMap{
-    startUpdateDisplayHandler();
-        return _data;
-    }
-
-    private function set_data(value:GameMap):GameMap{
+    private function set_data( value:GameMap ):GameMap {
         _data = value;
-        startUpdateDisplayHandler();
-        _cellsSprite = new Array<CellSprite>();
+        _cellsSprite = new Array<T>();
         _cellsContainer.removeAllChildren();
-        drawCell(_data.cells[0][0], new Point(CELL_WIDTH, CELL_HEIGHT));
-        stopUpdateDisplayHandler();
+        drawCell(_data.cells[0][0], new Point(0, 0));
         return _data;
-    }
-
-    private function startUpdateDisplayHandler():Void{
-        _updateDisplay = true;
-    }
-
-    private function stopUpdateDisplayHandler():Void{
-        Timer.delay( function ():Void{
-            _updateDisplay = false;
-        }, 500);
     }
 
     private function drawCell( data:Cell, position:Point ):Void {
-        var sprite = new CellSprite(data, CELL_WIDTH, CELL_HEIGHT);
+        var sprite:T = Type.createInstance(CellSpriteClass,[data]);
         sprite.x = position.x;
         sprite.y = position.y;
         _cellsContainer.addChild(sprite);
         _cellsSprite.push(sprite);
 
         if ( data.top != null && !cellDrawn(data.top) ) {
-            drawCell(data.top, new Point(position.x, position.y - CELL_HEIGHT));
+            drawCell(data.top, new Point(position.x, position.y - sprite.height));
         }
 
         if ( data.bottom != null && !cellDrawn(data.bottom) ) {
-            drawCell(data.bottom, new Point(position.x, position.y + CELL_HEIGHT));
+            drawCell(data.bottom, new Point(position.x, position.y + sprite.height));
         }
 
         if ( data.left != null && !cellDrawn(data.left) ) {
-            drawCell(data.left, new Point(position.x - CELL_WIDTH, position.y));
+            drawCell(data.left, new Point(position.x - sprite.width, position.y));
         }
 
         if ( data.right != null && !cellDrawn(data.right) ) {
-            drawCell(data.right, new Point(position.x + CELL_WIDTH, position.y));
+            drawCell(data.right, new Point(position.x + sprite.width, position.y));
         }
     }
 
@@ -114,8 +78,6 @@ class MapUI extends Stage {
     }
 
     private function tickerHandler( ):Void {
-        if ( _updateDisplay ) {
             this.update();
-        }
     }
 }

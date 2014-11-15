@@ -13,7 +13,7 @@
 
         <exec executable="node" dir="${basedir}" failonerror="true">
             <arg line="node_modules/haxe/bin/haxe-cli.js"/>
-            <arg line="-cp src -js ${output.js}/MapEditor.js -main com.tamina.cow4.MapEditor  -debug"/>
+            <arg line="-cp src -js ${output.js}/MapEditor.js -main com.tamina.cow4.MapEditor"/>
             <arg line="-use createjs"/>
             <arg line="-lib msignal"/>
             <arg line="-lib mconsole-npm"/>
@@ -40,6 +40,7 @@
         <exec executable="node" dir="${basedir}" failonerror="true">
             <arg line="node_modules/haxe/bin/haxe-cli.js"/>
             <arg line="-cp src -js ${output.js}/Frontend.js -main com.tamina.cow4.Frontend"/>
+            <arg line="-use createjs"/>
             <arg line="-lib msignal"/>
             <arg line="-lib mconsole-npm"/>
             <arg line="-lib taminahx"/>
