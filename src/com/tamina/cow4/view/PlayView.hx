@@ -12,8 +12,8 @@ import org.tamina.html.HTMLComponent;
 @view('com/tamina/cow4/view/PlayView.html')
 class PlayView extends HTMLComponent {
 
-    private static inline var APPLICATION_WIDTH:Int=720;
-    private static inline var APPLICATION_HEIGHT:Int=720;
+    private static inline var APPLICATION_WIDTH:Int=800;
+    private static inline var APPLICATION_HEIGHT:Int=800;
 
     private var _gameContainer:DivElement;
     private var _applicationCanvas:CanvasElement;
