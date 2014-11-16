@@ -12,8 +12,8 @@ import org.tamina.html.HTMLComponent;
 @view('com/tamina/cow4/view/PlayView.html')
 class PlayView extends HTMLComponent {
 
-    private static inline var APPLICATION_WIDTH:Int=800;
-    private static inline var APPLICATION_HEIGHT:Int=800;
+    private static inline var APPLICATION_WIDTH:Int=864;
+    private static inline var APPLICATION_HEIGHT:Int=864;
 
     private var _gameContainer:DivElement;
     private var _applicationCanvas:CanvasElement;
@@ -29,5 +29,6 @@ class PlayView extends HTMLComponent {
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
         _stage.data = Mock.instance.getTestMap(25, 25);
+
     }
 }

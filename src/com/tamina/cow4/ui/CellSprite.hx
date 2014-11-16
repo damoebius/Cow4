@@ -1,7 +1,4 @@
 package com.tamina.cow4.ui;
-import com.tamina.cow4.events.NotificationBus;
-import createjs.easeljs.MouseEvent;
-import org.tamina.events.CreateJSEvent;
 import createjs.easeljs.Shape;
 import createjs.easeljs.Container;
 import com.tamina.cow4.model.Cell;
@@ -14,10 +11,10 @@ class CellSprite extends Container {
     public var data(get, null):Cell;
 
     private var _backgroundShape:Shape;
-    private var _topWall:HWallSprite;
-    private var _bottomWall:HWallSprite;
-    private var _leftWall:VWallSprite;
-    private var _rightWall:VWallSprite;
+    private var _topWall:WallSprite;
+    private var _bottomWall:WallSprite;
+    private var _leftWall:WallSprite;
+    private var _rightWall:WallSprite;
     private var _data:Cell;
 
     public function new( data:Cell ) {
