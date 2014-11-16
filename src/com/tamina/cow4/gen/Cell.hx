@@ -5,13 +5,11 @@ import org.tamina.utils.UID;
 
 class Cell {
 
-    public var visited  : Bool;
     public var id       : Float;
-
-    public var nexts      :Array<Cell>;
-    public var previous   :Array<Cell>;
-
-    public var position :Point;
+    public var visited  : Bool;
+    public var nexts    : Array<Cell>;
+    public var previous : Array<Cell>;
+    public var position : Point;
 
     public function new(position:Point) {
         this.id         = UID.getUID();

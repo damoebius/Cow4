@@ -12,18 +12,18 @@ class MapGen {
 
     private var _width  :Int;
     private var _height :Int;
-    private var startCell:Cell;
+    private var _startCell:Cell;
 
     private var _map :Array<Array<Cell>>;
 
     function getMap(width:Int, height:Int, startPos:Point):Cell{
         initMapAndStartCell(width, height, startPos);
-        generate(startCell);
-        return startCell;
+        generate(_startCell);
+        return _startCell;
     }
 
     function generate(actualCell:Cell){
-        if (actualCell == startCell && !actualCell.visited ) return;
+        if (actualCell == _startCell && actualCell.visited ) return;
         actualCell.visited = true;
 
         var nextCell = getNextCell(actualCell);
@@ -49,8 +49,8 @@ class MapGen {
     function initMapAndStartCell(width:Int, height:Int, startPos:Point){
         this._width     = width;
         this._height    = height;
-        this._map       = [for(x in 0..._width) for(y in 0..._height) _map[x][y] = new Cell(new Point(x, y))];
-        this.startCell  = _map[startPos.x][startPos.y];
+        this._map       = [for(x in 0..._width) [ for(y in 0..._height) _map[x][y] = new Cell(new Point(x, y))]];
+        this._startCell  = _map[startPos.x][startPos.y];
     }
 
 }
