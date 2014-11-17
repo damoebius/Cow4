@@ -24,43 +24,43 @@ class EditorCellSprite extends CellSprite {
         var neighborCell:Cell = null;
         if ( evt.currentTarget == _bottomWall ) {
             neighborCell = map.getCellAt(cast currentCellPosition.x, cast currentCellPosition.y + 1);
-            if ( _data.bottom != null ) {
-                _data.bottom = null;
-                neighborCell.top = null;
-            } else if ( neighborCell != null ) {
-                _data.bottom = neighborCell;
-                neighborCell.top = _data;
-            }
+//            if ( _data.bottom != null ) {
+//                _data.bottom = null;
+//                neighborCell.top = null;
+//            } else if ( neighborCell != null ) {
+//                _data.bottom = neighborCell;
+//                neighborCell.top = _data;
+//            }
         } else if ( evt.currentTarget == _topWall ) {
 
             neighborCell = map.getCellAt(cast currentCellPosition.x, cast currentCellPosition.y - 1);
-            if ( _data.top != null ) {
-                _data.top = null;
-                neighborCell.bottom = null;
-            } else if ( neighborCell != null ) {
-                _data.top = neighborCell;
-                neighborCell.bottom = _data;
-            }
+//            if ( _data.top != null ) {
+//                _data.top = null;
+//                neighborCell.bottom = null;
+//            } else if ( neighborCell != null ) {
+//                _data.top = neighborCell;
+//                neighborCell.bottom = _data;
+//            }
 
         } else if ( evt.currentTarget == _leftWall ) {
             neighborCell = map.getCellAt(cast currentCellPosition.x - 1, cast currentCellPosition.y);
-            if ( _data.left != null ) {
-                _data.left = null;
-                neighborCell.right = null;
-            } else if ( neighborCell != null ) {
-                _data.left = neighborCell;
-                neighborCell.right = _data;
-            }
+//            if ( _data.left != null ) {
+//                _data.left = null;
+//                neighborCell.right = null;
+//            } else if ( neighborCell != null ) {
+//                _data.left = neighborCell;
+//                neighborCell.right = _data;
+//            }
 
         } else if ( evt.currentTarget == _rightWall ) {
             neighborCell = map.getCellAt(cast currentCellPosition.x + 1, cast currentCellPosition.y);
-            if ( _data.right != null ) {
-                _data.right = null;
-                neighborCell.left = null;
-            } else if ( neighborCell != null ) {
-                _data.right = neighborCell;
-                neighborCell.left = _data;
-            }
+//            if ( _data.right != null ) {
+//                _data.right = null;
+//                neighborCell.left = null;
+//            } else if ( neighborCell != null ) {
+//                _data.right = neighborCell;
+//                neighborCell.left = _data;
+//            }
         }
         NotificationBus.instance.stopUpdateDisplay.dispatch();
     }

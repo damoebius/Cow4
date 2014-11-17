@@ -1,6 +1,6 @@
 package com.tamina.cow4.data;
 
-import com.tamina.cow4.gen.Cell;
+import com.tamina.cow4.model.GameMap;
 import createjs.easeljs.Point;
 import com.tamina.cow4.gen.MapGen;
 
@@ -16,8 +16,8 @@ class Mock {
     private function new( ) {
     }
 
-    public function getTestMap( row:Int, col:Int ):Cell {
-        return MapGen.instance.getMap(col, row, new Point(0, 0));
+    public function getTestMap( row:Int, col:Int ):GameMap {
+        return MapGen.instance.getMap(col, row, new Point(10, 10));
     }
 
     private static function get_instance( ):Mock {

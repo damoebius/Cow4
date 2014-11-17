@@ -1,4 +1,6 @@
 package com.tamina.cow4.ui;
+import org.tamina.log.QuickLogger;
+import Lambda;
 import haxe.Timer;
 import com.tamina.cow4.model.Cell;
 import org.tamina.geom.Point;
@@ -10,10 +12,12 @@ import createjs.easeljs.Stage;
 @:generic class MapUI<T:CellSprite> extends Stage {
 
     private var _data:GameMap;
+    private var _reversed:Bool=false;
 
     private var _cellsSprite:Array<T>;
     private var _cellsContainer:Container;
     private var _fps:Float=30.0;
+
     private var CellSpriteClass:Class<T>;
 
 
@@ -48,22 +52,38 @@ import createjs.easeljs.Stage;
         sprite.y = position.y;
         _cellsContainer.addChild(sprite);
         _cellsSprite.push(sprite);
+        draws(data);
+    }
 
-        if ( data.top != null && !cellDrawn(data.top) ) {
-            drawCell(data.top, new Point(position.x, position.y - sprite.height));
-        }
+    private function draws(cell:Cell){
 
-        if ( data.bottom != null && !cellDrawn(data.bottom) ) {
-            drawCell(data.bottom, new Point(position.x, position.y + sprite.height));
-        }
+    // WTFFFFFFFFFFFFFFF i've done. GO TO BED!!! NOWWW
+//        if (cell != null && cell.drawed) {
+//            QuickLogger.info('Plop = ' + _reversed);
+//            if(_reversed && cell.previous != null && cell.previous.nexts != null){
+//                Lambda.foreach(cell.previous.nexts, function(cell){draws(cell);return true;});
+//            }else if(!_reversed && cell.nexts != null){
+//                Lambda.foreach(cell.nexts, function(cell){draws(cell);return true;});
+//            }
+//        }else if(cell == null || cell.nexts == null || cell.previous != null) {
+//            reverse();
+//            QuickLogger.info('reversed = ' + _reversed);
+//            draws(_reversed ? cell.previous : cell.nexts[Std.random(cell.nexts.length)-1]);
+//        }else{
+//            cellDrawn(cell);
+//            QuickLogger.info('Draw ' +cell.id);
+//            cell.drawed = true;
+//            if(_reversed && cell.previous != null){
+//                Lambda.foreach(cell.previous.nexts, function(cell){draws(cell);return true;});
+//            }else if(!_reversed && cell.nexts != null){
+//                Lambda.foreach(cell.nexts, function(cell){draws(cell);return true;});
+//            }
+//        }
 
-        if ( data.left != null && !cellDrawn(data.left) ) {
-            drawCell(data.left, new Point(position.x - sprite.width, position.y));
-        }
+    }
 
-        if ( data.right != null && !cellDrawn(data.right) ) {
-            drawCell(data.right, new Point(position.x + sprite.width, position.y));
-        }
+    private function reverse(){
+        this._reversed = !this._reversed;
     }
 
     private function cellDrawn( target:Cell ):Bool {

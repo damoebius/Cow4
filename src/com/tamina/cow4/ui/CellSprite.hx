@@ -43,10 +43,10 @@ class CellSprite extends Container {
     }
 
     private function update( ):Void {
-        _topWall.display = (_data.top == null);
-        _bottomWall.display = (_data.bottom == null);
-        _rightWall.display = (_data.right == null);
-        _leftWall.display = (_data.left == null);
+//        _topWall.display = (_data.top == null);
+//        _bottomWall.display = (_data.bottom == null);
+//        _rightWall.display = (_data.right == null);
+//        _leftWall.display = (_data.left == null);
     }
 
     private function drawWalls( ):Void {

@@ -1,9 +1,7 @@
 package com.tamina.cow4.view;
 
 import com.tamina.cow4.ui.PlayerMapUI;
-import com.tamina.cow4.ui.CellSprite;
 import com.tamina.cow4.data.Mock;
-import com.tamina.cow4.ui.MapUI;
 import org.tamina.log.QuickLogger;
 import js.html.CanvasElement;
 import js.html.DivElement;

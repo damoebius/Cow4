@@ -49,7 +49,7 @@ import org.tamina.log.QuickLogger;
 
     public function importModel(model:String):Void{
         QuickLogger.info('importing data');
-        var importedModel:Array<Array<CellVO>> = cast Unserializer.run( model );
-        _stage.data = GameMap.fromGameMapVO(importedModel);
+//        var importedModel:Array<Array<CellVO>> = cast Unserializer.run( model );
+//        _stage.data = GameMap.fromGameMapVO(importedModel);
     }
 }
