@@ -1,7 +1,9 @@
 package com.tamina.cow4.data;
-import org.tamina.log.QuickLogger;
-import com.tamina.cow4.model.GameMap;
-import com.tamina.cow4.model.Cell;
+
+import com.tamina.cow4.gen.Cell;
+import createjs.easeljs.Point;
+import com.tamina.cow4.gen.MapGen;
+
 class Mock {
 
     private static var _instance:Mock;
@@ -14,61 +16,8 @@ class Mock {
     private function new( ) {
     }
 
-    public function getTestMap( row:Int, col:Int ):GameMap {
-        this._goRight = true;
-        this._columnNumber = col;
-        this._rowNumber = row;
-
-        var result = new GameMap();
-        var previousCell:Cell = null;
-        var currentCell:Cell = null;
-        QuickLogger.debug("Nombre total de cellules : " + Std.string(this._rowNumber * this._columnNumber));
-        for ( rowIndex in 0...this._rowNumber ) {
-            result.cells.push(new Array<Cell>());
-            if ( _goRight ) {
-                currentCell = new Cell();
-                currentCell.top = previousCell;
-                if(previousCell != null){
-                   previousCell.bottom = currentCell;
-                }
-                result.cells[rowIndex].push(currentCell);
-                previousCell = currentCell;
-                for ( columnIndex in 1...this._columnNumber ) {
-                    currentCell = new Cell();
-                    currentCell.left = previousCell;
-                    if(previousCell != null){
-                        previousCell.right = currentCell;
-                    }
-                    result.cells[rowIndex].push(currentCell);
-                    previousCell = currentCell;
-                }
-                _goRight = false;
-            } else {
-                var columnIndex = _columnNumber - 1;
-                currentCell = new Cell();
-                currentCell.top = previousCell;
-                if(previousCell != null){
-                    previousCell.bottom = currentCell;
-                }
-                result.cells[rowIndex][columnIndex] = currentCell;
-                previousCell = currentCell;
-                columnIndex--;
-                while ( columnIndex >= 0 ) {
-                    currentCell = new Cell();
-                    currentCell.right = previousCell;
-                    if(previousCell != null){
-                        previousCell.left = currentCell;
-                    }
-                    result.cells[rowIndex][columnIndex] = currentCell;
-                    previousCell = currentCell;
-                    columnIndex--;
-                }
-                _goRight = true;
-            }
-
-
-        }
-        return result;
+    public function getTestMap( row:Int, col:Int ):Cell {
+        return MapGen.instance.getMap(col, row, new Point(0, 0));
     }
 
     private static function get_instance( ):Mock {
