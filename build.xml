@@ -70,4 +70,12 @@
     <target name="deploy-local" depends="compile-all, copy-static-resources">
 
     </target>
+
+    <target name="deploy-prod" depends="compile-all, copy-static-resources">
+        <scp todir="cow4@vps.tamina-online.com:/home/cow4" sftp="true" verbose="true" password="cow4$" trust="true">
+            <fileset dir="${output}">
+                <include name="**/*"/>
+            </fileset>
+        </scp>
+    </target>
 </project>
