@@ -14,12 +14,11 @@ class Cell {
     public var changeSignal :Signal0;
 
 
-    public function new(position:Point) {
+    public function new() {
         this.id             = UID.getUID();
         this.visited        = false;
         this.drawed         = false;
         this.nexts          = new Array<Cell>();
-        this.position       = position;
         this.changeSignal   = new Signal0();
     }
 
@@ -28,6 +27,6 @@ class Cell {
     }
 
     public static function fromCellVO(value:CellVO):Cell{
-        return new Cell(new Point(0,0));
+        return new Cell();
     }
 }

@@ -26,7 +26,7 @@ class PlayView extends HTMLComponent {
         _applicationCanvas.height = APPLICATION_HEIGHT;
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
-        _stage.data = Mock.instance.getTestMap(25, 25);
+        _stage.data = Mock.instance.getTestMap(5, 5);
 
     }
 }

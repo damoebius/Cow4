@@ -20,7 +20,7 @@ class CellSprite extends Container {
     public function new( data:Cell ) {
         super();
         this._data = data;
-        _data.changeSignal.add(modelChangeHandler);
+//        _data.changeSignal.add(modelChangeHandler);
         _backgroundShape = new Shape();
         _backgroundShape.graphics.beginFill("#FFFFFF");
         _backgroundShape.graphics.drawRect(0, 0, width, height);

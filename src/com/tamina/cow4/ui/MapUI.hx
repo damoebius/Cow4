@@ -40,20 +40,12 @@ import createjs.easeljs.Stage;
     }
 
     private function set_data( value:GameMap ):GameMap {
+        QuickLogger.info("Value set data "+ value.cells.length);
         _data = value;
         _cellsSprite = new Array<T>();
         _cellsContainer.removeAllChildren();
-        drawCell(_data.cells[0][0], new Point(0, 0));
+        draws(_data.cells[0][0]);
         return _data;
-    }
-
-    private function drawCell( data:Cell, position:Point ):Void {
-        var sprite:T = Type.createInstance(CellSpriteClass,[data]);
-        sprite.x = position.x;
-        sprite.y = position.y;
-        _cellsContainer.addChild(sprite);
-        _cellsSprite.push(sprite);
-        draws(data);
     }
 
     private function draws(cell:Cell){
@@ -62,6 +54,13 @@ import createjs.easeljs.Stage;
                 cell.drawed = true;
                 cellDrawn(cell);
                 QuickLogger.debug('draw cell id : ' + cell.id);
+                var sprite:T = Type.createInstance(CellSpriteClass, [data]);
+                sprite.x = cell.position.x;
+                sprite.y = cell.position.y;
+                QuickLogger.debug('position: ' + cell.position);
+
+                _cellsContainer.addChild(sprite);
+                _cellsSprite.push(sprite);
             }
             var plop = cell.nexts;
             Lambda.foreach(plop, function(cell:Cell){if(cell.drawed){plop.remove(cell);}return true;});

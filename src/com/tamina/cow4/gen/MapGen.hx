@@ -31,6 +31,9 @@ class MapGen {
         generate(_startCell);
         var map:GameMap  = new GameMap();
         map.cells = _map;
+        QuickLogger.info("nb cell X: "+ _map[0].length);
+        QuickLogger.info("nb cell Y: "+ _map.length);
+
         return map;
     }
 
@@ -93,9 +96,10 @@ class MapGen {
         for (x in 0..._width)
         {
             this._map[x] = [];
-            for (y in 0..._height)
-            {
-                this._map[x][y] = new Cell(new Point(x, y));
+            for (y in 0..._height){
+                var cell = new Cell();
+                cell.position = new Point(x, y);
+                this._map[x][y] = cell;
             }
         }
         this._startCell  = _map[Std.int(startPos.x)][Std.int(startPos.y)];
