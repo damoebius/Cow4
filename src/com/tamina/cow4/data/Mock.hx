@@ -17,7 +17,7 @@ class Mock {
     }
 
     public function getTestMap( row:Int, col:Int ):GameMap {
-        return MapGen.instance.getMap(col, row, new Point(10, 10));
+        return MapGen.instance.getMap(col, row, new Point(0, 0));
     }
 
     private static function get_instance( ):Mock {

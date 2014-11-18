@@ -1,5 +1,6 @@
 package com.tamina.cow4.ui;
 import org.tamina.log.QuickLogger;
+import org.tamina.log.QuickLogger;
 import Lambda;
 import haxe.Timer;
 import com.tamina.cow4.model.Cell;
@@ -12,7 +13,7 @@ import createjs.easeljs.Stage;
 @:generic class MapUI<T:CellSprite> extends Stage {
 
     private var _data:GameMap;
-    private var _reversed:Bool=false;
+    private var _drawed:Int=0;
 
     private var _cellsSprite:Array<T>;
     private var _cellsContainer:Container;
@@ -56,34 +57,20 @@ import createjs.easeljs.Stage;
     }
 
     private function draws(cell:Cell){
+        if(cell != null){
+            if (!cell.drawed) {
+                cell.drawed = true;
+                cellDrawn(cell);
+                QuickLogger.debug('draw cell id : ' + cell.id);
+            }
+            var plop = cell.nexts;
+            Lambda.foreach(plop, function(cell:Cell){if(cell.drawed){plop.remove(cell);}return true;});
+            Lambda.foreach(plop, function(cell){draws(cell);return true;});
+        }else{
+            QuickLogger.info('finish');
+            return;
+        }
 
-    // WTFFFFFFFFFFFFFFF i've done. GO TO BED!!! NOWWW
-//        if (cell != null && cell.drawed) {
-//            QuickLogger.info('Plop = ' + _reversed);
-//            if(_reversed && cell.previous != null && cell.previous.nexts != null){
-//                Lambda.foreach(cell.previous.nexts, function(cell){draws(cell);return true;});
-//            }else if(!_reversed && cell.nexts != null){
-//                Lambda.foreach(cell.nexts, function(cell){draws(cell);return true;});
-//            }
-//        }else if(cell == null || cell.nexts == null || cell.previous != null) {
-//            reverse();
-//            QuickLogger.info('reversed = ' + _reversed);
-//            draws(_reversed ? cell.previous : cell.nexts[Std.random(cell.nexts.length)-1]);
-//        }else{
-//            cellDrawn(cell);
-//            QuickLogger.info('Draw ' +cell.id);
-//            cell.drawed = true;
-//            if(_reversed && cell.previous != null){
-//                Lambda.foreach(cell.previous.nexts, function(cell){draws(cell);return true;});
-//            }else if(!_reversed && cell.nexts != null){
-//                Lambda.foreach(cell.nexts, function(cell){draws(cell);return true;});
-//            }
-//        }
-
-    }
-
-    private function reverse(){
-        this._reversed = !this._reversed;
     }
 
     private function cellDrawn( target:Cell ):Bool {

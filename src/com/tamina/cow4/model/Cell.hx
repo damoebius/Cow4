@@ -9,7 +9,6 @@ class Cell {
     public var id           : Float;
     public var position     : Point;
     public var nexts        : Array<Cell>;
-    public var previous     : Cell;
     public var visited      : Bool;
     public var drawed       : Bool;
     public var changeSignal :Signal0;

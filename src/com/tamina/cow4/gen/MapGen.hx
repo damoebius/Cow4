@@ -45,8 +45,8 @@ class MapGen {
 
     private function openWall(actualCell:Cell, nextCell:Cell):Cell{
         actualCell.nexts.push(nextCell);
-        if(nextCell != null ) {
-            nextCell.previous = actualCell;
+        if(nextCell != null) {
+            nextCell.nexts.push(actualCell);
         }
         return nextCell;
     }
