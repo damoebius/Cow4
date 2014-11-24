@@ -14,6 +14,17 @@ class SocketServer {
         _server.listen(port, socketServer_createHandler);
     }
 
+    public static function getIAById(id:Float):IA{
+        var result:IA = null;
+        for(i in 0...connections.length){
+            if(connections[i].id == id){
+                result = connections[i];
+                break;
+            }
+        }
+        return result;
+    }
+
     private function socketServer_connectionHandler( c:TCPSocket ):Void {
         trace('[socket server] new connection ');
         var ia = new IA(c);

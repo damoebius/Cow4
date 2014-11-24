@@ -1,4 +1,6 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.GetTurnOrder;
+import com.tamina.cow4.model.GameMap;
 import msignal.Signal.Signal1;
 import com.tamina.cow4.model.IAInfo;
 import haxe.Json;
@@ -34,6 +36,10 @@ class IA {
 
     public function toInfo():IAInfo{
         return new IAInfo(id,name,avatar.path);
+    }
+
+    public function sendIAOrder(data:GameMap):Void{
+        _socket.write( new GetTurnOrder(data));
     }
 
     private function socketServer_closeHandler(c:Dynamic):Void{
