@@ -1,12 +1,16 @@
 package com.tamina.cow4.model;
+import com.tamina.cow4.model.vo.GameMapVO;
 import com.tamina.cow4.model.vo.CellVO;
 import org.tamina.geom.Point;
 class GameMap {
 
     public var cells:Array<Array<Cell>>;
+    public var currentTurn:Int=0;
+    public var iaList:Array<IAInfo>;
 
     public function new( ) {
         cells = new Array<Array<Cell>>();
+        iaList = new Array<IAInfo>();
     }
 
     public function getCellPosition(cell:Cell):Point{
@@ -26,19 +30,21 @@ class GameMap {
         return cells[row][column];
     }
 
-    public static function fromGameMapVO(value:Array<Array<CellVO>>):GameMap{
+    public static function fromGameMapVO(value:GameMapVO):GameMap{
         var result = new GameMap();
-        for(i in 0...value.length){
+        result.iaList = value.iaList;
+        result.currentTurn = value.currentTurn;
+        for(i in 0...value.cells.length){
             result.cells.push( new Array<Cell>());
-            for(j in 0...value[i].length){
-                result.cells[i].push( Cell.fromCellVO(   value[i][j]) );
+            for(j in 0...value.cells[i].length){
+                result.cells[i].push( Cell.fromCellVO(   value.cells[i][j]) );
             }
         }
 
         for(i in 0...result.cells.length){
             for(j in 0...result.cells[i].length){
                 var cell = result.cells[i][j];
-                var cellVO = value[i][j];
+                var cellVO = value.cells[i][j];
                 if(cellVO.top != null) {
                     cell.top = result.cells[i-1][j];
                 }
@@ -57,31 +63,33 @@ class GameMap {
         return result;
     }
 
-    public function toGameMapVO():Array<Array<CellVO>>{
-        var result = new Array<Array<CellVO>>();
+    public function toGameMapVO():GameMapVO{
+        var result = new GameMapVO();
+        result.iaList = this.iaList;
+        result.currentTurn = this.currentTurn;
         // on construit la matrice
         for(i in 0...cells.length){
-            result.push( new Array<CellVO>());
+            result.cells.push( new Array<CellVO>());
             for(j in 0...cells[i].length){
-                result[i].push(cells[i][j].toCellVO());
+                result.cells[i].push(cells[i][j].toCellVO());
             }
         }
         // on cré les références
         for(i in 0...cells.length){
             for(j in 0...cells[i].length){
                 var cell = cells[i][j];
-                var cellVO = result[i][j];
+                var cellVO = result.cells[i][j];
                 if(cell.top != null) {
-                    cellVO.top = result[i-1][j];
+                    cellVO.top = result.cells[i-1][j];
                 }
                 if(cell.bottom != null) {
-                    cellVO.bottom = result[i+1][j];
+                    cellVO.bottom = result.cells[i+1][j];
                 }
                 if(cell.left != null) {
-                    cellVO.left = result[i][j-1];
+                    cellVO.left = result.cells[i][j-1];
                 }
                 if(cell.right != null) {
-                    cellVO.right = result[i][j+1];
+                    cellVO.right = result.cells[i][j+1];
                 }
             }
         }

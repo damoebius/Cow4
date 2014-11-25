@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.model.vo.GameMapVO;
 import org.tamina.utils.ClassUtils;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.data.Mock;
@@ -50,6 +51,8 @@ import org.tamina.log.QuickLogger;
     public function importModel(model:String):Void{
         QuickLogger.info('importing data');
         var importedModel:Array<Array<CellVO>> = cast Unserializer.run( model );
-        _stage.data = GameMap.fromGameMapVO(importedModel);
+        var vo = new GameMapVO();
+        vo.cells = importedModel;
+        _stage.data = GameMap.fromGameMapVO(vo);
     }
 }

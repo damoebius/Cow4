@@ -37,6 +37,7 @@ class GameEngine {
 
     }
 
+
     private function retrieveIAOrders(targetIA:IA):Void {
         targetIA.sendIAOrder(_data);
     }
