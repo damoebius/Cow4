@@ -6,8 +6,10 @@ class CellVO {
     public var bottom:CellVO;
     public var left:CellVO;
     public var right:CellVO;
+    public var occupant:IAInfo;
     
-    public function new(id:Float ) {
+    public function new(id:Float, ?occupant:IAInfo ) {
         this.id = id;
+        this.occupant = occupant;
     }
 }

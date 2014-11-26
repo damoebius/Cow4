@@ -62,6 +62,9 @@ class IA {
                     avatar = new URL(auth.avatar);
                     _socket.write( new ID( this.id ).serialize());
                 }
+                case GetTurnOrder.MESSAGE_TYPE:
+                trace('demande de tour');
+                var getTurnOrder:GetTurnOrder = cast message;
                 default: _socket.write( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu').serialize());
 
             }

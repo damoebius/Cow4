@@ -27,7 +27,7 @@ class CellSprite extends Container {
         _backgroundShape.graphics.endFill();
         addChild(_backgroundShape);
         drawWalls();
-        update();
+        updateDisplay();
     }
 
     public function get_width():Int{
@@ -39,10 +39,10 @@ class CellSprite extends Container {
     }
 
     private function modelChangeHandler( ):Void {
-        update();
+        updateDisplay();
     }
 
-    private function update( ):Void {
+    private function updateDisplay( ):Void {
         _topWall.display = (_data.top == null);
         _bottomWall.display = (_data.bottom == null);
         _rightWall.display = (_data.right == null);

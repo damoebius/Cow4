@@ -13,6 +13,8 @@ class Cell {
     public var left(get, set):Cell;
     public var right(get, set):Cell;
 
+    public var occupant:IAInfo;
+
     private var _top:Cell;
     private var _bottom:Cell;
     private var _left:Cell;
@@ -24,12 +26,13 @@ class Cell {
     }
 
     public function toCellVO():CellVO{
-        return new CellVO(id);
+        return new CellVO(id,occupant);
     }
 
     public static function fromCellVO(value:CellVO):Cell{
         var result = new Cell();
         result.id = value.id;
+        result.occupant = value.occupant;
         return result;
     }
 
