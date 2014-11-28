@@ -26,7 +26,7 @@ class SocketServer {
     }
 
     private function socketServer_connectionHandler( c:TCPSocket ):Void {
-        trace('[socket server] new connection ');
+        nodejs.Console.info('[socket server] new connection ');
         var ia = new IA(c);
         ia.exitSignal.addOnce(iaCloseHandler);
         connections.push(ia);
@@ -44,6 +44,6 @@ class SocketServer {
     }
 
     private function socketServer_createHandler( c:Dynamic ):Void {
-        trace('[socket server] ready');
+        nodejs.Console.info('[socket server] ready');
     }
 }

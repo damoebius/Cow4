@@ -43,16 +43,16 @@ class IA {
     }
 
     private function socketServer_closeHandler(c:Dynamic):Void{
-        trace('[socket server] connection close');
+        nodejs.Console.info('[socket server] connection close');
     }
 
     private function socketServer_dataHandler(data:String):Void{
-        trace('[socket server] data received : ' + data);
+        nodejs.Console.info('[socket server] data received : ' + data);
         var message:SocketMessage = Json.parse( data );
         if(message.type != null){
             switch( message.type){
                 case Authenticate.MESSAGE_TYPE:
-                trace('demande dauthentifiction');
+                    nodejs.Console.info('demande dauthentifiction');
                 var auth:Authenticate = cast message;
                 if(isLoggued){
                     _socket.write( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié').serialize());
@@ -63,7 +63,7 @@ class IA {
                     _socket.write( new ID( this.id ).serialize());
                 }
                 case GetTurnOrder.MESSAGE_TYPE:
-                trace('demande de tour');
+                    nodejs.Console.info('demande de tour');
                 var getTurnOrder:GetTurnOrder = cast message;
                 default: _socket.write( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu').serialize());
 
@@ -76,11 +76,11 @@ class IA {
     }
 
     private function socketServer_connectHandler(c:Dynamic):Void{
-        trace('[socket server] new connectionzzz');
+        nodejs.Console.info('[socket server] new connectionzzz');
     }
 
     private function socketServer_endHandler(c:Dynamic):Void{
-        trace('[socket server] connection end');
+        nodejs.Console.info('[socket server] connection end');
         exitSignal.dispatch(id);
     }
 }

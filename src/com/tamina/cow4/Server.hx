@@ -1,11 +1,10 @@
 package com.tamina.cow4;
+
 import com.tamina.cow4.routes.PlayRoute;
 import com.tamina.cow4.routes.Routes;
 import com.tamina.cow4.routes.IAListRoute;
 import com.tamina.cow4.routes.TestSocketServerRoute;
 import com.tamina.cow4.socket.SocketServer;
-import nodejs.net.TCPServer;
-import nodejs.net.Net;
 import com.tamina.cow4.config.Config;
 import com.tamina.cow4.routes.MainRoute;
 import nodejs.express.Application;
@@ -14,8 +13,8 @@ class Server {
 
     private static var _server:Server;
 
-    private var _express:Application;
-    private var _socketServer:SocketServer;
+   private var _express:Application;
+   private var _socketServer:SocketServer;
 
     public function new( ) {
 
@@ -35,13 +34,18 @@ class Server {
         var playRoute = new PlayRoute();
         _express.get('/'+Routes.Play,playRoute.succesHandler);
 
-        trace('server listening on ' + Config.APP_PORT);
+        nodejs.Console.info('server listening on ' + Config.APP_PORT);
 
         _socketServer = new SocketServer(Config.SOCKET_PORT);
     }
 
-    static function main() {
+    public static function main() {
+        haxe.Log.trace = myTrace;
         _server = new Server();
+    }
+
+    private static function myTrace( v : Dynamic, ?inf : haxe.PosInfos ) {
+        nodejs.Console.info(v);
     }
 
 }
