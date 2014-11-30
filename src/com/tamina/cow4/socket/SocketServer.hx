@@ -16,9 +16,11 @@ class SocketServer {
 
     public static function getIAById(id:Float):IA{
         var result:IA = null;
+        trace('search IA : ' + id);
         for(i in 0...connections.length){
             if(connections[i].id == id){
                 result = connections[i];
+                trace('IA found');
                 break;
             }
         }

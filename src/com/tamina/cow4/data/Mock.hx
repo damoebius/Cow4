@@ -1,5 +1,4 @@
 package com.tamina.cow4.data;
-import org.tamina.log.QuickLogger;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.model.Cell;
 class Mock {
@@ -22,7 +21,6 @@ class Mock {
         var result = new GameMap();
         var previousCell:Cell = null;
         var currentCell:Cell = null;
-        QuickLogger.debug("Nombre total de cellules : " + Std.string(this._rowNumber * this._columnNumber));
         for ( rowIndex in 0...this._rowNumber ) {
             result.cells.push(new Array<Cell>());
             if ( _goRight ) {

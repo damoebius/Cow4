@@ -1,5 +1,6 @@
 package com.tamina.cow4;
 
+import com.tamina.cow4.socket.WSocketServer;
 import com.tamina.cow4.routes.PlayRoute;
 import com.tamina.cow4.routes.Routes;
 import com.tamina.cow4.routes.IAListRoute;
@@ -15,6 +16,7 @@ class Server {
 
    private var _express:Application;
    private var _socketServer:SocketServer;
+    private var _websocketServer:WSocketServer;
 
     public function new( ) {
 
@@ -34,9 +36,10 @@ class Server {
         var playRoute = new PlayRoute();
         _express.get('/'+Routes.Play,playRoute.succesHandler);
 
-        nodejs.Console.info('server listening on ' + Config.APP_PORT);
+        trace('server listening on ' + Config.APP_PORT);
 
         _socketServer = new SocketServer(Config.SOCKET_PORT);
+        _websocketServer = new WSocketServer();
     }
 
     public static function main() {

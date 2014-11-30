@@ -1,5 +1,6 @@
 package com.tamina.cow4.view;
 
+import org.tamina.utils.UID;
 import com.tamina.cow4.net.request.PlayRequestParam;
 import js.html.ButtonElement;
 import js.html.MouseEvent;
@@ -66,7 +67,7 @@ class HomeView extends HTMLComponent {
         }
 
         if(selectedItems.length >=2){
-            Browser.window.location.href = "/PLAY?"+PlayRequestParam.IA1+"="+selectedItems[0].info.id + "&"+PlayRequestParam.IA2+"="+selectedItems[1].info.id;
+            Browser.window.location.href = "/PLAY?"+PlayRequestParam.IA1+"="+selectedItems[0].info.id + "&"+PlayRequestParam.IA2+"="+selectedItems[1].info.id+"&"+PlayRequestParam.GAME_ID+"="+UID.getUID();
         }
     }
 

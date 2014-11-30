@@ -1,9 +1,14 @@
 package com.tamina.cow4.core;
+
+
+import nodejs.ws.WebSocket;
+import com.tamina.cow4.socket.IA;
+
 import com.tamina.cow4.socket.SheepIA;
 import com.tamina.cow4.data.Mock;
 import com.tamina.cow4.model.Game;
-import com.tamina.cow4.socket.IA;
 import com.tamina.cow4.model.GameMap;
+
 class GameEngine {
 
     private var _currentTurn:Int;
@@ -15,10 +20,11 @@ class GameEngine {
     private var _sheep:IA;
 
     private var _IAList:Array<IA>;
-    public function new( iaList:Array<IA>) {
+    public function new( iaList:Array<IA>, gameId:Float) {
         _IAList = iaList;
         _sheep = new SheepIA();
         _data = Mock.instance.getTestMap(25, 25);
+        _data.id = gameId;
         _data.getCellAt(0,0).occupant = _IAList[0].toInfo();
         _data.getCellAt(24,24).occupant = _IAList[1].toInfo();
         _data.getCellAt(12,12).occupant = _sheep.toInfo();
@@ -27,14 +33,6 @@ class GameEngine {
     public function start():Void {
         _currentTurn = 0;
         _isComputing = false;
-
-        /*_IAList[0].turnResult_completeSignal.add(IA_ordersResultHandler);
-        _IAList[0].turnMaxDuration_reachSignal.add(maxDuration_reachHandler);
-        _IAList[0].turnResult_errorSignal.add(turnResultErrorHandler);
-
-        _IAList[1].turnResult_completeSignal.add(IA_ordersResultHandler);
-        _IAList[1].turnMaxDuration_reachSignal.add(maxDuration_reachHandler);
-        _IAList[1].turnResult_errorSignal.add(turnResultErrorHandler);*/
 
         _maxNumTurn = Game.GAME_MAX_NUM_TURN;
         _startBattleDate = Date.now();

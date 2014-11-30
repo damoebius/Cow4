@@ -22,6 +22,7 @@
     "dependencies": {
         "haxe": ">=0.1.9",
         "express": "3.x",
+        "ws": ">=0.5.0",
         "taminahx": ">=0.1.0",
         "mconsole-npm": ">=1.6.1",
         "msignal": ">=1.2.3"

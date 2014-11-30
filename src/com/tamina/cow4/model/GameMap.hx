@@ -4,9 +4,11 @@ import com.tamina.cow4.model.vo.CellVO;
 import org.tamina.geom.Point;
 class GameMap {
 
+    public var id:Float;
     public var cells:Array<Array<Cell>>;
     public var currentTurn:Int=0;
     public var iaList:Array<IAInfo>;
+
 
     public function new( ) {
         cells = new Array<Array<Cell>>();
@@ -32,6 +34,7 @@ class GameMap {
 
     public static function fromGameMapVO(value:GameMapVO):GameMap{
         var result = new GameMap();
+        result.id = value.id;
         result.iaList = value.iaList;
         result.currentTurn = value.currentTurn;
         for(i in 0...value.cells.length){
@@ -65,6 +68,7 @@ class GameMap {
 
     public function toGameMapVO():GameMapVO{
         var result = new GameMapVO();
+        result.id = this.id;
         result.iaList = this.iaList;
         result.currentTurn = this.currentTurn;
         // on construit la matrice

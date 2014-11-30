@@ -1,6 +1,7 @@
 package com.tamina.cow4.model.vo;
 class GameMapVO {
 
+    public var id:Float;
     public var cells:Array<Array<CellVO>>;
     public var currentTurn:Int=0;
     public var iaList:Array<IAInfo>;
