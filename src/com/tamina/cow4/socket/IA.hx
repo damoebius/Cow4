@@ -1,36 +1,29 @@
 package com.tamina.cow4.socket;
 import com.tamina.cow4.socket.message.GetTurnOrder;
 import com.tamina.cow4.model.GameMap;
-import msignal.Signal.Signal1;
 import com.tamina.cow4.model.IAInfo;
 import haxe.Json;
 import com.tamina.cow4.socket.message.ID;
 import org.tamina.net.URL;
-import org.tamina.utils.UID;
 import com.tamina.cow4.socket.message.Authenticate;
 import com.tamina.cow4.socket.message.SocketMessage;
 import com.tamina.cow4.socket.message.ErrorCode;
 import com.tamina.cow4.socket.message.Error;
 import nodejs.net.TCPSocket;
-class IA {
+class IA extends Client {
 
-    public var id:Float;
     public var name:String;
     public var avatar:URL;
-    public var isLoggued:Bool = false;
-
-    public var exitSignal:Signal1<Float>;
 
     private var _socket:TCPSocket;
 
 
     public function new( c:TCPSocket ) {
-        id = UID.getUID();
-        exitSignal = new Signal1<Float>();
+        super();
         _socket = c;
-        _socket.on(TCPSocketEventType.Connect,socketServer_connectHandler);
+        _socket.on(TCPSocketEventType.Connect,socketServer_openHandler);
         _socket.on(TCPSocketEventType.Close,socketServer_closeHandler);
-        _socket.on(TCPSocketEventType.End,socketServer_endHandler);
+        _socket.on(TCPSocketEventType.Error,socketServer_errorHandler);
         _socket.on(TCPSocketEventType.Data,socketServer_dataHandler);
     }
 
@@ -42,45 +35,30 @@ class IA {
         _socket.write( new GetTurnOrder(data));
     }
 
-    private function socketServer_closeHandler(c:Dynamic):Void{
-        nodejs.Console.info('[socket server] connection close');
-    }
 
-    private function socketServer_dataHandler(data:String):Void{
-        nodejs.Console.info('[socket server] data received : ' + data);
-        var message:SocketMessage = Json.parse( data );
-        if(message.type != null){
-            switch( message.type){
-                case Authenticate.MESSAGE_TYPE:
-                    nodejs.Console.info('demande dauthentifiction');
+    override private function parseMessage(message:SocketMessage):Void{
+        switch( message.type){
+            case Authenticate.MESSAGE_TYPE:
+                nodejs.Console.info('demande dauthentifiction');
                 var auth:Authenticate = cast message;
                 if(isLoggued){
-                    _socket.write( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié').serialize());
+                    sendError( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié'));
                 } else {
                     isLoggued = true;
                     name = auth.name;
                     avatar = new URL(auth.avatar);
                     _socket.write( new ID( this.id ).serialize());
                 }
-                case GetTurnOrder.MESSAGE_TYPE:
-                    nodejs.Console.info('demande de tour');
+            case GetTurnOrder.MESSAGE_TYPE:
+                nodejs.Console.info('demande de tour');
                 var getTurnOrder:GetTurnOrder = cast message;
-                default: _socket.write( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu').serialize());
+            default: sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
-            }
-
-        } else {
-            _socket.write( new Error( ErrorCode.UNKNOWN_MESSAGE,'message inconnu').serialize());
         }
-
     }
 
-    private function socketServer_connectHandler(c:Dynamic):Void{
-        nodejs.Console.info('[socket server] new connectionzzz');
+    override private function sendError(error:Error):Void{
+        _socket.write(error.serialize());
     }
 
-    private function socketServer_endHandler(c:Dynamic):Void{
-        nodejs.Console.info('[socket server] connection end');
-        exitSignal.dispatch(id);
-    }
 }

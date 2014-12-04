@@ -4,12 +4,12 @@ import com.tamina.cow4.config.Config;
 import nodejs.ws.WebSocketServer;
 class WSocketServer {
 
-    public static var connections:Array<SocketPlayer>;
+    public static var connections:Array<Player>;
 
     private var _server:WebSocketServer;
 
     public function new( ) {
-        connections = new Array<SocketPlayer>();
+        connections = new Array<Player>();
         var opt:WebSocketServerOption = cast {
         port : Config.WEB_SOCKET_PORT
         };
@@ -18,8 +18,8 @@ class WSocketServer {
         _server.on(WebSocketServerEventType.Connection, connectionHandler);
     }
 
-    public static function getPlayerById(id:Float):SocketPlayer{
-        var result:SocketPlayer = null;
+    public static function getPlayerById(id:Float):Player{
+        var result:Player = null;
         trace('search Player : ' + id);
         for(i in 0...connections.length){
             if(connections[i].id == id){
@@ -37,7 +37,7 @@ class WSocketServer {
 
     private function connectionHandler( socket:WebSocket ):Void {
         trace('[Socket server] : New Connection');
-        var p = new SocketPlayer(socket);
+        var p = new Player(socket);
         p.exitSignal.addOnce(playerCloseHandler);
         connections.push(p);
     }

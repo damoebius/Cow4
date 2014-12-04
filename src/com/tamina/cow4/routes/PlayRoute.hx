@@ -1,6 +1,5 @@
 package com.tamina.cow4.routes;
 
-import com.tamina.cow4.data.Mock;
 import com.tamina.cow4.socket.IA;
 
 import com.tamina.cow4.socket.SocketServer;
