@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.events.NotificationBus;
 import com.tamina.cow4.socket.message.StartBattle;
 import com.tamina.cow4.socket.message.ErrorCode;
 import com.tamina.cow4.socket.message.Authenticate;
@@ -27,6 +28,7 @@ class Player extends Client {
             case StartBattle.MESSAGE_TYPE:
                 nodejs.Console.info('StartBattle');
                 var startBattle:StartBattle = cast message;
+                NotificationBus.instance.startBattle.dispatch(startBattle);
             default: sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
         }

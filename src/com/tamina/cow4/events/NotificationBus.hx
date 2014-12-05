@@ -1,5 +1,6 @@
 package com.tamina.cow4.events;
-import msignal.Signal.Signal0;
+import com.tamina.cow4.socket.message.StartBattle;
+import msignal.Signal;
 class NotificationBus {
 
     public static var instance(get, null):NotificationBus;
@@ -7,10 +8,12 @@ class NotificationBus {
 
     public var startUpdateDisplay:Signal0;
     public var stopUpdateDisplay:Signal0;
+    public var startBattle:Signal1<StartBattle>;
 
     private function new( ) {
         startUpdateDisplay = new Signal0();
         stopUpdateDisplay = new Signal0();
+        startBattle = new Signal1<StartBattle>();
     }
 
     private static function get_instance():NotificationBus {
