@@ -40,6 +40,7 @@ class TestSocketServerRoute extends Route {
         _proxy.messageSignal.add(serverMessageHandler);
 
         _proxy.sendMessage( new Authenticate('TestIA','http://images.groups.adobe.com/1332a08/logo100x100.gif'));
+        _response.send(_log);
         Timer.delay(quit,ALIVE_DURATION);
     }
 
@@ -48,27 +49,26 @@ class TestSocketServerRoute extends Route {
     }
 
     private function serverMessageHandler(message:GameServerMessage):Void{
-        _log += 'Data recevied <br/>';
+        nodejs.Console.info( '[TestIA] Data recevied ' );
         if(message.type != null){
             switch( message.type){
                 case ID.MESSAGE_TYPE:
                     var idMessage:ID = cast message;
-                    _log += 'identification ' + idMessage;
+                    nodejs.Console.info( '[TestIA] identification ' + idMessage);
                 case Error.MESSAGE_TYPE:
                     var errorMessage:Error = cast message;
-                    _log += 'ERROR ' +errorMessage.message +  ' <br/>';
+                    nodejs.Console.info( '[TestIA] ERROR ' +errorMessage.message );
 
                 case GetTurnOrder.MESSAGE_TYPE:
                     nodejs.Console.info('demande de tour');
                     var getTurnOrder:GetTurnOrder = cast message;
 
-                default: _log += 'type de message inconnu <br/>';
+                default: nodejs.Console.warn( '[TestIA] type de message inconnu ');
 
             }
 
         } else {
-            _log += ' MESSAGE inconnu <br/>';
+            nodejs.Console.warn( '[TestIA]  MESSAGE inconnu ');
         }
-        _response.send(_log);
     }
 }

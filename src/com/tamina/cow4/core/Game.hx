@@ -42,7 +42,7 @@ class Game {
 
     private function performTurn():Void{
         updatePlayer();
-        retrieveIAOrders(_IAList[0]);
+        //retrieveIAOrders(_IAList[0]);
     }
 
     private function updatePlayer():Void{

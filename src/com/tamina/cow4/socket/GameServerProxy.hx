@@ -38,7 +38,7 @@ class GameServerProxy {
     }
 
     private function socketServer_dataHandler(data:String):Void{
-        nodejs.Console.info('[game server proxy] data received : ' + data);
+        nodejs.Console.info('[game server proxy] data received : ');
         var message:GameServerMessage = Json.parse( data );
         if(message.type != null){
             messageSignal.dispatch(message);
