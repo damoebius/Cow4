@@ -1,7 +1,7 @@
 package com.tamina.cow4.socket.message;
 import haxe.Serializer;
 import com.tamina.cow4.model.GameMap;
-class GetTurnOrder extends SocketMessage {
+class GetTurnOrder extends GameServerMessage {
 
     public static inline var MESSAGE_TYPE:String='getTurnOrder';
 

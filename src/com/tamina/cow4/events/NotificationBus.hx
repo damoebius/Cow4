@@ -8,12 +8,12 @@ class NotificationBus {
 
     public var startUpdateDisplay:Signal0;
     public var stopUpdateDisplay:Signal0;
-    public var startBattle:Signal1<StartBattle>;
+    public var startBattle:Signal1<StartBattleNotification>;
 
     private function new( ) {
         startUpdateDisplay = new Signal0();
         stopUpdateDisplay = new Signal0();
-        startBattle = new Signal1<StartBattle>();
+        startBattle = new Signal1<StartBattleNotification>();
     }
 
     private static function get_instance():NotificationBus {

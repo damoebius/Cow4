@@ -6,9 +6,12 @@ import nodejs.net.TCPSocket;
 
 class SheepIA extends IA {
 
+    private var _socket:TCPSocket;
+
     public function new():Void {
-        super(new TCPSocket());
+        _socket = new TCPSocket();
         _socket.connect(Config.SOCKET_PORT,'localhost');
+        super(_socket);
         avatar = new URL("");
     }
 

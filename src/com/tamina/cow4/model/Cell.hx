@@ -26,7 +26,12 @@ class Cell {
     }
 
     public function toCellVO():CellVO{
-        return new CellVO(id,occupant);
+        var result = new CellVO(id, occupant);
+        if (null != result.top )    result.top = this.top.id;
+        if (null != result.bottom)  result.bottom = this.bottom.id;
+        if (null != result.left )   result.left = this.left.id;
+        if (null != result.right)   result.right = this.right.id;
+        return result;
     }
 
     public static function fromCellVO(value:CellVO):Cell{

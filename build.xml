@@ -49,7 +49,7 @@
     </target>
 
 
-	<target name="compile-all" depends="compile-mapeditor, compile-server, compile-frontend"/>
+	<target name="compile-all" depends="compile-server, compile-frontend"/>
 
 	<target name="copy-static-resources">
 		<copy todir="${output}">

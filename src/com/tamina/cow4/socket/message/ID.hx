@@ -1,5 +1,5 @@
 package com.tamina.cow4.socket.message;
-class ID extends SocketMessage {
+class ID extends GameServerMessage {
     public static inline var MESSAGE_TYPE:String='id';
 
     public var id:Float;

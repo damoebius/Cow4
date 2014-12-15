@@ -1,64 +1,58 @@
 package com.tamina.cow4.socket;
+import msignal.Signal;
+import com.tamina.cow4.socket.message.Error;
+import com.tamina.cow4.socket.message.ClientMessage;
 import com.tamina.cow4.socket.message.GetTurnOrder;
+import com.tamina.cow4.socket.message.ID;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.model.IAInfo;
-import haxe.Json;
-import com.tamina.cow4.socket.message.ID;
-import org.tamina.net.URL;
+import com.tamina.cow4.socket.message.GetTurnOrder;
 import com.tamina.cow4.socket.message.Authenticate;
-import com.tamina.cow4.socket.message.SocketMessage;
-import com.tamina.cow4.socket.message.ErrorCode;
-import com.tamina.cow4.socket.message.Error;
+import org.tamina.net.URL;
 import nodejs.net.TCPSocket;
+import com.tamina.cow4.socket.message.ErrorCode;
 class IA extends Client {
 
     public var name:String;
     public var avatar:URL;
 
-    private var _socket:TCPSocket;
-
+    private var _proxy:ClientProxy;
 
     public function new( c:TCPSocket ) {
         super();
-        _socket = c;
-        _socket.on(TCPSocketEventType.Connect,socketServer_openHandler);
-        _socket.on(TCPSocketEventType.Close,socketServer_closeHandler);
-        _socket.on(TCPSocketEventType.Error,socketServer_errorHandler);
-        _socket.on(TCPSocketEventType.Data,socketServer_dataHandler);
+        _proxy = new ClientProxy(c);
+        _proxy.messageSignal.add(clientMessageHandler);
+        _proxy.errorSignal.add(exitHandler);
     }
 
     public function toInfo():IAInfo{
         return new IAInfo(id,name,avatar.path);
     }
 
-    public function sendIAOrder(data:GameMap):Void{
-        _socket.write( new GetTurnOrder(data));
+    public function getTurnOrder(data:GameMap):Void{
+        _proxy.sendMessage(new GetTurnOrder(data));
     }
 
 
-    override private function parseMessage(message:SocketMessage):Void{
+    private function clientMessageHandler(message:ClientMessage):Void{
         switch( message.type){
             case Authenticate.MESSAGE_TYPE:
                 nodejs.Console.info('demande dauthentifiction');
                 var auth:Authenticate = cast message;
                 if(isLoggued){
-                    sendError( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié'));
+                    _proxy.sendError( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié'));
                 } else {
                     isLoggued = true;
                     name = auth.name;
                     avatar = new URL(auth.avatar);
-                    _socket.write( new ID( this.id ).serialize());
+                    _proxy.sendMessage( new ID( this.id ));
                 }
-            case GetTurnOrder.MESSAGE_TYPE:
+            /*case GetTurnOrder.MESSAGE_TYPE:
                 nodejs.Console.info('demande de tour');
-                var getTurnOrder:GetTurnOrder = cast message;
-            default: sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
+                var getTurnOrder:GetTurnOrder = cast message;  */
+            default: _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
         }
-    }
-
-    override private function sendError(error:Error):Void{
-        _socket.write(error.serialize());
     }
 
 }

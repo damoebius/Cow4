@@ -1,15 +1,15 @@
 package com.tamina.cow4.core;
 
 
-import nodejs.ws.WebSocket;
+import com.tamina.cow4.socket.Player;
+import com.tamina.cow4.model.GameConstants;
 import com.tamina.cow4.socket.IA;
 
 import com.tamina.cow4.socket.SheepIA;
 import com.tamina.cow4.data.Mock;
-import com.tamina.cow4.model.Game;
 import com.tamina.cow4.model.GameMap;
 
-class GameEngine {
+class Game {
 
     private var _currentTurn:Int;
     private var _endBattleDate:Date;
@@ -18,11 +18,13 @@ class GameEngine {
     private var _maxNumTurn:Int;
     private var _startBattleDate:Date;
     private var _sheep:IA;
+    private var _player:Player;
 
     private var _IAList:Array<IA>;
-    public function new( iaList:Array<IA>, gameId:Float) {
+    public function new( iaList:Array<IA>, gameId:Float, player:Player) {
         _IAList = iaList;
         _sheep = new SheepIA();
+        _player = player;
         _data = Mock.instance.getTestMap(25, 25);
         _data.id = gameId;
         _data.getCellAt(0,0).occupant = _IAList[0].toInfo();
@@ -33,16 +35,22 @@ class GameEngine {
     public function start():Void {
         _currentTurn = 0;
         _isComputing = false;
-
-        _maxNumTurn = Game.GAME_MAX_NUM_TURN;
+        _maxNumTurn = GameConstants.GAME_MAX_NUM_TURN;
         _startBattleDate = Date.now();
-        _currentTurn = 0;
-        _isComputing = true;
+        performTurn();
+    }
 
+    private function performTurn():Void{
+        updatePlayer();
+        retrieveIAOrders(_IAList[0]);
+    }
+
+    private function updatePlayer():Void{
+        _player.render(_data);
     }
 
 
     private function retrieveIAOrders(targetIA:IA):Void {
-        targetIA.sendIAOrder(_data);
+        targetIA.getTurnOrder(_data);
     }
 }

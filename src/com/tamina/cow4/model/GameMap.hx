@@ -84,16 +84,16 @@ class GameMap {
                 var cell = cells[i][j];
                 var cellVO = result.cells[i][j];
                 if(cell.top != null) {
-                    cellVO.top = result.cells[i-1][j];
+                    cellVO.top = result.cells[i-1][j].id;
                 }
                 if(cell.bottom != null) {
-                    cellVO.bottom = result.cells[i+1][j];
+                    cellVO.bottom = result.cells[i+1][j].id;
                 }
                 if(cell.left != null) {
-                    cellVO.left = result.cells[i][j-1];
+                    cellVO.left = result.cells[i][j-1].id;
                 }
                 if(cell.right != null) {
-                    cellVO.right = result.cells[i][j+1];
+                    cellVO.right = result.cells[i][j+1].id;
                 }
             }
         }

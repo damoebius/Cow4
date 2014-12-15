@@ -1,42 +1,44 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.socket.message.Render;
+import com.tamina.cow4.model.GameMap;
+import com.tamina.cow4.events.StartBattleNotification;
+import com.tamina.cow4.socket.message.PlayerMessage;
 import com.tamina.cow4.events.NotificationBus;
 import com.tamina.cow4.socket.message.StartBattle;
 import com.tamina.cow4.socket.message.ErrorCode;
-import com.tamina.cow4.socket.message.Authenticate;
-import com.tamina.cow4.socket.message.SocketMessage;
 import com.tamina.cow4.socket.message.Error;
-import haxe.Json;
 import nodejs.ws.WebSocket;
 
 class Player extends Client {
 
 
     private var _socket:WebSocket;
+    private var _proxy:PlayerProxy;
 
     public function new( c:WebSocket ) {
         super();
-        _socket = c;
-        _socket.on(WebSocketEventType.Open,socketServer_openHandler);
-        _socket.on(WebSocketEventType.Close,socketServer_closeHandler);
-        _socket.on(WebSocketEventType.Error,socketServer_errorHandler);
-        _socket.on(WebSocketEventType.Message,socketServer_dataHandler);
+        _proxy = new PlayerProxy(c);
+        _proxy.messageSignal.add(playerMessageHandler);
     }
 
-    override private function parseMessage(message:SocketMessage):Void{
+    public function render(data:GameMap):Void{
+        _proxy.sendMessage(new Render(data.toGameMapVO()));
+    }
+
+    private function playerMessageHandler(message:PlayerMessage):Void{
         switch( message.type){
             case StartBattle.MESSAGE_TYPE:
                 nodejs.Console.info('StartBattle');
                 var startBattle:StartBattle = cast message;
-                NotificationBus.instance.startBattle.dispatch(startBattle);
-            default: sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
+                var iaList = new Array<IA>();
+                iaList.push(SocketServer.getIAById( cast startBattle.IA1));
+                iaList.push(SocketServer.getIAById( cast startBattle.IA2) ) ;
+                var notif = new StartBattleNotification(iaList,this);
+                NotificationBus.instance.startBattle.dispatch(notif);
+            default: _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
         }
     }
-
-    override private function sendError(error:Error):Void{
-        _socket.send(error.serialize());
-    }
-
 
 }

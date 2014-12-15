@@ -1,4 +1,7 @@
 package com.tamina.cow4.routes;
+import com.tamina.cow4.socket.message.GetTurnOrder;
+import com.tamina.cow4.socket.message.GameServerMessage;
+import com.tamina.cow4.socket.GameServerProxy;
 import haxe.Timer;
 import haxe.Json;
 import com.tamina.cow4.socket.message.ErrorCode;
@@ -16,6 +19,7 @@ class TestSocketServerRoute extends Route {
     private static inline var ALIVE_DURATION:Int = 10*60*1000;
 
     private var _socket:TCPSocket;
+    private var _proxy:GameServerProxy;
     private var _response:ExpressResponse;
     private var _log:String='';
 
@@ -32,8 +36,10 @@ class TestSocketServerRoute extends Route {
 
     private function connectionHandler():Void{
         _log += 'CONNECTED <br/> Sending Auth message...';
-        _socket.on(TCPSocketEventType.Data, socket_dataHandler);
-        _socket.write( new Authenticate('TestIA','http://images.groups.adobe.com/1332a08/logo100x100.gif').serialize());
+        _proxy = new GameServerProxy(_socket);
+        _proxy.messageSignal.add(serverMessageHandler);
+
+        _proxy.sendMessage( new Authenticate('TestIA','http://images.groups.adobe.com/1332a08/logo100x100.gif'));
         Timer.delay(quit,ALIVE_DURATION);
     }
 
@@ -41,9 +47,8 @@ class TestSocketServerRoute extends Route {
         _socket.destroy();
     }
 
-    private function socket_dataHandler(data:String):Void{
+    private function serverMessageHandler(message:GameServerMessage):Void{
         _log += 'Data recevied <br/>';
-        var message:SocketMessage = Json.parse( data );
         if(message.type != null){
             switch( message.type){
                 case ID.MESSAGE_TYPE:
@@ -52,6 +57,11 @@ class TestSocketServerRoute extends Route {
                 case Error.MESSAGE_TYPE:
                     var errorMessage:Error = cast message;
                     _log += 'ERROR ' +errorMessage.message +  ' <br/>';
+
+                case GetTurnOrder.MESSAGE_TYPE:
+                    nodejs.Console.info('demande de tour');
+                    var getTurnOrder:GetTurnOrder = cast message;
+
                 default: _log += 'type de message inconnu <br/>';
 
             }
@@ -60,6 +70,5 @@ class TestSocketServerRoute extends Route {
             _log += ' MESSAGE inconnu <br/>';
         }
         _response.send(_log);
-        //_socket.destroy();
     }
 }

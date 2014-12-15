@@ -1,5 +1,5 @@
 package com.tamina.cow4.socket.message;
-class StartBattle extends SocketMessage{
+class StartBattle extends PlayerMessage{
 
     public static inline var MESSAGE_TYPE:String='startbattle';
 

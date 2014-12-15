@@ -1,24 +1,24 @@
 package com.tamina.cow4.core;
 
+import com.tamina.cow4.events.StartBattleNotification;
 import com.tamina.cow4.socket.message.StartBattle;
 import com.tamina.cow4.events.NotificationBus;
 import com.tamina.cow4.socket.IA;
 import com.tamina.cow4.socket.SocketServer;
-import com.tamina.cow4.core.GameEngine;
+import com.tamina.cow4.core.Game;
 
 class GameManager {
 
-    private var _games:Array<GameEngine>;
+    private var _games:Array<Game>;
 
     public function new() {
-        _games = new Array<GameEngine>();
+        _games = new Array<Game>();
         NotificationBus.instance.startBattle.add(startBattleHandler);
     }
 
-    private function startBattleHandler(battle:StartBattle):Void{
-        var iaList = new Array<IA>();
-        iaList.push(SocketServer.getIAById( cast battle.IA1));
-        iaList.push(SocketServer.getIAById( cast battle.IA2) ) ;
-        var game = new GameEngine(iaList, cast battle.gameId );
+    private function startBattleHandler(battle:StartBattleNotification):Void{
+        var game = new Game(battle.IAList, cast battle.gameId, battle.player );
+        _games.push(game);
+        game.start();
     }
 }

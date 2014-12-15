@@ -1,5 +1,5 @@
 package com.tamina.cow4.socket.message;
-class Authenticate extends SocketMessage{
+class Authenticate extends ClientMessage{
 
     public static inline var MESSAGE_TYPE:String='authenticate';
 

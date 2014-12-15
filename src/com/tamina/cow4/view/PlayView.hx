@@ -1,5 +1,9 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.model.GameMap;
+import com.tamina.cow4.socket.message.Render;
+import com.tamina.cow4.socket.message.GameServerMessage;
+import com.tamina.cow4.socket.PlayerServerProxy;
 import org.tamina.net.URL;
 import com.tamina.cow4.socket.message.StartBattle;
 import com.tamina.cow4.config.Config;
@@ -26,6 +30,7 @@ class PlayView extends HTMLComponent {
     private var _applicationCanvas:CanvasElement;
     private var _stage:PlayerMapUI;
     private var _socket:WebSocket;
+    private var _proxy:PlayerServerProxy;
 
     public function new( containerId:String = "") {
         super(Browser.document.getElementById(containerId));
@@ -37,24 +42,29 @@ class PlayView extends HTMLComponent {
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
         _socket = new WebSocket( 'ws://localhost:'+Config.WEB_SOCKET_PORT);
-        _socket.addEventListener('error',socketErrorHandler);
-        _socket.addEventListener('message',socketMessageHandler);
+
         _socket.addEventListener('open',socketOpenHandler);
-        //_stage.data = Mock.instance.getTestMap(25, 25);
 
-    }
+        _proxy = new PlayerServerProxy(_socket);
+        _proxy.messageSignal.add(serverMessageHandler);
 
-    private function socketErrorHandler(evt:WebSocketErrorEvent):Void{
-        QuickLogger.error('Socket Error' + evt.detail);
+
     }
 
     private function socketOpenHandler(evt:Dynamic):Void{
-        QuickLogger.error('Socket Open');
+        QuickLogger.info('Socket Open');
         var url = new URL(Browser.document.URL);
-        _socket.send( new StartBattle( url.parameters.get(PlayRequestParam.GAME_ID),url.parameters.get(PlayRequestParam.IA1),url.parameters.get(PlayRequestParam.IA2) ).serialize() );
+        _proxy.sendMessage( new StartBattle( url.parameters.get(PlayRequestParam.GAME_ID),url.parameters.get(PlayRequestParam.IA1),url.parameters.get(PlayRequestParam.IA2) ) );
     }
 
-    private function socketMessageHandler(evt:WebSocketMessageEvent):Void{
-        QuickLogger.info('Socket Message ' + evt.data);
+    private function serverMessageHandler(message:GameServerMessage):Void{
+        QuickLogger.info('Socket Message ' + message.type);
+        switch( message.type){
+            case Render.MESSAGE_TYPE:
+            var render:Render = cast message;
+            _stage.data = GameMap.fromGameMapVO(render.map);
+            default: QuickLogger.error('message inconnu');
+
+        }
     }
 }
