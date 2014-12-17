@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.Player;
 import com.tamina.cow4.model.GameConstants;
 import com.tamina.cow4.socket.IA;
@@ -21,15 +22,18 @@ class Game {
     private var _player:Player;
 
     private var _IAList:Array<IA>;
-    public function new( iaList:Array<IA>, gameId:Float, player:Player) {
+    private var _iaTurnIndex:Int = 0;
+
+    public function new(iaList:Array<IA>, gameId:Float, player:Player) {
         _IAList = iaList;
         _sheep = new SheepIA();
+        _IAList.push(_sheep);
         _player = player;
         _data = Mock.instance.getTestMap(25, 25);
         _data.id = gameId;
-        _data.getCellAt(0,0).occupant = _IAList[0].toInfo();
-        _data.getCellAt(24,24).occupant = _IAList[1].toInfo();
-        _data.getCellAt(12,12).occupant = _sheep.toInfo();
+        _data.getCellAt(0, 0).occupant = _IAList[0].toInfo();
+        _data.getCellAt(24, 24).occupant = _IAList[1].toInfo();
+        _data.getCellAt(12, 12).occupant = _sheep.toInfo();
     }
 
     public function start():Void {
@@ -40,17 +44,31 @@ class Game {
         performTurn();
     }
 
-    private function performTurn():Void{
+    private function performTurn():Void {
         updatePlayer();
-        //retrieveIAOrders(_IAList[0]);
+        retrieveIAOrders(_IAList[_iaTurnIndex]);
     }
 
-    private function updatePlayer():Void{
+    private function updatePlayer():Void {
         _player.render(_data);
     }
 
 
     private function retrieveIAOrders(targetIA:IA):Void {
+        targetIA.turnComplete.addOnce(turnCompleteHandler);
         targetIA.getTurnOrder(_data);
+    }
+
+    private function turnCompleteHandler(result:TurnResult):Void {
+        _iaTurnIndex++;
+        if (_iaTurnIndex >= _IAList.length) {
+            _iaTurnIndex = 0;
+            _currentTurn++;
+        }
+        if (_currentTurn < _maxNumTurn) {
+            performTurn();
+        } else {
+            nodejs.Console.info('FIN DU COMBAT');
+        }
     }
 }

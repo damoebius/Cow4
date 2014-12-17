@@ -1,4 +1,5 @@
 package com.tamina.cow4.routes;
+import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.message.GetTurnOrder;
 import com.tamina.cow4.socket.message.GameServerMessage;
 import com.tamina.cow4.socket.GameServerProxy;
@@ -62,6 +63,7 @@ class TestSocketServerRoute extends Route {
                 case GetTurnOrder.MESSAGE_TYPE:
                     nodejs.Console.info('demande de tour');
                     var getTurnOrder:GetTurnOrder = cast message;
+                    processTurn(getTurnOrder);
 
                 default: nodejs.Console.warn( '[TestIA] type de message inconnu ');
 
@@ -70,5 +72,10 @@ class TestSocketServerRoute extends Route {
         } else {
             nodejs.Console.warn( '[TestIA]  MESSAGE inconnu ');
         }
+    }
+
+    private function processTurn(data:GetTurnOrder):Void{
+        var result = new TurnResult();
+        _proxy.sendMessage(result);
     }
 }

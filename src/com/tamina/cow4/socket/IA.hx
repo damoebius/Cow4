@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.TurnResult;
 import msignal.Signal;
 import com.tamina.cow4.socket.message.Error;
 import com.tamina.cow4.socket.message.ClientMessage;
@@ -15,42 +16,45 @@ class IA extends Client {
 
     public var name:String;
     public var avatar:URL;
+    public var turnComplete:Signal1<TurnResult>;
 
     private var _proxy:ClientProxy;
 
-    public function new( c:TCPSocket ) {
+    public function new(c:TCPSocket) {
         super();
         _proxy = new ClientProxy(c);
         _proxy.messageSignal.add(clientMessageHandler);
         _proxy.errorSignal.add(exitHandler);
+        turnComplete = new Signal1<TurnResult>();
     }
 
-    public function toInfo():IAInfo{
-        return new IAInfo(id,name,avatar.path);
+    public function toInfo():IAInfo {
+        return new IAInfo(id, name, avatar.path);
     }
 
-    public function getTurnOrder(data:GameMap):Void{
+    public function getTurnOrder(data:GameMap):Void {
         _proxy.sendMessage(new GetTurnOrder(data));
     }
 
 
-    private function clientMessageHandler(message:ClientMessage):Void{
+    private function clientMessageHandler(message:ClientMessage):Void {
         switch( message.type){
             case Authenticate.MESSAGE_TYPE:
                 nodejs.Console.info('demande dauthentifiction');
                 var auth:Authenticate = cast message;
-                if(isLoggued){
-                    _proxy.sendError( new Error( ErrorCode.ALREADY_AUTH,'deja ahtentifié'));
+                if (isLoggued) {
+                    _proxy.sendError(new Error( ErrorCode.ALREADY_AUTH, 'deja ahtentifié'));
                 } else {
                     isLoggued = true;
                     name = auth.name;
                     avatar = new URL(auth.avatar);
-                    _proxy.sendMessage( new ID( this.id ));
+                    _proxy.sendMessage(new ID( this.id ));
                 }
-            /*case GetTurnOrder.MESSAGE_TYPE:
-                nodejs.Console.info('demande de tour');
-                var getTurnOrder:GetTurnOrder = cast message;  */
-            default: _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
+            case TurnResult.MESSAGE_TYPE:
+                nodejs.Console.info('resultat du tour');
+                var result:TurnResult = cast message;
+                turnComplete.dispatch(result);
+            default: _proxy.sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'type de message inconnu'));
 
         }
     }
