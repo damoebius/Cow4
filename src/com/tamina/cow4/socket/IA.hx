@@ -33,7 +33,7 @@ class IA extends Client {
     }
 
     public function getTurnOrder(data:GameMap):Void {
-        _proxy.sendMessage(new GetTurnOrder(data));
+        _proxy.sendMessage(new GetTurnOrder(data.toGameMapVO()));
     }
 
 

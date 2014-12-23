@@ -48,8 +48,21 @@
 
     </target>
 
+    <target name="compile-ia-demo">
 
-	<target name="compile-all" depends="compile-server, compile-frontend"/>
+        <exec executable="node" dir="${basedir}" failonerror="true">
+            <arg line="node_modules/haxe/bin/haxe-cli.js"/>
+            <arg line="-cp src -js ${output.js}/IADemoApp.js -main com.tamina.cow4.IADemoApp"/>
+            <arg line="-use nodejs"/>
+            <arg line="-lib msignal"/>
+            <arg line="-lib mconsole-npm"/>
+            <arg line="-lib taminahx"/>
+        </exec>
+
+    </target>
+
+
+	<target name="compile-all" depends="compile-server, compile-frontend, compile-ia-demo"/>
 
 	<target name="copy-static-resources">
 		<copy todir="${output}">
