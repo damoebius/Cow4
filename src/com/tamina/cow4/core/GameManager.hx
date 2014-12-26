@@ -1,5 +1,6 @@
 package com.tamina.cow4.core;
 
+import com.tamina.cow4.socket.IIA;
 import com.tamina.cow4.events.StartBattleNotification;
 import com.tamina.cow4.socket.message.StartBattle;
 import com.tamina.cow4.events.NotificationBus;
@@ -17,7 +18,11 @@ class GameManager {
     }
 
     private function startBattleHandler(battle:StartBattleNotification):Void{
-        var game = new Game(battle.IAList, cast battle.gameId, battle.player );
+        var list = new Array<IIA>();
+        for(i in 0...battle.IAList.length){
+            list.push(battle.IAList[i]);
+        }
+        var game = new Game(list, cast battle.gameId, battle.player );
         _games.push(game);
         game.start();
     }

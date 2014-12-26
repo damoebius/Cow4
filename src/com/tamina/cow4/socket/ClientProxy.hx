@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.SocketMessage;
 import com.tamina.cow4.socket.message.GameServerMessage;
 import com.tamina.cow4.socket.message.ClientMessage;
 
@@ -13,6 +14,7 @@ class ClientProxy {
     public var messageSignal:Signal1<ClientMessage>;
 
     private var _socket:TCPSocket;
+    private var _data:String = '';
 
     public function new(c:TCPSocket) {
         errorSignal = new Signal0();
@@ -36,9 +38,10 @@ class ClientProxy {
         nodejs.Console.info('[client proxy] connection close');
     }
 
-    private function socketServer_dataHandler(data:String):Void{
-        nodejs.Console.info('[client proxy] data received : ' + data);
-        var message:ClientMessage = Json.parse( data );
+    private function socketServer_endHandler():Void{
+        nodejs.Console.info('[client proxy] message received : ' + _data);
+        var message:ClientMessage = Json.parse( _data );
+        _data = '';
         if(message.type != null){
             messageSignal.dispatch(message);
         } else {
@@ -47,8 +50,17 @@ class ClientProxy {
 
     }
 
+    private function socketServer_dataHandler(data:String):Void {
+        _data += data.toString();
+        if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
+            _data = _data.split(SocketMessage.END_CHAR).join('');
+            socketServer_endHandler();
+        }
+
+    }
+
     private function socketServer_openHandler(c:Dynamic):Void{
-        nodejs.Console.info('[client proxy] new connectionzzz');
+        nodejs.Console.info('[client proxy] new connection');
     }
 
     private function socketServer_errorHandler(c:Dynamic):Void{

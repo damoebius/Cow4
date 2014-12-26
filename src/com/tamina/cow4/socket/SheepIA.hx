@@ -1,21 +1,29 @@
 package com.tamina.cow4.socket;
 
-import org.tamina.net.URL;
-import com.tamina.cow4.config.Config;
-import nodejs.net.TCPSocket;
+import com.tamina.cow4.model.GameMap;
+import com.tamina.cow4.model.IAInfo;
+import org.tamina.utils.UID;
+import com.tamina.cow4.socket.message.TurnResult;
+import msignal.Signal;
+class SheepIA implements IIA {
 
-class SheepIA extends IA {
-
-    private var _socket:TCPSocket;
+    public var id:Float;
+    public var name:String='SheepIA';
+    public var turnComplete:Signal1<TurnResult>;
 
     public function new():Void {
-        _socket = new TCPSocket();
-        _socket.connect(Config.SOCKET_PORT,'localhost');
-        super(_socket);
-        avatar = new URL("");
+        id = UID.getUID();
+        turnComplete = new Signal1<TurnResult>();
     }
 
-    private function quit():Void{
-        _socket.destroy();
+    public function toInfo():IAInfo {
+        return new IAInfo(id, name, "");
     }
+
+    public function getTurnOrder(data:GameMap):Void {
+        var result = new TurnResult();
+        turnComplete.dispatch(result);
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.socket.IIA;
 import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.Player;
 import com.tamina.cow4.model.GameConstants;
@@ -18,13 +19,13 @@ class Game {
     private var _isComputing:Bool;
     private var _maxNumTurn:Int;
     private var _startBattleDate:Date;
-    private var _sheep:IA;
+    private var _sheep:IIA;
     private var _player:Player;
 
-    private var _IAList:Array<IA>;
+    private var _IAList:Array<IIA>;
     private var _iaTurnIndex:Int = 0;
 
-    public function new(iaList:Array<IA>, gameId:Float, player:Player) {
+    public function new(iaList:Array<IIA>, gameId:Float, player:Player) {
         _IAList = iaList;
         _sheep = new SheepIA();
         _IAList.push(_sheep);
@@ -45,6 +46,7 @@ class Game {
     }
 
     private function performTurn():Void {
+        nodejs.Console.info('performTurn');
         updatePlayer();
         retrieveIAOrders(_IAList[_iaTurnIndex]);
     }
@@ -54,12 +56,14 @@ class Game {
     }
 
 
-    private function retrieveIAOrders(targetIA:IA):Void {
+    private function retrieveIAOrders(targetIA:IIA):Void {
+        nodejs.Console.info( targetIA.id + ' : retrieveIAOrders');
         targetIA.turnComplete.addOnce(turnCompleteHandler);
         targetIA.getTurnOrder(_data);
     }
 
     private function turnCompleteHandler(result:TurnResult):Void {
+        nodejs.Console.info('fin de tour');
         _iaTurnIndex++;
         if (_iaTurnIndex >= _IAList.length) {
             _iaTurnIndex = 0;

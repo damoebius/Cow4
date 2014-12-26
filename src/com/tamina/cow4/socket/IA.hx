@@ -12,7 +12,7 @@ import com.tamina.cow4.socket.message.Authenticate;
 import org.tamina.net.URL;
 import nodejs.net.TCPSocket;
 import com.tamina.cow4.socket.message.ErrorCode;
-class IA extends Client {
+class IA extends Client implements IIA {
 
     public var name:String;
     public var avatar:URL;

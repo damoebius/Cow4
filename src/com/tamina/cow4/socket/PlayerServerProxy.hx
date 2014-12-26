@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.SocketMessage;
 import js.html.MessageEvent;
 import js.html.WebSocket;
 import com.tamina.cow4.socket.message.PlayerMessage;
@@ -15,6 +16,7 @@ class PlayerServerProxy {
     public var messageSignal:Signal1<GameServerMessage>;
 
     private var _socket:WebSocket;
+    private var _data:String='';
 
     public function new(c:WebSocket) {
         errorSignal = new Signal0();
@@ -37,9 +39,19 @@ class PlayerServerProxy {
         trace('[player server proxy] connection close');
     }
 
-    private function socketServer_dataHandler(event:MessageEvent):Void{
+    private function socketServer_dataHandler(event:MessageEvent):Void {
         trace('[player server proxy] data received : ' + event.data);
-        var message:GameServerMessage = Json.parse( event.data );
+        _data += event.data.toString();
+        if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
+            _data = _data.split(SocketMessage.END_CHAR).join('');
+            socketServer_endHandler();
+        }
+
+    }
+
+    private function socketServer_endHandler():Void{
+        var message:GameServerMessage = Json.parse( _data );
+        _data = '';
         if(message.type != null){
             messageSignal.dispatch(message);
         } else {

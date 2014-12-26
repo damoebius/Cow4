@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.SocketMessage;
 import com.tamina.cow4.socket.message.PlayerMessage;
 import com.tamina.cow4.socket.message.GameServerMessage;
 import com.tamina.cow4.socket.message.ClientMessage;
@@ -15,6 +16,7 @@ class PlayerProxy {
     public var messageSignal:Signal1<PlayerMessage>;
 
     private var _socket:WebSocket;
+    private var _data:String='';
 
     public function new(c:WebSocket) {
         errorSignal = new Signal0();
@@ -31,16 +33,27 @@ class PlayerProxy {
     }
 
     public function sendError(error:Error):Void{
-        _socket.send(error.serialize());
+        //_socket.send(error.serialize());
     }
 
     private function socketServer_closeHandler(c:Dynamic):Void{
         nodejs.Console.info('[player proxy] connection close');
     }
 
-    private function socketServer_dataHandler(data:String):Void{
-        nodejs.Console.info('[player proxy] data received : ' + data);
-        var message:PlayerMessage = Json.parse( data );
+    private function socketServer_dataHandler(data:String):Void {
+        nodejs.Console.info('[player proxy] data received : ');
+        _data += data.toString();
+        if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
+            _data = _data.split(SocketMessage.END_CHAR).join('');
+            socketServer_endHandler();
+        }
+
+    }
+
+    private function socketServer_endHandler():Void{
+        nodejs.Console.info('[player proxy] data received : ' + _data);
+        var message:PlayerMessage = Json.parse( _data );
+        _data = '';
         if(message.type != null){
             messageSignal.dispatch(message);
         } else {

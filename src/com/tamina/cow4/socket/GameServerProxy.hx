@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.socket.message.SocketMessage;
 import com.tamina.cow4.socket.message.GameServerMessage;
 import com.tamina.cow4.socket.message.ClientMessage;
 
@@ -11,6 +12,7 @@ import msignal.Signal;
 class GameServerProxy {
 
     public var errorSignal:Signal0;
+    public var closeSignal:Signal0;
     public var messageSignal:Signal1<GameServerMessage>;
 
     private var _socket:TCPSocket;
@@ -18,13 +20,14 @@ class GameServerProxy {
 
     public function new(c:TCPSocket) {
         errorSignal = new Signal0();
+        closeSignal = new Signal0();
         messageSignal = new Signal1<GameServerMessage>();
         _socket = c;
         _socket.on(TCPSocketEventType.Connect, socketServer_openHandler);
         _socket.on(TCPSocketEventType.Close, socketServer_closeHandler);
         _socket.on(TCPSocketEventType.Error, socketServer_errorHandler);
         _socket.on(TCPSocketEventType.Data, socketServer_dataHandler);
-        _socket.on(TCPSocketEventType.Data, socketServer_endHandler);
+        //_socket.on(TCPSocketEventType.End, socketServer_endHandler);
     }
 
     public function sendMessage(message:ClientMessage):Void {
@@ -32,23 +35,22 @@ class GameServerProxy {
     }
 
     public function sendError(error:Error):Void {
-        _socket.write(error.serialize());
+        //_socket.write(error.serialize());
     }
 
     private function socketServer_closeHandler(c:Dynamic):Void {
         nodejs.Console.info('[game server proxy] connection close');
+        closeSignal.dispatch();
     }
 
-    private function socketServer_endHandler(data:String):Void {
-        nodejs.Console.info('[game server proxy] message received : ' + data);
-        if (_data != data) {
-            _data += data;
-        }
+    private function socketServer_endHandler():Void {
+        nodejs.Console.info('[game server proxy] MESSAGE received : ');
         var message:GameServerMessage = Json.parse(_data);
         _data = '';
         if (message.type != null) {
             messageSignal.dispatch(message);
         } else {
+            nodejs.Console.info('[game server proxy] MESSAGE error : ' + _data);
             sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
         }
 
@@ -56,8 +58,12 @@ class GameServerProxy {
     }
 
     private function socketServer_dataHandler(data:String):Void {
-        nodejs.Console.info('[game server proxy] data received : ' + data);
-        _data += data;
+        nodejs.Console.info('[game server proxy] data received : ');
+        _data += data.toString();
+        if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
+            _data = _data.split(SocketMessage.END_CHAR).join('');
+            socketServer_endHandler();
+        }
 
     }
 

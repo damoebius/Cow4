@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import nodejs.NodeJS;
 import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.message.GetTurnOrder;
 import com.tamina.cow4.socket.message.ID;
@@ -9,6 +10,7 @@ import com.tamina.cow4.socket.message.Authenticate;
 import com.tamina.cow4.config.Config;
 import nodejs.net.TCPSocket;
 import com.tamina.cow4.socket.GameServerProxy;
+import nodejs.Process;
 class IADemoApp {
 
     private static inline var ALIVE_DURATION:Int = 10*60*1000;
@@ -27,7 +29,7 @@ class IADemoApp {
         nodejs.Console.log( 'CONNECTED <br/> Sending Auth message...');
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
-
+        _proxy.closeSignal.add(quit);
         _proxy.sendMessage( new Authenticate('DemoIA','http://images.groups.adobe.com/1332a08/logo100x100.gif'));
         Timer.delay(quit,ALIVE_DURATION);
     }
@@ -64,6 +66,7 @@ class IADemoApp {
 
     private function quit():Void{
         _socket.destroy();
+       NodeJS.process.exit(0);
     }
 
     public static function main() {
