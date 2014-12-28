@@ -1,5 +1,8 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.socket.message.TurnResult;
+import com.tamina.cow4.socket.message.UpdateRender;
+import com.tamina.cow4.model.TurnAction;
 import com.tamina.cow4.socket.message.Render;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.events.StartBattleNotification;
@@ -24,6 +27,13 @@ class Player extends Client {
 
     public function render(data:GameMap):Void{
         _proxy.sendMessage(new Render(data.toGameMapVO()));
+    }
+
+    public function updateRender(turn:TurnResult):Void{
+        var msg = new UpdateRender();
+        msg.ia = turn.ia;
+        msg.actions = turn.actions;
+        _proxy.sendMessage(msg);
     }
 
     private function playerMessageHandler(message:PlayerMessage):Void{

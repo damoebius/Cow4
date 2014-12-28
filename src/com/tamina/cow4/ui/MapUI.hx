@@ -30,6 +30,12 @@ import createjs.easeljs.Stage;
         t.run = tickerHandler;
     }
 
+    public function updateDisplay():Void{
+        for ( i in 0..._cellsSprite.length ) {
+            _cellsSprite[i].updateDisplay();
+        }
+    }
+
     private function get_data( ):GameMap {
         return _data;
     }

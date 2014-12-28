@@ -1,16 +1,14 @@
 package com.tamina.cow4.socket.message;
 import com.tamina.cow4.model.IAInfo;
 import com.tamina.cow4.model.TurnAction;
-class TurnResult extends ClientMessage{
-
-    public static inline var MESSAGE_TYPE:String='turnResult';
+class UpdateRender extends GameServerMessage {
+    public static inline var MESSAGE_TYPE:String='updateRender';
 
     public var actions:Array<TurnAction>;
     public var ia:IAInfo;
 
-
-    public function new( ) {
+    public function new() {
         super( MESSAGE_TYPE);
-        actions = new Array<TurnAction>();
+        this.actions = new Array<TurnAction>();
     }
 }

@@ -1,6 +1,9 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.socket.message.order.MoveOrder;
+import com.tamina.cow4.model.Action;
+import com.tamina.cow4.model.TurnAction;
 import com.tamina.cow4.socket.IIA;
 import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.Player;
@@ -25,7 +28,7 @@ class Game {
     private var _IAList:Array<IIA>;
     private var _iaTurnIndex:Int = 0;
 
-    public function new(iaList:Array<IIA>, gameId:Float, player:Player) {
+    public function new( iaList:Array<IIA>, gameId:Float, player:Player ) {
         _IAList = iaList;
         _sheep = new SheepIA();
         _IAList.push(_sheep);
@@ -37,42 +40,90 @@ class Game {
         _data.getCellAt(12, 12).occupant = _sheep.toInfo();
     }
 
-    public function start():Void {
+    public function start( ):Void {
         _currentTurn = 0;
         _isComputing = false;
         _maxNumTurn = GameConstants.GAME_MAX_NUM_TURN;
         _startBattleDate = Date.now();
+        initPlayer();
         performTurn();
     }
 
-    private function performTurn():Void {
-        nodejs.Console.info('performTurn');
-        updatePlayer();
-        retrieveIAOrders(_IAList[_iaTurnIndex]);
-    }
-
-    private function updatePlayer():Void {
+    private function initPlayer( ):Void {
         _player.render(_data);
     }
 
+    private function performTurn( ):Void {
+        nodejs.Console.info('performTurn');
+        retrieveIAOrders(_IAList[_iaTurnIndex]);
+    }
 
-    private function retrieveIAOrders(targetIA:IIA):Void {
-        nodejs.Console.info( targetIA.id + ' : retrieveIAOrders');
+    private function updatePlayer( turn:TurnResult ):Void {
+        _player.updateRender(turn);
+    }
+
+
+    private function retrieveIAOrders( targetIA:IIA ):Void {
+        nodejs.Console.info(targetIA.id + ' : retrieveIAOrders');
         targetIA.turnComplete.addOnce(turnCompleteHandler);
         targetIA.getTurnOrder(_data);
     }
 
-    private function turnCompleteHandler(result:TurnResult):Void {
-        nodejs.Console.info('fin de tour');
-        _iaTurnIndex++;
-        if (_iaTurnIndex >= _IAList.length) {
-            _iaTurnIndex = 0;
-            _currentTurn++;
+    private function parseTurnResult( value:TurnResult ):Bool {
+        var result = true;
+        for ( i in 0...value.actions.length ) {
+            switch(value.actions[i].type){
+                case Action.MOVE :
+                    result = parseMoveOrder(cast value.actions[i]);
+                    break;
+            }
+
         }
-        if (_currentTurn < _maxNumTurn) {
-            performTurn();
+        return result;
+    }
+
+    private function parseMoveOrder( order:MoveOrder ):Bool {
+        var result = true;
+        var currentIA = _IAList[_iaTurnIndex];
+        var currentCell = _data.getCellByIA(currentIA.id);
+        var targetCell = currentCell.getNeighboorById(order.target);
+        if ( targetCell != null ) {
+            if ( targetCell.occupant != null ) {
+                result = false;
+                nodejs.Console.info('la case ciblée est deja occupée');
+            } else {
+                targetCell.occupant = currentCell.occupant;
+                currentCell.occupant = null;
+            }
         } else {
-            nodejs.Console.info('FIN DU COMBAT');
+            result = false;
+            nodejs.Console.info('la case ciblée nest pas voisine de la courant');
         }
+        return result;
+    }
+
+    private function turnCompleteHandler( result:TurnResult ):Void {
+        nodejs.Console.info('fin de tour');
+        if ( parseTurnResult(result) ) {
+            result.ia = _IAList[_iaTurnIndex].toInfo();
+            updatePlayer(result);
+            _iaTurnIndex++;
+            if ( _iaTurnIndex >= _IAList.length ) {
+                _iaTurnIndex = 0;
+                _currentTurn++;
+            }
+            if ( _currentTurn < _maxNumTurn ) {
+                performTurn();
+            } else {
+                end('nombre de tour max');
+            }
+        } else {
+            end('actions interdites');
+        }
+
+    }
+
+    private function end( message:String ):Void {
+        nodejs.Console.info(message);
     }
 }

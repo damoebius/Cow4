@@ -1,5 +1,6 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.socket.message.UpdateRender;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.socket.message.Render;
 import com.tamina.cow4.socket.message.GameServerMessage;
@@ -63,8 +64,13 @@ class PlayView extends HTMLComponent {
             case Render.MESSAGE_TYPE:
             var render:Render = cast message;
             _stage.data = GameMap.fromGameMapVO(render.map);
+            case UpdateRender.MESSAGE_TYPE:
+            var update:UpdateRender = cast message;
+            _stage.updateMap(update.ia,update.actions);
+
             default: QuickLogger.error('message inconnu');
 
         }
     }
+
 }

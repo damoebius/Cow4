@@ -32,6 +32,21 @@ class GameMap {
         return cells[row][column];
     }
 
+    public function getCellByIA(id:Float):Cell{
+        var result:Cell = null;
+        for(i in 0...cells.length){
+            var columns = cells[i];
+            for(j in 0...columns.length){
+                var cell = columns[j];
+                if(cell.occupant != null && cell.occupant.id == id){
+                    result = cell;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     public static function fromGameMapVO(value:GameMapVO):GameMap{
         var result = new GameMap();
         result.id = value.id;
