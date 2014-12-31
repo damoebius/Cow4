@@ -42,7 +42,7 @@ class CellSprite extends Container {
         updateDisplay();
     }
 
-    private function updateDisplay( ):Void {
+    public function updateDisplay( ):Void {
         _topWall.display = (_data.top == null);
         _bottomWall.display = (_data.bottom == null);
         _rightWall.display = (_data.right == null);

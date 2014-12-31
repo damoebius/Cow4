@@ -35,7 +35,7 @@ class PlayerCellSprite extends CellSprite {
         return 32;
     }
 
-    override private function updateDisplay( ):Void {
+    override public function updateDisplay( ):Void {
         super.updateDisplay();
         if ( _initialized ) {
             _playerSprite.visible = (data.occupant != null);

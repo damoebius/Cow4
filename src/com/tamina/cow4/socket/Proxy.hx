@@ -38,7 +38,7 @@ class Proxy<T:SocketMessage> {
     }
 
     private function socketServer_dataHandler(data:String):Void {
-        trace('['+_type+'] data received ');
+        //trace('['+_type+'] data received ');
         _data += data.toString();
         if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
             _data = _data.split(SocketMessage.END_CHAR).join('');
@@ -48,7 +48,7 @@ class Proxy<T:SocketMessage> {
     }
 
     private function socketServer_endHandler():Void{
-        trace('[player proxy] MESSAGE OK : ' + _data);
+        //trace('[player proxy] MESSAGE OK : ' + _data);
         try {
             var message:T = Json.parse(_data);
             _data = '';

@@ -29,6 +29,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
 
     public function updateMap( ia:IAInfo, actions:Array<TurnAction> ):Void {
         var currentCell:Cell = this.data.getCellByIA(ia.id);
+        trace('updateMap ' + actions.length);
         for ( i in 0...actions.length ) {
             switch (actions[i].type){
                 case Action.MOVE:
@@ -39,6 +40,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
                     break;
             }
         }
+        updateDisplay();
     }
 
     private function backgroundLoadHandler( evt:Event ):Void {

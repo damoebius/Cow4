@@ -59,7 +59,6 @@ class PlayView extends HTMLComponent {
     }
 
     private function serverMessageHandler(message:GameServerMessage):Void{
-        QuickLogger.info('Socket Message ' + message.type);
         switch( message.type){
             case Render.MESSAGE_TYPE:
             var render:Render = cast message;
