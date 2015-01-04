@@ -37,10 +37,10 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
                     var targetCell = currentCell.getNeighboorById(move.target);
                     targetCell.occupant = currentCell.occupant;
                     currentCell.occupant = null;
-                    break;
             }
+            updateDisplay();
         }
-        updateDisplay();
+
     }
 
     private function backgroundLoadHandler( evt:Event ):Void {
