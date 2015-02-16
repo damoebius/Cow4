@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import haxe.Json;
 import com.tamina.cow4.model.vo.GameMapVO;
 import org.tamina.utils.ClassUtils;
 import com.tamina.cow4.model.GameMap;
@@ -44,15 +45,13 @@ import org.tamina.log.QuickLogger;
 
     public function exportModel():String{
         QuickLogger.info('exporting data');
-        var exportedData = Serializer.run( EditorMapUI.getMap().toGameMapVO() );
+        var exportedData = Json.stringify( EditorMapUI.getMap().toGameMapVO() );
         return exportedData;
     }
 
     public function importModel(model:String):Void{
         QuickLogger.info('importing data');
-        var importedModel:Array<Array<CellVO>> = cast Unserializer.run( model );
-        var vo = new GameMapVO();
-        vo.cells = importedModel;
-        _stage.data = GameMap.fromGameMapVO(vo);
+        var importedModel:GameMapVO = cast Json.parse( model );
+        _stage.data = GameMap.fromGameMapVO(importedModel);
     }
 }
