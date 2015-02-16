@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.model.Direction;
 import com.tamina.cow4.model.Cell;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.model.GameMap;
@@ -73,35 +74,45 @@ class IADemoApp {
         _proxy.sendMessage(result);
     }
 
+    private function getrandomDirection(directions:Array<Direction>):Direction{
+         var index = Math.floor(Math.random()*3);
+        return directions[index];
+    }
+
     private function getMoveOrderCell(cell:Cell):MoveOrder{
         var result:MoveOrder;
+        var directions = new Array<Direction>();
         switch (_currentDirection){
             case Direction.RIGHT :
                 if(cell.right != null){
                     result = new MoveOrder(cell.right);
                 } else {
-                    _currentDirection = Direction.TOP;
+                    directions = [Direction.TOP,Direction.BOTTOM,Direction.LEFT];
+                    _currentDirection = getrandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.TOP :
                 if(cell.top != null){
                     result = new MoveOrder(cell.top);
                 } else {
-                    _currentDirection = Direction.LEFT;
+                    directions = [Direction.LEFT,Direction.BOTTOM,Direction.RIGHT];
+                    _currentDirection = getrandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.LEFT :
                 if(cell.left != null){
                     result = new MoveOrder(cell.left);
                 } else {
-                    _currentDirection = Direction.BOTTOM;
+                    directions = [Direction.TOP,Direction.RIGHT,Direction.BOTTOM];
+                    _currentDirection = getrandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.BOTTOM :
                 if(cell.bottom != null){
                     result = new MoveOrder(cell.bottom);
                 } else {
-                    _currentDirection = Direction.RIGHT;
+                    directions = [Direction.TOP,Direction.RIGHT,Direction.LEFT];
+                    _currentDirection = getrandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
         }
@@ -118,11 +129,4 @@ class IADemoApp {
     public static function main() {
         _app = new IADemoApp();
     }
-}
-
-enum Direction {
-    LEFT;
-    RIGHT;
-    TOP;
-    BOTTOM;
 }
