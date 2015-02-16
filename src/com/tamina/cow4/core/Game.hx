@@ -33,7 +33,7 @@ class Game {
         _sheep = new SheepIA();
         _IAList.push(_sheep);
         _player = player;
-        _data = Mock.instance.getTestMap(25, 25);
+        _data = Mock.instance.getDefaultMap();
         _data.id = gameId;
         _data.getCellAt(0, 0).occupant = _IAList[0].toInfo();
         _data.getCellAt(24, 24).occupant = _IAList[1].toInfo();

@@ -40,7 +40,7 @@ import org.tamina.log.QuickLogger;
         _applicationCanvas.height = contentHeight;
         QuickLogger.info("canvas initialized");
         _stage = new EditorMapUI(_applicationCanvas,contentWidth,contentHeight);
-        _stage.data = Mock.instance.getTestMap(25, 25);
+        _stage.data = Mock.instance.getDefaultMap();
     }
 
     public function exportModel():String{

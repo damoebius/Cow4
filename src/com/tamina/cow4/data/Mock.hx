@@ -1,4 +1,6 @@
 package com.tamina.cow4.data;
+import haxe.Json;
+import com.tamina.cow4.model.vo.GameMapVO;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.model.Cell;
 class Mock {
@@ -14,6 +16,11 @@ class Mock {
     private var _rowNumber:Int;
 
     private function new( ) {
+    }
+
+    public function getDefaultMap():GameMap{
+        var importedModel:GameMapVO = cast Json.parse( defaultMap );
+        return GameMap.fromGameMapVO(importedModel);
     }
 
     public function getTestMap( row:Int, col:Int ):GameMap {
