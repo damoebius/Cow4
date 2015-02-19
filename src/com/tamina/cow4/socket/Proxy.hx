@@ -58,7 +58,7 @@ class Proxy<T:SocketMessage> {
                 sendError(new Error( ErrorCode.UNKNOWN_MESSAGE,'message inconnu'));
             }
         } catch ( e:js.Error ) {
-            trace('impossible de parser le message json ');
+            trace('['+_type+'] impossible de parser le message json : ' + _data);
         }
 
 

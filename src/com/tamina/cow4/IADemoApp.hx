@@ -71,50 +71,67 @@ class IADemoApp {
         var gameData = GameMap.fromGameMapVO(data.data);
         var currentCell = gameData.getCellByIA(_id);
         result.actions.push( getMoveOrderCell(currentCell) );
+        trace(result);
         _proxy.sendMessage(result);
     }
 
-    private function getrandomDirection(directions:Array<Direction>):Direction{
-         var index = Math.floor(Math.random()*3);
+    private function getRandomDirection(directions:Array<Direction>):Direction{
+         var index = Math.floor(Math.random()*directions.length);
         return directions[index];
+    }
+
+    private function getAvaibleDirections(cell:Cell):Array<Direction>{
+        var directions = new Array<Direction>();
+        if(cell.right != null && _currentDirection != Direction.RIGHT){
+            directions.push(Direction.RIGHT);
+        }
+        if(cell.left != null && _currentDirection != Direction.LEFT){
+            directions.push(Direction.LEFT);
+        }
+        if(cell.top != null && _currentDirection != Direction.TOP){
+            directions.push(Direction.TOP);
+        }
+        if(cell.bottom != null && _currentDirection != Direction.BOTTOM){
+            directions.push(Direction.BOTTOM);
+        }
+        return directions;
     }
 
     private function getMoveOrderCell(cell:Cell):MoveOrder{
         var result:MoveOrder;
-        var directions = new Array<Direction>();
+        var directions = getAvaibleDirections(cell);
+
         switch (_currentDirection){
             case Direction.RIGHT :
                 if(cell.right != null){
                     result = new MoveOrder(cell.right);
                 } else {
-                    directions = [Direction.TOP,Direction.BOTTOM,Direction.LEFT];
-                    _currentDirection = getrandomDirection(directions);
+                    _currentDirection = getRandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.TOP :
                 if(cell.top != null){
                     result = new MoveOrder(cell.top);
                 } else {
-                    directions = [Direction.LEFT,Direction.BOTTOM,Direction.RIGHT];
-                    _currentDirection = getrandomDirection(directions);
+                    _currentDirection = getRandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.LEFT :
                 if(cell.left != null){
                     result = new MoveOrder(cell.left);
                 } else {
-                    directions = [Direction.TOP,Direction.RIGHT,Direction.BOTTOM];
-                    _currentDirection = getrandomDirection(directions);
+                    _currentDirection = getRandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
             case Direction.BOTTOM :
                 if(cell.bottom != null){
                     result = new MoveOrder(cell.bottom);
                 } else {
-                    directions = [Direction.TOP,Direction.RIGHT,Direction.LEFT];
-                    _currentDirection = getrandomDirection(directions);
+                    _currentDirection = getRandomDirection(directions);
                     result = getMoveOrderCell(cell);
                 }
+            default : trace('unknown direction ' + _currentDirection);
+
         }
         return result;
     }

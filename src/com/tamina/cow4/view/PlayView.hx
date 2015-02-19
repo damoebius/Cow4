@@ -1,5 +1,7 @@
 package com.tamina.cow4.view;
 
+import js.html.ImageElement;
+import js.html.Element;
 import haxe.Timer;
 import com.tamina.cow4.socket.message.UpdateRender;
 import com.tamina.cow4.model.GameMap;
@@ -34,11 +36,22 @@ class PlayView extends HTMLComponent {
     private var _socket:WebSocket;
     private var _proxy:PlayerServerProxy;
     private var _updatePool:Array<UpdateRender>;
+    private var _map:GameMap;
+    private var _ia1NameElement:Element;
+    private var _ia1LogoImage:ImageElement;
+    private var _ia2NameElement:Element;
+    private var _ia2LogoImage:ImageElement;
 
     public function new( containerId:String = "" ) {
         super(Browser.document.getElementById(containerId));
         _updatePool = new Array<UpdateRender>();
         _gameContainer = cast Browser.document.getElementById(PlayViewElementId.GAME_CONTAINER);
+
+        _ia1NameElement = cast Browser.document.getElementById(PlayViewElementId.IA1_NAME);
+        _ia1LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA1_LOGO);
+        _ia2NameElement = cast Browser.document.getElementById(PlayViewElementId.IA2_NAME);
+        _ia2LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA2_LOGO);
+
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
         _applicationCanvas.width = APPLICATION_WIDTH;
@@ -52,7 +65,7 @@ class PlayView extends HTMLComponent {
         _proxy = new PlayerServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
 
-        var t = new Timer(500);
+        var t = new Timer(100);
         t.run = updateHandler;
 
     }
@@ -74,7 +87,12 @@ class PlayView extends HTMLComponent {
         switch( message.type){
             case Render.MESSAGE_TYPE:
                 var render:Render = cast message;
-                _stage.data = GameMap.fromGameMapVO(render.map);
+                _map = GameMap.fromGameMapVO(render.map);
+                _stage.data = _map;
+                _ia1NameElement.innerHTML = _map.iaList[0].name;
+                _ia1LogoImage.src = _map.iaList[0].avatar;
+                _ia2NameElement.innerHTML = _map.iaList[1].name;
+                _ia2LogoImage.src = _map.iaList[1].avatar;
             case UpdateRender.MESSAGE_TYPE:
                 var update:UpdateRender = cast message;
                 _updatePool.push(update);

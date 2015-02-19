@@ -29,12 +29,14 @@ class Game {
     private var _iaTurnIndex:Int = 0;
 
     public function new( iaList:Array<IIA>, gameId:Float, player:Player ) {
+        _player = player;
+        _data = Mock.instance.getDefaultMap();
+        _data.iaList.push(iaList[0].toInfo());
+        _data.iaList.push(iaList[1].toInfo());
+        _data.id = gameId;
         _IAList = iaList;
         _sheep = new SheepIA();
         _IAList.push(_sheep);
-        _player = player;
-        _data = Mock.instance.getDefaultMap();
-        _data.id = gameId;
         _data.getCellAt(0, 0).occupant = _IAList[0].toInfo();
         _data.getCellAt(24, 24).occupant = _IAList[1].toInfo();
         _data.getCellAt(12, 12).occupant = _sheep.toInfo();
