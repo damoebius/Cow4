@@ -39,10 +39,12 @@ class PlayView extends HTMLComponent {
     private var _map:GameMap;
     private var _ia1NameElement:Element;
     private var _ia1LogoImage:ImageElement;
+    private var _ia1PMElement:Element;
     private var _ia2NameElement:Element;
     private var _ia2LogoImage:ImageElement;
+    private var _ia2PMElement:Element;
 
-    public function new( containerId:String = "" ) {
+    public function new(containerId:String = "") {
         super(Browser.document.getElementById(containerId));
         _updatePool = new Array<UpdateRender>();
         _gameContainer = cast Browser.document.getElementById(PlayViewElementId.GAME_CONTAINER);
@@ -51,6 +53,8 @@ class PlayView extends HTMLComponent {
         _ia1LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA1_LOGO);
         _ia2NameElement = cast Browser.document.getElementById(PlayViewElementId.IA2_NAME);
         _ia2LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA2_LOGO);
+        _ia1PMElement = cast Browser.document.getElementById(PlayViewElementId.IA1_PM);
+        _ia2PMElement = cast Browser.document.getElementById(PlayViewElementId.IA2_PM);
 
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
@@ -70,20 +74,25 @@ class PlayView extends HTMLComponent {
 
     }
 
-    private function socketOpenHandler( evt:Dynamic ):Void {
+    private function socketOpenHandler(evt:Dynamic):Void {
         QuickLogger.info('Socket Open');
         var url = new URL(Browser.document.URL);
         _proxy.sendMessage(new StartBattle( url.parameters.get(PlayRequestParam.GAME_ID), url.parameters.get(PlayRequestParam.IA1), url.parameters.get(PlayRequestParam.IA2) ));
     }
 
-    private function updateHandler( ):Void {
-        if ( _updatePool.length > 0 ) {
+    private function updateHandler():Void {
+        if (_updatePool.length > 0) {
             var msg = _updatePool.shift();
+            if (msg.ia.id == _map.iaList[0].id) {
+                _ia1PMElement.innerHTML = 'PM : ' + msg.ia.pm;
+            } else {
+                _ia2PMElement.innerHTML = 'PM : ' + msg.ia.pm;
+            }
             _stage.updateMap(msg.ia, msg.actions);
         }
     }
 
-    private function serverMessageHandler( message:GameServerMessage ):Void {
+    private function serverMessageHandler(message:GameServerMessage):Void {
         switch( message.type){
             case Render.MESSAGE_TYPE:
                 var render:Render = cast message;

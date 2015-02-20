@@ -4,6 +4,8 @@ class IAInfo {
     public var id:Float;
     public var name:String;
     public var avatar:String;
+    public var pm:Int=1;
+
 
     public function new( id:Float,name:String,avatar:String ) {
         this.id = id;

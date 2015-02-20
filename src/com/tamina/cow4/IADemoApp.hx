@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.utils.GameUtils;
 import com.tamina.cow4.model.Direction;
 import com.tamina.cow4.model.Cell;
 import com.tamina.cow4.socket.message.order.MoveOrder;
@@ -70,8 +71,8 @@ class IADemoApp {
         var result = new TurnResult();
         var gameData = GameMap.fromGameMapVO(data.data);
         var currentCell = gameData.getCellByIA(_id);
+        GameUtils.getPath(currentCell, gameData.getCellAt(10,10),gameData);
         result.actions.push( getMoveOrderCell(currentCell) );
-        trace(result);
         _proxy.sendMessage(result);
     }
 
