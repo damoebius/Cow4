@@ -71,8 +71,8 @@ class IADemoApp {
         var result = new TurnResult();
         var gameData = GameMap.fromGameMapVO(data.data);
         var currentCell = gameData.getCellByIA(_id);
-        trace('getpath');
-        var path = GameUtils.getPath(currentCell, gameData.getCellAt(12,12),gameData);
+        var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
+        var path = GameUtils.getPath(currentCell, sheepCell,gameData);
         trace(currentCell.id + ' -> '+ path.getItemAt(1).id);
         var order = new MoveOrder(path.getItemAt(1));
         result.actions.push( order );
