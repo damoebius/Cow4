@@ -71,8 +71,11 @@ class IADemoApp {
         var result = new TurnResult();
         var gameData = GameMap.fromGameMapVO(data.data);
         var currentCell = gameData.getCellByIA(_id);
-        GameUtils.getPath(currentCell, gameData.getCellAt(10,10),gameData);
-        result.actions.push( getMoveOrderCell(currentCell) );
+        trace('getpath');
+        var path = GameUtils.getPath(currentCell, gameData.getCellAt(12,12),gameData);
+        trace(currentCell.id + ' -> '+ path.getItemAt(1).id);
+        var order = new MoveOrder(path.getItemAt(1));
+        result.actions.push( order );
         _proxy.sendMessage(result);
     }
 
