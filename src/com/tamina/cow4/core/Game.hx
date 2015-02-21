@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.model.Action;
 import com.tamina.cow4.model.TurnAction;
@@ -80,6 +81,8 @@ class Game {
                 case Action.MOVE :
                     result = parseMoveOrder(cast value.actions[i]);
                     break;
+                case Action.FAIL :
+                    end("action interdite");
             }
 
         }
@@ -128,6 +131,10 @@ class Game {
     }
 
     private function end( message:String ):Void {
+        var result = new TurnResult();
+        result.actions.push( new EndOrder(Action.FAIL,message));
+        result.ia = _IAList[_iaTurnIndex].toInfo();
+        updatePlayer(result);
         nodejs.Console.info(message);
     }
 }
