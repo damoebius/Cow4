@@ -47,6 +47,8 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
                     var fail:EndOrder = cast actions[i];
                     trace(fail.message);
                     this.addChild(_endScreen);
+
+                    _endScreen.setMessage('fail : ' + ia.name + ' : ' + fail.message);
             }
             updateDisplay();
         }

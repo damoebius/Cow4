@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.core.ParseResult.ParseResultType;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.model.Action;
@@ -74,44 +75,49 @@ class Game {
         targetIA.getTurnOrder(_data);
     }
 
-    private function parseTurnResult( value:TurnResult ):Bool {
-        var result = true;
+    private function parseTurnResult( value:TurnResult ):ParseResult {
+        var result = new ParseResult();
         for ( i in 0...value.actions.length ) {
             switch(value.actions[i].type){
                 case Action.MOVE :
                     result = parseMoveOrder(cast value.actions[i]);
                     break;
                 case Action.FAIL :
-                    end("action interdite");
+                    result.type = ParseResultType.ERROR;
+                    result.message = 'action interdite';
+                    end(result.message);
             }
 
         }
         return result;
     }
 
-    private function parseMoveOrder( order:MoveOrder ):Bool {
-        var result = true;
+    private function parseMoveOrder( order:MoveOrder ):ParseResult {
+        var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
         var currentCell = _data.getCellByIA(currentIA.id);
         var targetCell = currentCell.getNeighboorById(order.target);
         if ( targetCell != null ) {
             if ( targetCell.occupant != null ) {
-                result = false;
-                nodejs.Console.info('la case ciblée est deja occupée');
+                result.type = ParseResultType.ERROR;
+                result.message = 'la case ciblée est deja occupée';
+                nodejs.Console.info(result.message);
             } else {
                 targetCell.occupant = currentCell.occupant;
                 currentCell.occupant = null;
             }
         } else {
-            result = false;
-            nodejs.Console.info('la case ciblée nest pas voisine de la courant');
+            result.type = ParseResultType.ERROR;
+            result.message = 'la case ciblée nest pas voisine de la courant';
+            nodejs.Console.info(result.message);
         }
         return result;
     }
 
     private function turnCompleteHandler( result:TurnResult ):Void {
         nodejs.Console.info('fin de tour');
-        if ( parseTurnResult(result) ) {
+        var parseResult =  parseTurnResult(result);
+        if ( parseResult.type == ParseResultType.SUCCESS ) {
             result.ia = _IAList[_iaTurnIndex].toInfo();
             updatePlayer(result);
             _iaTurnIndex++;
@@ -125,7 +131,7 @@ class Game {
                 end('nombre de tour max');
             }
         } else {
-            end('actions interdites');
+            end( parseResult.message );
         }
 
     }

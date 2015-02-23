@@ -1,9 +1,11 @@
 package com.tamina.cow4.ui;
+import createjs.easeljs.Text;
 import createjs.easeljs.Shape;
 import createjs.easeljs.Container;
 class EndScreen extends Container {
 
-    var _background:Shape;
+    private var _background:Shape;
+    private var _messageText:Text;
     private var _width:Int;
     private var _height:Int;
 
@@ -17,5 +19,11 @@ class EndScreen extends Container {
         _background.graphics.endFill();
         _background.alpha = 0.6;
         addChild(_background);
+        _messageText = new Text();
+        addChild(_messageText);
+    }
+
+    public function setMessage(message:String):Void{
+        _messageText.text = message;
     }
 }
