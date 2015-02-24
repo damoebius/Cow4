@@ -11,6 +11,7 @@ class ParseResult {
 @:enum abstract ParseResultType(Int) from Int to Int{
     var SUCCESS=0;
     var ERROR=1;
+    var VICTORY=2;
 }
 
 

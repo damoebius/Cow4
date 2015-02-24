@@ -3,17 +3,16 @@ import createjs.easeljs.Shape;
 import com.tamina.cow4.model.Cell;
 class PlayerCellSprite extends CellSprite {
 
-    private var _playerSprite:Shape;
+    private var _playerSprite:IASprite;
     private var _sheepSprite:Shape;
     private var _initialized:Bool = false;
 
     public function new( data:Cell ) {
         super(data);
         _backgroundShape.visible = false;
-        _playerSprite = new Shape();
-        _playerSprite.graphics.beginFill('#0000FF');
-        _playerSprite.graphics.drawRect(8, 8, 16, 16);
-        _playerSprite.graphics.endFill();
+        _playerSprite = new IASprite("images/ia_sprite.png");
+        _playerSprite.x = 8;
+        _playerSprite.y = 8;
         addChild(_playerSprite);
 
         _sheepSprite = new Shape();

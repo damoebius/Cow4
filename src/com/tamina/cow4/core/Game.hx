@@ -30,7 +30,7 @@ class Game {
     private var _IAList:Array<IIA>;
     private var _iaTurnIndex:Int = 0;
 
-    public function new( iaList:Array<IIA>, gameId:Float, player:Player ) {
+    public function new(iaList:Array<IIA>, gameId:Float, player:Player) {
         _player = player;
         _IAList = iaList;
         _sheep = new SheepIA();
@@ -46,7 +46,7 @@ class Game {
         _data.getCellAt(12, 12).occupant = _sheep.toInfo();
     }
 
-    public function start( ):Void {
+    public function start():Void {
         _currentTurn = 0;
         _isComputing = false;
         _maxNumTurn = GameConstants.GAME_MAX_NUM_TURN;
@@ -55,53 +55,60 @@ class Game {
         performTurn();
     }
 
-    private function initPlayer( ):Void {
+    private function initPlayer():Void {
         _player.render(_data);
     }
 
-    private function performTurn( ):Void {
+    private function performTurn():Void {
         nodejs.Console.info('performTurn');
         retrieveIAOrders(_IAList[_iaTurnIndex]);
     }
 
-    private function updatePlayer( turn:TurnResult ):Void {
+    private function updatePlayer(turn:TurnResult):Void {
         _player.updateRender(turn);
     }
 
 
-    private function retrieveIAOrders( targetIA:IIA ):Void {
+    private function retrieveIAOrders(targetIA:IIA):Void {
         nodejs.Console.info(targetIA.id + ' : retrieveIAOrders');
         targetIA.turnComplete.addOnce(turnCompleteHandler);
         targetIA.getTurnOrder(_data);
     }
 
-    private function parseTurnResult( value:TurnResult ):ParseResult {
+    private function parseTurnResult(value:TurnResult):ParseResult {
         var result = new ParseResult();
-        for ( i in 0...value.actions.length ) {
+        for (i in 0...value.actions.length) {
             switch(value.actions[i].type){
                 case Action.MOVE :
                     result = parseMoveOrder(cast value.actions[i]);
                     break;
                 case Action.FAIL :
+                case Action.SUCCESS :
                     result.type = ParseResultType.ERROR;
                     result.message = 'action interdite';
-                    end(result.message);
+                    end(Action.FAIL, result.message);
             }
 
         }
         return result;
     }
 
-    private function parseMoveOrder( order:MoveOrder ):ParseResult {
+    private function parseMoveOrder(order:MoveOrder):ParseResult {
         var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
         var currentCell = _data.getCellByIA(currentIA.id);
         var targetCell = currentCell.getNeighboorById(order.target);
-        if ( targetCell != null ) {
-            if ( targetCell.occupant != null ) {
-                result.type = ParseResultType.ERROR;
-                result.message = 'la case ciblée est deja occupée';
-                nodejs.Console.info(result.message);
+        if (targetCell != null) {
+            if (targetCell.occupant != null) {
+                if (targetCell.occupant.id == _sheep.id) {
+                    result.type = ParseResultType.VICTORY;
+                    result.message = 'cible attrapée';
+                    nodejs.Console.info(result.message);
+                } else {
+                    result.type = ParseResultType.ERROR;
+                    result.message = 'la case ciblée est deja occupée';
+                    nodejs.Console.info(result.message);
+                }
             } else {
                 targetCell.occupant = currentCell.occupant;
                 currentCell.occupant = null;
@@ -114,31 +121,33 @@ class Game {
         return result;
     }
 
-    private function turnCompleteHandler( result:TurnResult ):Void {
+    private function turnCompleteHandler(result:TurnResult):Void {
         nodejs.Console.info('fin de tour');
-        var parseResult =  parseTurnResult(result);
-        if ( parseResult.type == ParseResultType.SUCCESS ) {
+        var parseResult = parseTurnResult(result);
+        if (parseResult.type == ParseResultType.SUCCESS) {
             result.ia = _IAList[_iaTurnIndex].toInfo();
             updatePlayer(result);
             _iaTurnIndex++;
-            if ( _iaTurnIndex >= _IAList.length ) {
+            if (_iaTurnIndex >= _IAList.length) {
                 _iaTurnIndex = 0;
                 _currentTurn++;
             }
-            if ( _currentTurn < _maxNumTurn ) {
+            if (_currentTurn < _maxNumTurn) {
                 performTurn();
             } else {
-                end('nombre de tour max');
+                end(Action.FAIL, 'nombre de tour max');
             }
+        } else if(parseResult.type == ParseResultType.VICTORY){
+            end(Action.SUCCESS, parseResult.message);
         } else {
-            end( parseResult.message );
+            end(Action.FAIL, parseResult.message);
         }
 
     }
 
-    private function end( message:String ):Void {
+    private function end(action:Action, message:String):Void {
         var result = new TurnResult();
-        result.actions.push( new EndOrder(Action.FAIL,message));
+        result.actions.push(new EndOrder(action, message));
         result.ia = _IAList[_iaTurnIndex].toInfo();
         updatePlayer(result);
         nodejs.Console.info(message);
