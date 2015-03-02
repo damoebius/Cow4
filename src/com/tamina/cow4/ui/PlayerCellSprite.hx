@@ -1,10 +1,11 @@
 package com.tamina.cow4.ui;
+import com.tamina.cow4.socket.SheepIA;
 import createjs.easeljs.Shape;
 import com.tamina.cow4.model.Cell;
 class PlayerCellSprite extends CellSprite {
 
     private var _playerSprite:IASprite;
-    private var _sheepSprite:Shape;
+    private var _sheepSprite:IASprite;
     private var _initialized:Bool = false;
 
     public function new( data:Cell ) {
@@ -15,11 +16,10 @@ class PlayerCellSprite extends CellSprite {
         _playerSprite.y = 8;
         addChild(_playerSprite);
 
-        _sheepSprite = new Shape();
-        _sheepSprite.graphics.beginFill('#FF0000');
-        _sheepSprite.graphics.drawRect(8, 8, 16, 16);
-        _sheepSprite.graphics.endFill();
-//addChild(_sheepSprite);
+        _sheepSprite =  new IASprite("images/chicken_sprite.png");
+        _sheepSprite.x = 8;
+        _sheepSprite.y = 8;
+        addChild(_sheepSprite);
 
         _initialized = true;
         updateDisplay();
@@ -37,7 +37,18 @@ class PlayerCellSprite extends CellSprite {
     override public function updateDisplay( ):Void {
         super.updateDisplay();
         if ( _initialized ) {
-            _playerSprite.visible = (data.occupant != null);
+            if(data.occupant != null){
+                if(data.occupant.name == SheepIA.IA_NAME){
+                    _playerSprite.visible = false;
+                    _sheepSprite.visible = true;
+                } else {
+                    _playerSprite.visible = true;
+                    _sheepSprite.visible = false;
+                }
+            } else {
+                _playerSprite.visible = false;
+                _sheepSprite.visible = false;
+            }
         }
     }
 

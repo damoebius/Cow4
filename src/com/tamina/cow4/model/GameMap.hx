@@ -32,6 +32,17 @@ class GameMap {
         return cells[row][column];
     }
 
+    public function getIAById(id:Float):IAInfo{
+        var result:IAInfo = null;
+        for(i in 0...iaList.length){
+            if(iaList[i].id == id){
+                result = iaList[i];
+                break;
+            }
+        }
+        return result;
+    }
+
     public function getCellByIA(id:Float):Cell{
         var result:Cell = null;
         for(i in 0...cells.length){

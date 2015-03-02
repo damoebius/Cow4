@@ -90,6 +90,7 @@ class Game {
             }
 
         }
+
         return result;
     }
 
@@ -112,6 +113,12 @@ class Game {
             } else {
                 targetCell.occupant = currentCell.occupant;
                 currentCell.occupant = null;
+                currentIA.pm--;
+                if(currentIA.pm <0){
+                    result.type = ParseResultType.ERROR;
+                    result.message = 'pas assez de mouvement';
+                    nodejs.Console.info(result.message);
+                }
             }
         } else {
             result.type = ParseResultType.ERROR;
@@ -125,7 +132,9 @@ class Game {
         nodejs.Console.info('fin de tour');
         var parseResult = parseTurnResult(result);
         if (parseResult.type == ParseResultType.SUCCESS) {
-            result.ia = _IAList[_iaTurnIndex].toInfo();
+            var currentIA = _IAList[_iaTurnIndex];
+            currentIA.pm++;
+            result.ia = currentIA.toInfo();
             updatePlayer(result);
             _iaTurnIndex++;
             if (_iaTurnIndex >= _IAList.length) {
@@ -149,6 +158,9 @@ class Game {
         var result = new TurnResult();
         result.actions.push(new EndOrder(action, message));
         result.ia = _IAList[_iaTurnIndex].toInfo();
+        _IAList[0].pm = 1;
+        _IAList[1].pm = 1;
+        _IAList[2].pm = 1;
         updatePlayer(result);
         nodejs.Console.info(message);
     }

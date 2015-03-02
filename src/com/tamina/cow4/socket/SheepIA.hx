@@ -7,9 +7,12 @@ import com.tamina.cow4.socket.message.TurnResult;
 import msignal.Signal;
 class SheepIA implements IIA {
 
+    inline public static var IA_NAME:String='SheepIA';
+
     public var id:Float;
-    public var name:String='SheepIA';
+    public var name:String= IA_NAME;
     public var turnComplete:Signal1<TurnResult>;
+    public var pm:Int=1;
 
     public function new():Void {
         id = UID.getUID();
@@ -17,7 +20,7 @@ class SheepIA implements IIA {
     }
 
     public function toInfo():IAInfo {
-        return new IAInfo(id, name, "");
+        return new IAInfo(id, name, "",pm);
     }
 
     public function getTurnOrder(data:GameMap):Void {

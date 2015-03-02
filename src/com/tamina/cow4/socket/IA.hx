@@ -17,6 +17,7 @@ class IA extends Client implements IIA {
     public var name:String;
     public var avatar:URL;
     public var turnComplete:Signal1<TurnResult>;
+    public var pm:Int=1;
 
     private var _proxy:ClientProxy;
 
@@ -29,7 +30,7 @@ class IA extends Client implements IIA {
     }
 
     public function toInfo():IAInfo {
-        return new IAInfo(id, name, avatar.path);
+        return new IAInfo(id, name, avatar.path, pm);
     }
 
     public function getTurnOrder(data:GameMap):Void {

@@ -8,6 +8,7 @@ interface IIA {
     var id:Float;
     var name:String;
     var turnComplete:Signal1<TurnResult>;
+    var pm:Int;
     function toInfo():IAInfo;
     function getTurnOrder(data:GameMap):Void;
 }
