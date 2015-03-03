@@ -81,12 +81,15 @@ class Game {
             switch(value.actions[i].type){
                 case Action.MOVE :
                     result = parseMoveOrder(cast value.actions[i]);
-                    break;
+                    if(result.type != ParseResultType.SUCCESS){
+                        break;
+                    }
                 case Action.FAIL :
                 case Action.SUCCESS :
                     result.type = ParseResultType.ERROR;
                     result.message = 'action interdite';
                     end(Action.FAIL, result.message);
+                    break;
             }
 
         }
@@ -133,8 +136,14 @@ class Game {
         var parseResult = parseTurnResult(result);
         if (parseResult.type == ParseResultType.SUCCESS) {
             var currentIA = _IAList[_iaTurnIndex];
-            currentIA.pm++;
+            if(currentIA.pm < GameConstants.MAX_PM){
+                currentIA.pm++;
+            }
+            if(currentIA.id == _sheep.id){
+                currentIA.pm = 1;
+            }
             result.ia = currentIA.toInfo();
+            this._data.getIAById(currentIA.id).pm = currentIA.pm;
             updatePlayer(result);
             _iaTurnIndex++;
             if (_iaTurnIndex >= _IAList.length) {

@@ -85,7 +85,7 @@ class PlayView extends HTMLComponent {
             var msg = _updatePool.shift();
             if (msg.ia.id == _map.iaList[0].id) {
                 _ia1PMElement.innerHTML = 'PM : ' + msg.ia.pm;
-            } else {
+            } else if (msg.ia.id == _map.iaList[1].id) {
                 _ia2PMElement.innerHTML = 'PM : ' + msg.ia.pm;
             }
             _stage.updateMap(msg.ia, msg.actions);

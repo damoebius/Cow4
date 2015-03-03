@@ -34,6 +34,7 @@ import createjs.easeljs.Stage;
         for ( i in 0..._cellsSprite.length ) {
             _cellsSprite[i].updateDisplay();
         }
+        this.update();
     }
 
     private function get_data( ):GameMap {

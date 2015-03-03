@@ -1,4 +1,5 @@
 package com.tamina.cow4.ui;
+import haxe.Timer;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.model.Cell;
@@ -34,30 +35,33 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
     }
 
     public function updateMap( ia:IAInfo, actions:Array<TurnAction> ):Void {
-        var currentCell:Cell = this.data.getCellByIA(ia.id);
         trace('updateMap ' + actions.length);
         for ( i in 0...actions.length ) {
-            switch (actions[i].type){
-                case Action.MOVE:
-                    var move:MoveOrder = cast actions[i];
-                    var targetCell = currentCell.getNeighboorById(move.target);
-                    targetCell.occupant = currentCell.occupant;
-                    currentCell.occupant = null;
-                case Action.FAIL:
-                    var fail:EndOrder = cast actions[i];
-                    trace(fail.message);
-                    this.addChild(_endScreen);
-
-                    _endScreen.setMessage('fail : ' + ia.name + ' : ' + fail.message);
-                case Action.SUCCESS:
-                    var success:EndOrder = cast actions[i];
-                    this.addChild(_endScreen);
-
-                    _endScreen.setMessage('success : ' + ia.name + ' : ' + success.message);
-            }
-            updateDisplay();
         }
 
+    }
+
+    private function parseAction( ia:IAInfo, action:TurnAction ):Void{
+        var currentCell:Cell = this.data.getCellByIA(ia.id);
+        switch (action.type){
+            case Action.MOVE:
+                var move:MoveOrder = cast action;
+                var targetCell = currentCell.getNeighboorById(move.target);
+                targetCell.occupant = currentCell.occupant;
+                currentCell.occupant = null;
+            case Action.FAIL:
+                var fail:EndOrder = cast action;
+                trace(fail.message);
+                this.addChild(_endScreen);
+
+                _endScreen.setMessage('fail : ' + ia.name + ' : ' + fail.message);
+            case Action.SUCCESS:
+                var success:EndOrder = cast action;
+                this.addChild(_endScreen);
+
+                _endScreen.setMessage('success : ' + ia.name + ' : ' + success.message);
+        }
+        updateDisplay();
     }
 
     private function backgroundLoadHandler( evt:Event ):Void {

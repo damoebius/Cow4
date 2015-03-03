@@ -70,13 +70,13 @@ class IADemoApp {
 
     private function processTurn( data:GetTurnOrder ):Void {
         var result = new TurnResult();
-
         var wait = Math.round(Math.random()) == 0;
         if ( wait ) {
             trace('wait');
         } else {
             var gameData = GameMap.fromGameMapVO(data.data);
             var myIa = gameData.getIAById(_id);
+            trace('pm : ' + myIa.pm);
             var currentCell = gameData.getCellByIA(_id);
             var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
             var path = GameUtils.getPath(currentCell, sheepCell, gameData);
