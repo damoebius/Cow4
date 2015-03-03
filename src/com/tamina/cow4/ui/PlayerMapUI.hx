@@ -20,6 +20,8 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
 
     private var _width:Int=864;
     private var _height:Int=864;
+    private var _runningActions:Int=0;
+    public var runningActions(get,null):Int;
 
     public function new( display:CanvasElement ) {
         super(PlayerCellSprite, display, FPS);
@@ -36,12 +38,17 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
 
     public function updateMap( ia:IAInfo, actions:Array<TurnAction> ):Void {
         trace('updateMap ' + actions.length);
+        _runningActions = actions.length;
         for ( i in 0...actions.length ) {
             Timer.delay(function():Void{
                parseAction(ia,actions[i]);
-            }, 50*i);
+            }, 250*i);
         }
 
+    }
+
+    private function get_runningActions():Int{
+        return _runningActions;
     }
 
     private function parseAction( ia:IAInfo, action:TurnAction ):Void{
@@ -64,6 +71,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
 
                 _endScreen.setMessage('success : ' + ia.name + ' : ' + success.message);
         }
+        _runningActions--;
         updateDisplay();
     }
 
