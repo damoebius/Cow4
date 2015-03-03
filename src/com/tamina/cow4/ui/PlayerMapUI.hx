@@ -37,6 +37,9 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
     public function updateMap( ia:IAInfo, actions:Array<TurnAction> ):Void {
         trace('updateMap ' + actions.length);
         for ( i in 0...actions.length ) {
+            Timer.delay(function():Void{
+               parseAction(ia,actions[i]);
+            }, 50*i);
         }
 
     }
