@@ -38,9 +38,13 @@ Le but du jeu est de parcourir un labyrinthe pour attraper le premier le poulet.
 
 ## Développer sa propre IA
 
-Vous pouvez coder votre IA dans le langage de votre choix dans la mesure où il peut étaablir une connection socket.
+Vous pouvez coder votre IA dans le langage de votre choix dans la mesure où il peut établir une connection socket.
+
+### Documentation
+http://www.codeofwar.net/api/modules/Server.html
 
 ### Se connecter au serveur
 La connection au serveur se fait en socket sur le port 8127.
+
 Les messages sont échangés en JSON et séparés par la chaine #end#
 
