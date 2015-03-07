@@ -1,0 +1,16 @@
+{
+    "name": "Server",
+    "description": "Code of war Server API",
+    "version": "0.0.1",
+    "url": "http://www.codeofwar.net/api/",
+	"logo":"./assets/logo.png",
+    "options": {
+        "linkNatives": "true",        
+        "attributesEmit": "true",
+        "selleck": "true",
+        "paths": ["../src"],
+		"helpers": ["./path.js"],
+		"themedir": "./theme/",
+        "outdir": "./build"
+    }
+}

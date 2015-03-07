@@ -1,0 +1,28 @@
+{
+  "name": "codeofwar",
+  "description": "Plateforme de jeu de code of war",
+  "keywords": [
+    "javascript",
+    "language",
+    "haxe",
+    "gamejam"
+  ],
+  "author": "David Mouton",
+  "version": "0.1.2",
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "main": "",
+
+  "homepage": "http://www.codeofwar.net",
+  "bugs": "https://github.com/damoebius/Cow4/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/damoebius/Cow4.git"
+  },
+  "dependencies": {
+    "express": "3.x",
+    "ws": ">=0.5.0"
+  }
+}

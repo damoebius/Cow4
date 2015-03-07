@@ -11,6 +11,13 @@ import com.tamina.cow4.config.Config;
 import com.tamina.cow4.routes.MainRoute;
 import nodejs.express.Application;
 import nodejs.express.Express;
+
+/**
+ * Code of war Server
+ * <br/>https://github.com/damoebius/Cow4
+ *
+ * @module Server
+ */
 class Server {
 
     private static var _server:Server;
