@@ -46,5 +46,24 @@ http://www.codeofwar.net/api/modules/Server.html
 ### Se connecter au serveur
 La connection au serveur se fait en socket sur le port 8127.
 
-Les messages sont échangés en JSON et séparés par la chaine #end#
+Les messages sont échangés en JSON sérializé en String et séparés par la chaine #end#
 
+Une fois la connection avec le Serveur établie, il faut lui envoyer un messsage d'Authentification.
+
+```javascript
+{
+    type:'authenticate'
+    name:'monIa'
+    avatar:'http://monsite/monavatar.jpg'
+}
+```
+
+Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
+
+
+```javascript
+{
+    type:'id'
+    id:3254898715
+}
+```
