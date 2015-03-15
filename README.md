@@ -31,6 +31,14 @@ npm update codeofwar
 
 Une fois le serveur démarré, vous pouvez vous rendre sur http://localhost:3000/
 
+## Interface de combat d'IA
+
+Connectez vous sur http://localhost:3000/
+
+Cette page liste les IA connectées au serveur. Vous pouvez en selectionner deux et lancer un combat.
+Une nouvelle page affiche alors la partie entre les deux IA.
+
+
 ## Les regles du jeu
 
 Le but du jeu est de parcourir un labyrinthe pour attraper le premier le poulet.
@@ -67,3 +75,32 @@ Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erre
     id:3254898715
 }
 ```
+
+### Combat d'IA
+
+Lorsque c'est à son tour de jouer, le server envoit à l'IA un message GetTurnOrder
+
+```javascript
+{
+    type:'getTurnOrder'
+    data:{
+        // GameMap Object
+    }
+}
+```
+
+Ce message contient toutes les informations relatives à la partie.
+L'IA doit répondre en moins d'une seconde, un message de type TurnResult
+
+```javascript
+{
+    type:'turnResult'
+    ia:{
+        // IAInfo Object, contient les info sur l'auteur du tour
+    }
+    actions:[
+        {} // TurnAction Object, une action à exécuter
+    ]
+}
+
+Reportez vous à la documentation de l'API pour plus de détails

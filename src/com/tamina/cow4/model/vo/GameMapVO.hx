@@ -17,7 +17,7 @@ class GameMapVO {
 /**
 	 * liste 2d des cases de la map
 	 * @property cells
-	 * @type Array[Array[Cell]]
+	 * @type Cell[]
 	 */
     public var cells:Array<Array<CellVO>>;
 
@@ -32,7 +32,7 @@ class GameMapVO {
 /**
 	 * liste des 3 IA
 	 * @property iaList
-	 * @type Array[IAInfo]
+	 * @type IAInfo[]
 	 */
     public var iaList:Array<IAInfo>;
 
