@@ -10,8 +10,8 @@ class Proxy<T:SocketMessage> {
     public var closeSignal:Signal0;
     public var messageSignal:Signal1<T>;
 
-    private var _data:String='';
-    private var _type:String='proxy';
+    private var _data:String = '';
+    private var _type:String = 'proxy';
 
     public function new( type:String ) {
         _type = type;
@@ -20,45 +20,50 @@ class Proxy<T:SocketMessage> {
         messageSignal = new Signal1<T>();
     }
 
-    public function sendError(error:Error):Void{
+    public function sendError( error:Error ):Void {
     }
 
-    private function socketServer_openHandler(c:Dynamic):Void{
-        trace('['+_type+'] new connection');
+    private function socketServer_openHandler( c:Dynamic ):Void {
+        trace('[' + _type + '] new connection');
     }
 
-    private function socketServer_errorHandler(c:Dynamic):Void{
-        trace('['+_type+'] ERROR '+ c);
+    private function socketServer_errorHandler( c:Dynamic ):Void {
+        trace('[' + _type + '] ERROR ' + c);
         errorSignal.dispatch();
     }
 
-    private function socketServer_closeHandler(c:Dynamic):Void{
-        trace('['+_type+'] connection close');
+    private function socketServer_closeHandler( c:Dynamic ):Void {
+        trace('[' + _type + '] connection close');
         closeSignal.dispatch();
     }
 
-    private function socketServer_dataHandler(data:String):Void {
-        //trace('['+_type+'] data received ');
+    private function socketServer_dataHandler( data:String ):Void {
+//trace('['+_type+'] data received ');
         _data += data.toString();
-        if(_data.indexOf(SocketMessage.END_CHAR) >= 0){
+        if ( _data.indexOf(SocketMessage.END_CHAR) >= 0 ) {
             _data = _data.split(SocketMessage.END_CHAR).join('');
-            socketServer_endHandler();
+            if ( _data.length > 0 ) {
+                socketServer_endHandler();
+            } else {
+                trace('message vide: ' + data);
+            }
         }
 
     }
 
-    private function socketServer_endHandler():Void{
-        //trace('[player proxy] MESSAGE OK : ' + _data);
+    private function socketServer_endHandler( ):Void {
+//trace('[player proxy] MESSAGE OK : ' + _data);
         try {
             var message:T = Json.parse(_data);
             _data = '';
-            if(message.type != null){
+            if ( message.type != null ) {
                 messageSignal.dispatch(message);
             } else {
-                sendError(new Error( ErrorCode.UNKNOWN_MESSAGE,'message inconnu'));
+                sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
             }
         } catch ( e:js.Error ) {
-            trace('['+_type+'] impossible de parser le message json : ' + _data);
+            trace('[' + _type + '] impossible de parser le message json : ' + e.message);
+            sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
         }
 
 
