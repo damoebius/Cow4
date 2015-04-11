@@ -53,16 +53,18 @@ class Proxy<T:SocketMessage> {
 
     private function socketServer_endHandler( ):Void {
 //trace('[player proxy] MESSAGE OK : ' + _data);
+        var message:T = null;
         try {
-            var message:T = Json.parse(_data);
+             message = Json.parse(_data);
             _data = '';
-            if ( message.type != null ) {
-                messageSignal.dispatch(message);
-            } else {
-                sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
-            }
+
         } catch ( e:js.Error ) {
             trace('[' + _type + '] impossible de parser le message json : ' + e.message);
+            sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
+        }
+        if ( message != null && message.type != null ) {
+            messageSignal.dispatch(message);
+        } else {
             sendError(new Error( ErrorCode.UNKNOWN_MESSAGE, 'message inconnu'));
         }
 

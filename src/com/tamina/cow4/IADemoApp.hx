@@ -70,21 +70,29 @@ class IADemoApp {
 
     private function processTurn( data:GetTurnOrder ):Void {
         var result = new TurnResult();
-        var wait = Math.round(Math.random()) == 0;
-        if ( wait ) {
-            trace('wait');
-        } else {
-            var gameData = GameMap.fromGameMapVO(data.data);
-            var myIa = gameData.getIAById(_id);
-            trace('pm : ' + myIa.pm);
-            var currentCell = gameData.getCellByIA(_id);
-            var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
-            var path = GameUtils.getPath(currentCell, sheepCell, gameData);
-            for ( i in 0...myIa.pm ) {
-                trace(currentCell.id + ' -> ' + path.getItemAt(i+1).id);
-                var order = new MoveOrder(path.getItemAt(i+1));
-                result.actions.push(order);
+        try {
+            var wait = Math.round(Math.random()) == 0;
+            if ( wait ) {
+                trace('wait');
+            } else {
+                var gameData = GameMap.fromGameMapVO(data.data);
+                var myIa = gameData.getIAById(_id);
+                trace('pm : ' + myIa.pm);
+                var currentCell = gameData.getCellByIA(_id);
+                var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
+                var path = GameUtils.getPath(currentCell, sheepCell, gameData);
+                if ( path != null ) {
+                    for ( i in 0...myIa.pm ) {
+                        trace(currentCell.id + ' -> ' + path.getItemAt(i + 1).id);
+                        var order = new MoveOrder(path.getItemAt(i + 1));
+                        result.actions.push(order);
+                    }
+                } else {
+                    trace('path null : ' + currentCell.id + "//" + sheepCell.id);
+                }
             }
+        } catch ( e:js.Error ) {
+            trace('error : ' + e.message);
         }
 
 
