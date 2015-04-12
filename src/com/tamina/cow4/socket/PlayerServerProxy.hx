@@ -14,25 +14,33 @@ class PlayerServerProxy extends Proxy<GameServerMessage> {
 
     private var _socket:WebSocket;
 
-    public function new(c:WebSocket) {
+    public function new( c:WebSocket ) {
         super('player server proxy');
         _socket = c;
-        _socket.addEventListener('open',socketServer_openHandler);
-        _socket.addEventListener('error',socketServer_errorHandler);
-        _socket.addEventListener('message',webSocketServer_dataHandler);
+        _socket.addEventListener('open', socketServer_openHandler);
+        _socket.addEventListener('error', socketServer_errorHandler);
+        _socket.addEventListener('message', webSocketServer_dataHandler);
     }
 
-    private function webSocketServer_dataHandler(event:MessageEvent):Void{
+    private function webSocketServer_dataHandler( event:MessageEvent ):Void {
         super.socketServer_dataHandler(event.data);
 
     }
 
-    public function sendMessage(message:PlayerMessage):Void{
-        _socket.send(message.serialize());
+    public function sendMessage( message:PlayerMessage ):Void {
+        try {
+            _socket.send(message.serialize());
+        } catch ( e:js.Error ) {
+            trace('ERROR : ' + e.message);
+        }
     }
 
-    override public function sendError(error:Error):Void{
-        _socket.send(error.serialize());
+    override public function sendError( error:Error ):Void {
+        try {
+            _socket.send(error.serialize());
+        } catch ( e:js.Error ) {
+            trace('ERROR : ' + e.message);
+        }
     }
 
 }

@@ -95,8 +95,12 @@ class IADemoApp {
             trace('error : ' + e.message);
         }
 
-
-        _proxy.sendMessage(result);
+        var timeout = Math.round(Math.random()) == 0;
+        if ( false ) {
+           trace('timeout');
+        } else {
+            _proxy.sendMessage(result);
+        }
     }
 
 

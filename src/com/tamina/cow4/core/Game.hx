@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import haxe.Timer;
 import com.tamina.cow4.core.ParseResult.ParseResultType;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.socket.message.order.MoveOrder;
@@ -29,8 +30,10 @@ class Game {
 
     private var _IAList:Array<IIA>;
     private var _iaTurnIndex:Int = 0;
+    private var _timeoutWatcher:Timer;
 
     public function new(iaList:Array<IIA>, gameId:Float, player:Player) {
+        _timeoutWatcher = new Timer(GameConstants.TIMEOUT_DURATION);
         _player = player;
         _IAList = iaList;
         _sheep = new SheepIA();
@@ -68,10 +71,26 @@ class Game {
         _player.updateRender(turn);
     }
 
+    private function timeoutHandler():Void{
+        _timeoutWatcher.stop();
+        var currentIA = _IAList[_iaTurnIndex];
+        currentIA.turnComplete.remove(turnCompleteHandler);
+        nodejs.Console.warn(currentIA.id + ' : TIMEOUT : next ia turn');
+        _iaTurnIndex++;
+        if (_iaTurnIndex >= _IAList.length) {
+            _iaTurnIndex = 0;
+            _currentTurn++;
+        }
+        performTurn();
+    }
+
 
     private function retrieveIAOrders(targetIA:IIA):Void {
         nodejs.Console.info(targetIA.id + ' : retrieveIAOrders');
         targetIA.turnComplete.addOnce(turnCompleteHandler);
+        _timeoutWatcher.stop();
+        _timeoutWatcher = new Timer(GameConstants.TIMEOUT_DURATION);
+        _timeoutWatcher.run = timeoutHandler;
         targetIA.getTurnOrder(_data);
     }
 
@@ -133,6 +152,7 @@ class Game {
 
     private function turnCompleteHandler(result:TurnResult):Void {
         nodejs.Console.info('fin de tour');
+        _timeoutWatcher.stop();
         var parseResult = parseTurnResult(result);
         if (parseResult.type == ParseResultType.SUCCESS) {
             var currentIA = _IAList[_iaTurnIndex];

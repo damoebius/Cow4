@@ -18,11 +18,19 @@ class ClientProxy extends Proxy<ClientMessage> {
     }
 
     public function sendMessage( message:GameServerMessage ):Void {
+        try{
         _socket.write(message.serialize());
+        } catch(e:js.Error){
+            trace('ERROR : ' + e.message);
+        }
     }
 
     override public function sendError( error:Error ):Void {
+        try{
         _socket.write(error.serialize());
+        } catch(e:js.Error){
+            trace('ERROR : ' + e.message);
+        }
     }
 
 }
