@@ -27,6 +27,7 @@ HxOverrides.remove = function(a,obj) {
 };
 var IMap = function() { };
 IMap.__name__ = true;
+Math.__name__ = true;
 var Reflect = function() { };
 Reflect.__name__ = true;
 Reflect.isFunction = function(f) {
@@ -57,7 +58,7 @@ com.tamina.cow4.Server = function() {
 	this._express.get("/" + "IAList",iaListRoute.succesHandler);
 	var playRoute = new com.tamina.cow4.routes.PlayRoute();
 	this._express.get("/" + "Play",playRoute.succesHandler);
-	haxe.Log.trace("server listening on " + 3000,{ fileName : "Server.hx", lineNumber : 41, className : "com.tamina.cow4.Server", methodName : "new"});
+	haxe.Log.trace("server listening on " + 3000,{ fileName : "Server.hx", lineNumber : 48, className : "com.tamina.cow4.Server", methodName : "new"});
 	this._socketServer = new com.tamina.cow4.socket.SocketServer(8127);
 	this._websocketServer = new com.tamina.cow4.socket.WSocketServer();
 	this._gameManager = new com.tamina.cow4.core.GameManager();
@@ -83,6 +84,7 @@ com.tamina.cow4.config.Config.prototype = {
 com.tamina.cow4.core = {};
 com.tamina.cow4.core.Game = function(iaList,gameId,player) {
 	this._iaTurnIndex = 0;
+	this._timeoutWatcher = new haxe.Timer(com.tamina.cow4.model.GameConstants.TIMEOUT_DURATION);
 	this._player = player;
 	this._IAList = iaList;
 	this._sheep = new com.tamina.cow4.socket.SheepIA();
@@ -116,9 +118,24 @@ com.tamina.cow4.core.Game.prototype = {
 	,updatePlayer: function(turn) {
 		this._player.updateRender(turn);
 	}
+	,timeoutHandler: function() {
+		this._timeoutWatcher.stop();
+		var currentIA = this._IAList[this._iaTurnIndex];
+		currentIA.turnComplete.remove($bind(this,this.turnCompleteHandler));
+		console.warn(currentIA.id + " : TIMEOUT : next ia turn");
+		this._iaTurnIndex++;
+		if(this._iaTurnIndex >= this._IAList.length) {
+			this._iaTurnIndex = 0;
+			this._currentTurn++;
+		}
+		this.performTurn();
+	}
 	,retrieveIAOrders: function(targetIA) {
 		console.info(targetIA.id + " : retrieveIAOrders");
 		targetIA.turnComplete.addOnce($bind(this,this.turnCompleteHandler));
+		this._timeoutWatcher.stop();
+		this._timeoutWatcher = new haxe.Timer(com.tamina.cow4.model.GameConstants.TIMEOUT_DURATION);
+		this._timeoutWatcher.run = $bind(this,this.timeoutHandler);
 		targetIA.getTurnOrder(this._data);
 	}
 	,parseTurnResult: function(value) {
@@ -182,6 +199,7 @@ com.tamina.cow4.core.Game.prototype = {
 	}
 	,turnCompleteHandler: function(result) {
 		console.info("fin de tour");
+		this._timeoutWatcher.stop();
 		var parseResult = this.parseTurnResult(result);
 		if(parseResult.type == 0) {
 			var currentIA = this._IAList[this._iaTurnIndex];
@@ -241,6 +259,63 @@ com.tamina.cow4.core.ParseResult.prototype = {
 com.tamina.cow4.core._ParseResult = {};
 com.tamina.cow4.core._ParseResult.ParseResultType_Impl_ = function() { };
 com.tamina.cow4.core._ParseResult.ParseResultType_Impl_.__name__ = true;
+com.tamina.cow4.core.PathFinder = function() {
+	this._inc = 0;
+	this._paths = new Array();
+};
+com.tamina.cow4.core.PathFinder.__name__ = true;
+com.tamina.cow4.core.PathFinder.prototype = {
+	getPath: function(fromCell,toCell,map) {
+		this._map = map;
+		this._source = fromCell;
+		this._target = toCell;
+		var p = new com.tamina.cow4.model.Path();
+		p.push(this._source);
+		this._paths.push(p);
+		var startDate = new Date();
+		this.find();
+		return this._result;
+	}
+	,find: function() {
+		var result = false;
+		this._inc++;
+		var paths = this._paths.slice();
+		var _g1 = 0;
+		var _g = paths.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.checkPath(paths[i])) {
+				result = true;
+				break;
+			}
+		}
+		if(!result && this._inc < 50) this.find();
+	}
+	,checkPath: function(target) {
+		var result = false;
+		var currentCell = target.getLastItem();
+		var _g1 = 0;
+		var _g = currentCell.getNeighboors().length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var nextCell = currentCell.getNeighboors()[i];
+			if(nextCell.id == this._target.id) {
+				result = true;
+				var p = target.copy();
+				p.push(nextCell);
+				this._result = p;
+				break;
+			} else if(!com.tamina.cow4.model.Path.contains(nextCell,this._paths)) {
+				var p1 = target.copy();
+				p1.push(nextCell);
+				this._paths.push(p1);
+			}
+		}
+		HxOverrides.remove(this._paths,target);
+		return result;
+	}
+	,__class__: com.tamina.cow4.core.PathFinder
+};
 com.tamina.cow4.data = {};
 com.tamina.cow4.data.Mock = function() {
 };
@@ -553,6 +628,57 @@ com.tamina.cow4.model.IAInfo.__name__ = true;
 com.tamina.cow4.model.IAInfo.prototype = {
 	__class__: com.tamina.cow4.model.IAInfo
 };
+com.tamina.cow4.model.Path = function(content) {
+	if(content == null) this._content = new Array(); else this._content = content;
+};
+com.tamina.cow4.model.Path.__name__ = true;
+com.tamina.cow4.model.Path.contains = function(item,list) {
+	var result = false;
+	var _g1 = 0;
+	var _g = list.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(list[i].hasItem(item)) {
+			result = true;
+			break;
+		}
+	}
+	return result;
+};
+com.tamina.cow4.model.Path.prototype = {
+	getLastItem: function() {
+		return this._content[this._content.length - 1];
+	}
+	,hasItem: function(item) {
+		var result = false;
+		var _g1 = 0;
+		var _g = this._content.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(item.id == this._content[i].id) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+	,getItemAt: function(index) {
+		return this._content[index];
+	}
+	,push: function(item) {
+		this._content.push(item);
+	}
+	,remove: function(item) {
+		return HxOverrides.remove(this._content,item);
+	}
+	,copy: function() {
+		return new com.tamina.cow4.model.Path(this._content.slice());
+	}
+	,get_length: function() {
+		return this._content.length;
+	}
+	,__class__: com.tamina.cow4.model.Path
+};
 com.tamina.cow4.model.TurnAction = function(type) {
 	this.type = type;
 };
@@ -688,19 +814,21 @@ com.tamina.cow4.socket.Proxy.prototype = {
 		this._data += data.toString();
 		if(this._data.indexOf("#end#") >= 0) {
 			this._data = this._data.split("#end#").join("");
-			this.socketServer_endHandler();
+			if(this._data.length > 0) this.socketServer_endHandler(); else haxe.Log.trace("message vide: " + data,{ fileName : "Proxy.hx", lineNumber : 48, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_dataHandler"});
 		}
 	}
 	,socketServer_endHandler: function() {
+		var message = null;
 		try {
-			var message = JSON.parse(this._data);
+			message = JSON.parse(this._data);
 			this._data = "";
-			if(message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 		} catch( e ) {
 			if( js.Boot.__instanceof(e,Error) ) {
-				haxe.Log.trace("[" + this._type + "] impossible de parser le message json : " + this._data,{ fileName : "Proxy.hx", lineNumber : 61, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_endHandler"});
+				haxe.Log.trace("[" + this._type + "] impossible de parser le message json : " + e.message,{ fileName : "Proxy.hx", lineNumber : 62, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_endHandler"});
+				this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 			} else throw(e);
 		}
+		if(message != null && message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 	}
 	,__class__: com.tamina.cow4.socket.Proxy
 };
@@ -716,10 +844,22 @@ com.tamina.cow4.socket.ClientProxy.__name__ = true;
 com.tamina.cow4.socket.ClientProxy.__super__ = com.tamina.cow4.socket.Proxy;
 com.tamina.cow4.socket.ClientProxy.prototype = $extend(com.tamina.cow4.socket.Proxy.prototype,{
 	sendMessage: function(message) {
-		this._socket.write(message.serialize());
+		try {
+			this._socket.write(message.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("ERROR : " + e.message,{ fileName : "ClientProxy.hx", lineNumber : 24, className : "com.tamina.cow4.socket.ClientProxy", methodName : "sendMessage"});
+			} else throw(e);
+		}
 	}
 	,sendError: function(error) {
-		this._socket.write(error.serialize());
+		try {
+			this._socket.write(error.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("ERROR : " + e.message,{ fileName : "ClientProxy.hx", lineNumber : 32, className : "com.tamina.cow4.socket.ClientProxy", methodName : "sendError"});
+			} else throw(e);
+		}
 	}
 	,__class__: com.tamina.cow4.socket.ClientProxy
 });
@@ -817,7 +957,13 @@ com.tamina.cow4.socket.PlayerProxy.__name__ = true;
 com.tamina.cow4.socket.PlayerProxy.__super__ = com.tamina.cow4.socket.Proxy;
 com.tamina.cow4.socket.PlayerProxy.prototype = $extend(com.tamina.cow4.socket.Proxy.prototype,{
 	sendMessage: function(message) {
-		this._socket.send(message.serialize());
+		try {
+			this._socket.send(message.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("ERROR : " + e.message,{ fileName : "PlayerProxy.hx", lineNumber : 25, className : "com.tamina.cow4.socket.PlayerProxy", methodName : "sendMessage"});
+			} else throw(e);
+		}
 	}
 	,sendError: function(error) {
 	}
@@ -837,6 +983,19 @@ com.tamina.cow4.socket.SheepIA.prototype = {
 	}
 	,getTurnOrder: function(data) {
 		var result = new com.tamina.cow4.socket.message.TurnResult();
+		try {
+			var currentCell = data.getCellByIA(this.id);
+			if(this._targetCell == null || this._targetCell.id == currentCell.id) this._targetCell = data.getCellAt(Math.floor(Math.random() * data.cells.length),Math.floor(Math.random() * data.cells.length));
+			var path = com.tamina.cow4.utils.GameUtils.getPath(currentCell,this._targetCell,data);
+			if(path != null) {
+				var order = new com.tamina.cow4.socket.message.order.MoveOrder(path.getItemAt(1));
+				result.actions.push(order);
+			} else haxe.Log.trace("path null : " + currentCell.id + "//" + this._targetCell.id,{ fileName : "SheepIA.hx", lineNumber : 44, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 47, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+			} else throw(e);
+		}
 		this.turnComplete.dispatch(result);
 	}
 	,__class__: com.tamina.cow4.socket.SheepIA
@@ -1069,11 +1228,39 @@ com.tamina.cow4.socket.message.order.MoveOrder.__super__ = com.tamina.cow4.model
 com.tamina.cow4.socket.message.order.MoveOrder.prototype = $extend(com.tamina.cow4.model.TurnAction.prototype,{
 	__class__: com.tamina.cow4.socket.message.order.MoveOrder
 });
+com.tamina.cow4.utils = {};
+com.tamina.cow4.utils.GameUtils = function() {
+};
+com.tamina.cow4.utils.GameUtils.__name__ = true;
+com.tamina.cow4.utils.GameUtils.getPath = function(fromCell,toCell,map) {
+	var p = new com.tamina.cow4.core.PathFinder();
+	return p.getPath(fromCell,toCell,map);
+};
+com.tamina.cow4.utils.GameUtils.prototype = {
+	__class__: com.tamina.cow4.utils.GameUtils
+};
 var haxe = {};
 haxe.Log = function() { };
 haxe.Log.__name__ = true;
 haxe.Log.trace = function(v,infos) {
 	js.Boot.__trace(v,infos);
+};
+haxe.Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+haxe.Timer.__name__ = true;
+haxe.Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,run: function() {
+	}
+	,__class__: haxe.Timer
 };
 haxe.ds = {};
 haxe.ds.StringMap = function() {
@@ -1702,6 +1889,15 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
+Math.NaN = Number.NaN;
+Math.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
+Math.POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
+Math.isFinite = function(i) {
+	return isFinite(i);
+};
+Math.isNaN = function(i1) {
+	return isNaN(i1);
+};
 String.prototype.__class__ = String;
 String.__name__ = true;
 Array.__name__ = true;
@@ -1728,6 +1924,7 @@ com.tamina.cow4.model._Action.Action_Impl_.MOVE = "move";
 com.tamina.cow4.model._Action.Action_Impl_.FAIL = "fail";
 com.tamina.cow4.model._Action.Action_Impl_.SUCCESS = "success";
 com.tamina.cow4.model.GameConstants.GAME_MAX_NUM_TURN = 100;
+com.tamina.cow4.model.GameConstants.TIMEOUT_DURATION = 2000;
 com.tamina.cow4.model.GameConstants.MAX_PM = 5;
 com.tamina.cow4.net.request.PlayRequestParam.IA1 = "ia1";
 com.tamina.cow4.net.request.PlayRequestParam.IA2 = "ia2";

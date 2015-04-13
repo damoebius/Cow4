@@ -61,8 +61,25 @@ IMap.prototype = {
 Math.__name__ = ["Math"];
 var Reflect = function() { };
 Reflect.__name__ = ["Reflect"];
+Reflect.field = function(o,field) {
+	try {
+		return o[field];
+	} catch( e ) {
+		return null;
+	}
+};
 Reflect.setField = function(o,field,value) {
 	o[field] = value;
+};
+Reflect.fields = function(o) {
+	var a = [];
+	if(o != null) {
+		var hasOwnProperty = Object.prototype.hasOwnProperty;
+		for( var f in o ) {
+		if(f != "__id__" && f != "hx__closures__" && hasOwnProperty.call(o,f)) a.push(f);
+		}
+	}
+	return a;
 };
 Reflect.isFunction = function(f) {
 	return typeof(f) == "function" && !(f.__name__ || f.__ename__);
@@ -220,6 +237,64 @@ com.tamina.cow4.config.Config = function() {
 com.tamina.cow4.config.Config.__name__ = ["com","tamina","cow4","config","Config"];
 com.tamina.cow4.config.Config.prototype = {
 	__class__: com.tamina.cow4.config.Config
+};
+com.tamina.cow4.core = {};
+com.tamina.cow4.core.PathFinder = function() {
+	this._inc = 0;
+	this._paths = new Array();
+};
+com.tamina.cow4.core.PathFinder.__name__ = ["com","tamina","cow4","core","PathFinder"];
+com.tamina.cow4.core.PathFinder.prototype = {
+	getPath: function(fromCell,toCell,map) {
+		this._map = map;
+		this._source = fromCell;
+		this._target = toCell;
+		var p = new com.tamina.cow4.model.Path();
+		p.push(this._source);
+		this._paths.push(p);
+		var startDate = new Date();
+		this.find();
+		return this._result;
+	}
+	,find: function() {
+		var result = false;
+		this._inc++;
+		var paths = this._paths.slice();
+		var _g1 = 0;
+		var _g = paths.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.checkPath(paths[i])) {
+				result = true;
+				break;
+			}
+		}
+		if(!result && this._inc < 50) this.find();
+	}
+	,checkPath: function(target) {
+		var result = false;
+		var currentCell = target.getLastItem();
+		var _g1 = 0;
+		var _g = currentCell.getNeighboors().length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var nextCell = currentCell.getNeighboors()[i];
+			if(nextCell.id == this._target.id) {
+				result = true;
+				var p = target.copy();
+				p.push(nextCell);
+				this._result = p;
+				break;
+			} else if(!com.tamina.cow4.model.Path.contains(nextCell,this._paths)) {
+				var p1 = target.copy();
+				p1.push(nextCell);
+				this._paths.push(p1);
+			}
+		}
+		HxOverrides.remove(this._paths,target);
+		return result;
+	}
+	,__class__: com.tamina.cow4.core.PathFinder
 };
 com.tamina.cow4.data = {};
 com.tamina.cow4.data.Mock = function() {
@@ -512,6 +587,57 @@ com.tamina.cow4.model.IAInfo.__name__ = ["com","tamina","cow4","model","IAInfo"]
 com.tamina.cow4.model.IAInfo.prototype = {
 	__class__: com.tamina.cow4.model.IAInfo
 };
+com.tamina.cow4.model.Path = function(content) {
+	if(content == null) this._content = new Array(); else this._content = content;
+};
+com.tamina.cow4.model.Path.__name__ = ["com","tamina","cow4","model","Path"];
+com.tamina.cow4.model.Path.contains = function(item,list) {
+	var result = false;
+	var _g1 = 0;
+	var _g = list.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(list[i].hasItem(item)) {
+			result = true;
+			break;
+		}
+	}
+	return result;
+};
+com.tamina.cow4.model.Path.prototype = {
+	getLastItem: function() {
+		return this._content[this._content.length - 1];
+	}
+	,hasItem: function(item) {
+		var result = false;
+		var _g1 = 0;
+		var _g = this._content.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(item.id == this._content[i].id) {
+				result = true;
+				break;
+			}
+		}
+		return result;
+	}
+	,getItemAt: function(index) {
+		return this._content[index];
+	}
+	,push: function(item) {
+		this._content.push(item);
+	}
+	,remove: function(item) {
+		return HxOverrides.remove(this._content,item);
+	}
+	,copy: function() {
+		return new com.tamina.cow4.model.Path(this._content.slice());
+	}
+	,get_length: function() {
+		return this._content.length;
+	}
+	,__class__: com.tamina.cow4.model.Path
+};
 com.tamina.cow4.model.TurnAction = function(type) {
 	this.type = type;
 };
@@ -657,19 +783,21 @@ com.tamina.cow4.socket.Proxy.prototype = {
 		this._data += data.toString();
 		if(this._data.indexOf("#end#") >= 0) {
 			this._data = this._data.split("#end#").join("");
-			this.socketServer_endHandler();
+			if(this._data.length > 0) this.socketServer_endHandler(); else haxe.Log.trace("message vide: " + data,{ fileName : "Proxy.hx", lineNumber : 48, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_dataHandler"});
 		}
 	}
 	,socketServer_endHandler: function() {
+		var message = null;
 		try {
-			var message = JSON.parse(this._data);
+			message = JSON.parse(this._data);
 			this._data = "";
-			if(message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 		} catch( e ) {
 			if( js.Boot.__instanceof(e,Error) ) {
-				haxe.Log.trace("[" + this._type + "] impossible de parser le message json : " + this._data,{ fileName : "Proxy.hx", lineNumber : 61, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_endHandler"});
+				haxe.Log.trace("[" + this._type + "] impossible de parser le message json : " + e.message,{ fileName : "Proxy.hx", lineNumber : 62, className : "com.tamina.cow4.socket.Proxy", methodName : "socketServer_endHandler"});
+				this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 			} else throw(e);
 		}
+		if(message != null && message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 	}
 	,__class__: com.tamina.cow4.socket.Proxy
 };
@@ -687,10 +815,22 @@ com.tamina.cow4.socket.PlayerServerProxy.prototype = $extend(com.tamina.cow4.soc
 		com.tamina.cow4.socket.Proxy.prototype.socketServer_dataHandler.call(this,event.data);
 	}
 	,sendMessage: function(message) {
-		this._socket.send(message.serialize());
+		try {
+			this._socket.send(message.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("ERROR : " + e.message,{ fileName : "PlayerServerProxy.hx", lineNumber : 34, className : "com.tamina.cow4.socket.PlayerServerProxy", methodName : "sendMessage"});
+			} else throw(e);
+		}
 	}
 	,sendError: function(error) {
-		this._socket.send(error.serialize());
+		try {
+			this._socket.send(error.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("ERROR : " + e.message,{ fileName : "PlayerServerProxy.hx", lineNumber : 42, className : "com.tamina.cow4.socket.PlayerServerProxy", methodName : "sendError"});
+			} else throw(e);
+		}
 	}
 	,__class__: com.tamina.cow4.socket.PlayerServerProxy
 });
@@ -708,6 +848,19 @@ com.tamina.cow4.socket.SheepIA.prototype = {
 	}
 	,getTurnOrder: function(data) {
 		var result = new com.tamina.cow4.socket.message.TurnResult();
+		try {
+			var currentCell = data.getCellByIA(this.id);
+			if(this._targetCell == null || this._targetCell.id == currentCell.id) this._targetCell = data.getCellAt(Math.floor(Math.random() * data.cells.length),Math.floor(Math.random() * data.cells.length));
+			var path = com.tamina.cow4.utils.GameUtils.getPath(currentCell,this._targetCell,data);
+			if(path != null) {
+				var order = new com.tamina.cow4.socket.message.order.MoveOrder(path.getItemAt(1));
+				result.actions.push(order);
+			} else haxe.Log.trace("path null : " + currentCell.id + "//" + this._targetCell.id,{ fileName : "SheepIA.hx", lineNumber : 44, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				haxe.Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 47, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+			} else throw(e);
+		}
 		this.turnComplete.dispatch(result);
 	}
 	,__class__: com.tamina.cow4.socket.SheepIA
@@ -972,7 +1125,7 @@ com.tamina.cow4.ui.MapUI = function(cellSpriteClass,display,fps) {
 	this._fps = fps;
 	this._cellsContainer = new createjs.Container();
 	this.addChild(this._cellsContainer);
-	var t = new haxe.Timer(Math.round(33.3333333333333357));
+	var t = new haxe.Timer(Math.round(33.333333333333336));
 	t.run = $bind(this,this.tickerHandler);
 };
 com.tamina.cow4.ui.MapUI.__name__ = ["com","tamina","cow4","ui","MapUI"];
@@ -1033,7 +1186,7 @@ com.tamina.cow4.ui.MapUI_com_tamina_cow4_ui_PlayerCellSprite = function(cellSpri
 	this._fps = fps;
 	this._cellsContainer = new createjs.Container();
 	this.addChild(this._cellsContainer);
-	var t = new haxe.Timer(Math.round(33.3333333333333357));
+	var t = new haxe.Timer(Math.round(33.333333333333336));
 	t.run = $bind(this,this.tickerHandler);
 };
 com.tamina.cow4.ui.MapUI_com_tamina_cow4_ui_PlayerCellSprite.__name__ = ["com","tamina","cow4","ui","MapUI_com_tamina_cow4_ui_PlayerCellSprite"];
@@ -1219,6 +1372,17 @@ com.tamina.cow4.ui.VWallSprite.__super__ = com.tamina.cow4.ui.WallSprite;
 com.tamina.cow4.ui.VWallSprite.prototype = $extend(com.tamina.cow4.ui.WallSprite.prototype,{
 	__class__: com.tamina.cow4.ui.VWallSprite
 });
+com.tamina.cow4.utils = {};
+com.tamina.cow4.utils.GameUtils = function() {
+};
+com.tamina.cow4.utils.GameUtils.__name__ = ["com","tamina","cow4","utils","GameUtils"];
+com.tamina.cow4.utils.GameUtils.getPath = function(fromCell,toCell,map) {
+	var p = new com.tamina.cow4.core.PathFinder();
+	return p.getPath(fromCell,toCell,map);
+};
+com.tamina.cow4.utils.GameUtils.prototype = {
+	__class__: com.tamina.cow4.utils.GameUtils
+};
 org.tamina.html = {};
 org.tamina.html.HTMLComponent = function(parent) {
 	this._visible = true;
@@ -1243,6 +1407,19 @@ org.tamina.html.HTMLComponent.prototype = {
 		var _this = window.document;
 		this._tempElement = _this.createElement("div");
 		this._tempElement.innerHTML = this.getContent();
+		var meta = haxe.rtti.Meta.getFields(Type.getClass(this));
+		var metaFields = Reflect.fields(meta);
+		var classFields = Reflect.fields(this);
+		var _g1 = 0;
+		var _g = metaFields.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var field = Reflect.field(meta,metaFields[i]);
+			if(field.skinpart != null) {
+				var element = org.tamina.utils.HTMLUtils.getElementByAttribute(this._tempElement,"ta-id",metaFields[i]);
+				this[metaFields[i]] = element;
+			}
+		}
 	}
 	,initContent: function() {
 	}
@@ -1260,7 +1437,7 @@ org.tamina.html.HTMLComponent.prototype = {
 com.tamina.cow4.view = {};
 com.tamina.cow4.view.HomeView = function(containerId) {
 	if(containerId == null) containerId = "";
-	this.view = "<div>\n    <button id=\"fightButton\">FIGHT</button>\n    IAList :\n    <div id=\"iaListContainer\"></div>\n</div>";
+	this.view = "<div>\r\n    <button id=\"fightButton\">FIGHT</button>\r\n    IAList :\r\n    <div id=\"iaListContainer\"></div>\r\n</div>";
 	org.tamina.html.HTMLComponent.call(this,window.document.getElementById(containerId));
 	this._iaListContainer = window.document.getElementById("iaListContainer");
 	this._fightButton = window.document.getElementById("fightButton");
@@ -1323,7 +1500,7 @@ com.tamina.cow4.view.HomeViewElementId = function() { };
 com.tamina.cow4.view.HomeViewElementId.__name__ = ["com","tamina","cow4","view","HomeViewElementId"];
 com.tamina.cow4.view.PlayView = function(containerId) {
 	if(containerId == null) containerId = "";
-	this.view = "<div>\n    <div style=\"width: 100%\">\n        <div style=\"display: inline-block\">\n            <img id=\"ia1_logo\" src=\"\" width=\"50px\" height=\"50px\" style=\"display: inline-block\"/>\n\n            <div style=\"display: inline-block\">\n                <div id=\"ia1_name\">no_name</div>\n                <div id=\"ia1_pm\">PM : 1</div>\n            </div>\n        </div>\n        <div style=\"display: inline-block;width: 700px;text-align: center\">VS</div>\n        <div style=\"display: inline-block\">\n            <img id=\"ia2_logo\" src=\"\" width=\"50px\" height=\"50px\" style=\"display: inline-block\"/>\n\n            <div style=\"display: inline-block\">\n                <div id=\"ia2_name\">no_name</div>\n                <div id=\"ia2_pm\">PM : 1</div>\n            </div>\n        </div>\n    </div>\n    <div id=\"gameContainer\"></div>\n</div>";
+	this.view = "<div>\r\n    <div style=\"width: 100%\">\r\n        <div style=\"display: inline-block\">\r\n            <img id=\"ia1_logo\" src=\"\" width=\"50px\" height=\"50px\" style=\"display: inline-block\"/>\r\n\r\n            <div style=\"display: inline-block\">\r\n                <div id=\"ia1_name\">no_name</div>\r\n                <div id=\"ia1_pm\">PM : 1</div>\r\n            </div>\r\n        </div>\r\n        <div style=\"display: inline-block;width: 700px;text-align: center\">VS</div>\r\n        <div style=\"display: inline-block\">\r\n            <img id=\"ia2_logo\" src=\"\" width=\"50px\" height=\"50px\" style=\"display: inline-block\"/>\r\n\r\n            <div style=\"display: inline-block\">\r\n                <div id=\"ia2_name\">no_name</div>\r\n                <div id=\"ia2_pm\">PM : 1</div>\r\n            </div>\r\n        </div>\r\n    </div>\r\n    <div id=\"gameContainer\"></div>\r\n</div>";
 	org.tamina.html.HTMLComponent.call(this,window.document.getElementById(containerId));
 	this._updatePool = new Array();
 	this._gameContainer = window.document.getElementById("gameContainer");
@@ -1391,7 +1568,7 @@ com.tamina.cow4.view._ViewName.ViewName_Impl_ = function() { };
 com.tamina.cow4.view._ViewName.ViewName_Impl_.__name__ = ["com","tamina","cow4","view","_ViewName","ViewName_Impl_"];
 com.tamina.cow4.view.component = {};
 com.tamina.cow4.view.component.IAItemRenderer = function(parent,info) {
-	this.view = "<div class=\"iaItem\">\n    <input type=\"checkbox\" class=\"ia_fight_checkbox\"/>\n    <img  class=\"ia_image\" src=\"\"/>\n    <div class=\"ia_name\"></div>\n</div>";
+	this.view = "<div class=\"iaItem\">\r\n    <input type=\"checkbox\" class=\"ia_fight_checkbox\"/>\r\n    <img  class=\"ia_image\" src=\"\"/>\r\n    <div class=\"ia_name\"></div>\r\n</div>";
 	this._info = info;
 	this.clickSignal = new msignal.Signal0();
 	org.tamina.html.HTMLComponent.call(this,parent);
@@ -1538,6 +1715,13 @@ haxe.ds.StringMap.prototype = {
 		return HxOverrides.iter(a);
 	}
 	,__class__: haxe.ds.StringMap
+};
+haxe.rtti = {};
+haxe.rtti.Meta = function() { };
+haxe.rtti.Meta.__name__ = ["haxe","rtti","Meta"];
+haxe.rtti.Meta.getFields = function(t) {
+	var meta = t.__meta__;
+	if(meta == null || meta.fields == null) return { }; else return meta.fields;
 };
 var js = {};
 js.Boot = function() { };
@@ -1739,7 +1923,7 @@ mconsole.Printer.prototype = {
 mconsole.ConsoleView = function() {
 	mconsole.PrinterBase.call(this);
 	this.atBottom = true;
-	this.projectHome = "/media/shared/home/david/Public/Cow4/";
+	this.projectHome = "C:\\Projects\\David\\developpement\\haxe\\Cow4/";
 	var document = window.document;
 	this.element = document.createElement("pre");
 	this.element.id = "console";
@@ -2486,6 +2670,54 @@ org.tamina.utils.ClassUtils = function() { };
 org.tamina.utils.ClassUtils.__name__ = ["org","tamina","utils","ClassUtils"];
 org.tamina.utils.ClassUtils.expose = function(instance,rootInstanceName) {
 	Reflect.setField(window,rootInstanceName,instance);
+};
+org.tamina.utils.HTMLUtils = function() { };
+org.tamina.utils.HTMLUtils.__name__ = ["org","tamina","utils","HTMLUtils"];
+org.tamina.utils.HTMLUtils.getElementById = function(parent,id) {
+	var result = null;
+	var _g1 = 0;
+	var _g = parent.children.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var el = parent.children.item(i);
+		var elId = org.tamina.utils.HTMLUtils.getAttribute(el,"id");
+		if(elId == id) {
+			result = el;
+			break;
+		} else result = org.tamina.utils.HTMLUtils.getElementById(el,id);
+	}
+	return result;
+};
+org.tamina.utils.HTMLUtils.getElementByAttribute = function(parent,attribute,value) {
+	var result = null;
+	var _g1 = 0;
+	var _g = parent.children.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		if(result == null) {
+			var el = parent.children.item(i);
+			var elId = org.tamina.utils.HTMLUtils.getAttribute(el,attribute);
+			if(elId == value) {
+				result = el;
+				return result;
+			} else result = org.tamina.utils.HTMLUtils.getElementByAttribute(el,attribute,value);
+		} else return result;
+	}
+	return result;
+};
+org.tamina.utils.HTMLUtils.getAttribute = function(element,name) {
+	var result = "";
+	var _g1 = 0;
+	var _g = element.attributes.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		var att = element.attributes.item(i);
+		if(att.nodeName == name) {
+			result = att.nodeValue;
+			break;
+		}
+	}
+	return result;
 };
 org.tamina.utils.UID = function() { };
 org.tamina.utils.UID.__name__ = ["org","tamina","utils","UID"];

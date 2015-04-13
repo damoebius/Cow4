@@ -88,23 +88,32 @@ com.tamina.cow4.IADemoApp.prototype = {
 	}
 	,processTurn: function(data) {
 		var result = new com.tamina.cow4.socket.message.TurnResult();
-		var wait = Math.round(Math.random()) == 0;
-		if(wait) console.log("wait"); else {
-			var gameData = com.tamina.cow4.model.GameMap.fromGameMapVO(data.data);
-			var myIa = gameData.getIAById(this._id);
-			console.log("pm : " + myIa.pm);
-			var currentCell = gameData.getCellByIA(this._id);
-			var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
-			var path = com.tamina.cow4.utils.GameUtils.getPath(currentCell,sheepCell,gameData);
-			var _g1 = 0;
-			var _g = myIa.pm;
-			while(_g1 < _g) {
-				var i = _g1++;
-				console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
-				var order = new com.tamina.cow4.socket.message.order.MoveOrder(path.getItemAt(i + 1));
-				result.actions.push(order);
+		try {
+			var wait = Math.round(Math.random()) == 0;
+			if(wait) console.log("wait"); else {
+				var gameData = com.tamina.cow4.model.GameMap.fromGameMapVO(data.data);
+				var myIa = gameData.getIAById(this._id);
+				console.log("pm : " + myIa.pm);
+				var currentCell = gameData.getCellByIA(this._id);
+				var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
+				var path = com.tamina.cow4.utils.GameUtils.getPath(currentCell,sheepCell,gameData);
+				if(path != null) {
+					var _g1 = 0;
+					var _g = myIa.pm;
+					while(_g1 < _g) {
+						var i = _g1++;
+						console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
+						var order = new com.tamina.cow4.socket.message.order.MoveOrder(path.getItemAt(i + 1));
+						result.actions.push(order);
+					}
+				} else console.log("path null : " + currentCell.id + "//" + sheepCell.id);
 			}
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				console.log("error : " + e.message);
+			} else throw(e);
 		}
+		var timeout = Math.round(Math.random()) == 0;
 		this._proxy.sendMessage(result);
 	}
 	,quit: function() {
@@ -508,19 +517,21 @@ com.tamina.cow4.socket.Proxy.prototype = {
 		this._data += data.toString();
 		if(this._data.indexOf("#end#") >= 0) {
 			this._data = this._data.split("#end#").join("");
-			this.socketServer_endHandler();
+			if(this._data.length > 0) this.socketServer_endHandler(); else console.log("message vide: " + data);
 		}
 	}
 	,socketServer_endHandler: function() {
+		var message = null;
 		try {
-			var message = JSON.parse(this._data);
+			message = JSON.parse(this._data);
 			this._data = "";
-			if(message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 		} catch( e ) {
 			if( js.Boot.__instanceof(e,Error) ) {
-				console.log("[" + this._type + "] impossible de parser le message json : " + this._data);
+				console.log("[" + this._type + "] impossible de parser le message json : " + e.message);
+				this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 			} else throw(e);
 		}
+		if(message != null && message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
 	}
 	,__class__: com.tamina.cow4.socket.Proxy
 };
@@ -536,7 +547,13 @@ com.tamina.cow4.socket.GameServerProxy.__name__ = true;
 com.tamina.cow4.socket.GameServerProxy.__super__ = com.tamina.cow4.socket.Proxy;
 com.tamina.cow4.socket.GameServerProxy.prototype = $extend(com.tamina.cow4.socket.Proxy.prototype,{
 	sendMessage: function(message) {
-		this._socket.write(message.serialize());
+		try {
+			this._socket.write(message.serialize());
+		} catch( e ) {
+			if( js.Boot.__instanceof(e,Error) ) {
+				console.log("ERROR : " + e.message);
+			} else throw(e);
+		}
 	}
 	,sendError: function(error) {
 	}
