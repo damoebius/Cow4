@@ -200,6 +200,7 @@ com.tamina.cow4.model.Cell.fromCellVO = function(value) {
 	var result = new com.tamina.cow4.model.Cell();
 	result.id = value.id;
 	result.occupant = value.occupant;
+	result.item = value.item;
 	return result;
 };
 com.tamina.cow4.model.Cell.prototype = {
@@ -209,6 +210,7 @@ com.tamina.cow4.model.Cell.prototype = {
 		if(null != result.bottom) result.bottom = this.get_bottom().id;
 		if(null != result.left) result.left = this.get_left().id;
 		if(null != result.right) result.right = this.get_right().id;
+		result.item = this.item;
 		return result;
 	}
 	,getNeighboors: function() {
@@ -408,11 +410,22 @@ com.tamina.cow4.model.IAInfo = function(id,name,avatar,pm) {
 	this.name = name;
 	this.avatar = avatar;
 	this.pm = pm;
+	this.items = new Array();
 };
 com.tamina.cow4.model.IAInfo.__name__ = true;
 com.tamina.cow4.model.IAInfo.prototype = {
 	__class__: com.tamina.cow4.model.IAInfo
 };
+com.tamina.cow4.model.Item = function(type) {
+	this.type = type;
+};
+com.tamina.cow4.model.Item.__name__ = true;
+com.tamina.cow4.model.Item.prototype = {
+	__class__: com.tamina.cow4.model.Item
+};
+com.tamina.cow4.model._ItemType = {};
+com.tamina.cow4.model._ItemType.ItemType_Impl_ = function() { };
+com.tamina.cow4.model._ItemType.ItemType_Impl_.__name__ = true;
 com.tamina.cow4.model.Path = function(content) {
 	if(content == null) this._content = new Array(); else this._content = content;
 };
@@ -1232,6 +1245,9 @@ com.tamina.cow4.model._Direction.Direction_Impl_.LEFT = 0;
 com.tamina.cow4.model._Direction.Direction_Impl_.RIGHT = 1;
 com.tamina.cow4.model._Direction.Direction_Impl_.TOP = 2;
 com.tamina.cow4.model._Direction.Direction_Impl_.BOTTOM = 3;
+com.tamina.cow4.model._ItemType.ItemType_Impl_.POTION = "potion";
+com.tamina.cow4.model._ItemType.ItemType_Impl_.PARFUM = "parfum";
+com.tamina.cow4.model._ItemType.ItemType_Impl_.TRAP = "trap";
 com.tamina.cow4.socket.message.SocketMessage.END_CHAR = "#end#";
 com.tamina.cow4.socket.message.Authenticate.MESSAGE_TYPE = "authenticate";
 com.tamina.cow4.socket.message.Error.MESSAGE_TYPE = "error";
