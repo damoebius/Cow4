@@ -48,6 +48,13 @@ class CellVO {
 	 * @type IAInfo
 	 */
     public var occupant:IAInfo;
+
+    /**
+	 * l'item presante sur la case
+	 * @property item
+	 * @type Item
+	 */
+    public var item:Item;
     
     public function new(id:Float, ?occupant:IAInfo ) {
         this.id = id;

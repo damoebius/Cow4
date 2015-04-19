@@ -14,7 +14,14 @@
         </div>
         <textarea id="mapDataArea"></textarea>
     </div>
-    <div id="mapEditorContainer"></div>
+    <div>
+        <select id="itemSelect" onchange="changeItemSelect()">
+            <option value="potion">potion</option>
+            <option value="trap">trap</option>
+            <option value="parfum">parfum</option>
+        </select>
+        <div id="mapEditorContainer"></div>
+    </div>
 </div>
 <script src="http://code.createjs.com/easeljs-0.7.1.min.js"></script>
 <script src="js/release/MapEditor.js"></script>
@@ -28,6 +35,12 @@
 
     var importModel = function(){
         MapEditor.importModel(mapDataArea.value);
+    }
+
+    var changeItemSelect = function(){
+        var selectElement = document.getElementById('itemSelect');
+
+       MapEditor.changeItemSelect(selectElement.item(selectElement.selectedIndex).value);
     }
 
     MapEditor.init('mapEditorContainer', 600, 600);

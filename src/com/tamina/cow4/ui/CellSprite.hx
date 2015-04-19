@@ -1,4 +1,6 @@
 package com.tamina.cow4.ui;
+import com.tamina.cow4.model.ItemType;
+import createjs.easeljs.Bitmap;
 import createjs.easeljs.Shape;
 import createjs.easeljs.Container;
 import com.tamina.cow4.model.Cell;
@@ -11,6 +13,7 @@ class CellSprite extends Container {
     public var data(get, null):Cell;
 
     private var _backgroundShape:Shape;
+    private var _itemBitmap:Bitmap;
     private var _topWall:WallSprite;
     private var _bottomWall:WallSprite;
     private var _leftWall:WallSprite;
@@ -27,6 +30,7 @@ class CellSprite extends Container {
         _backgroundShape.graphics.endFill();
         addChild(_backgroundShape);
         drawWalls();
+        drawItem();
         updateDisplay();
     }
 
@@ -47,6 +51,20 @@ class CellSprite extends Container {
         _bottomWall.display = (_data.bottom == null);
         _rightWall.display = (_data.right == null);
         _leftWall.display = (_data.left == null);
+    }
+
+    private function drawItem():Void{
+        if(_data.item != null){
+            switch(_data.item.type){
+                case ItemType.POTION:
+                    _itemBitmap = new Bitmap('images/potion_sprite.png');
+                case ItemType.TRAP:
+                    _itemBitmap = new Bitmap('images/trap_sprite.png');
+                case ItemType.PARFUM:
+                    _itemBitmap = new Bitmap('images/parfum_sprite.png');
+            }
+            addChild(_itemBitmap);
+        }
     }
 
     private function drawWalls( ):Void {

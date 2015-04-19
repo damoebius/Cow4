@@ -1,4 +1,8 @@
 package com.tamina.cow4.ui;
+import com.tamina.cow4.model.ParfumItem;
+import com.tamina.cow4.model.TrapItem;
+import com.tamina.cow4.model.PotionItem;
+import com.tamina.cow4.model.ItemType;
 import org.tamina.geom.Point;
 import org.tamina.events.CreateJSEvent;
 import com.tamina.cow4.model.Cell;
@@ -16,6 +20,21 @@ class EditorCellSprite extends CellSprite {
         _bottomWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
         _leftWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
         _rightWall.addEventListener(CreateJSEvent.MOUSE_DOWN, wall_clickHandler);
+        _backgroundShape.addEventListener(CreateJSEvent.MOUSE_DOWN, background_clickHandler);
+    }
+
+    private function background_clickHandler(event:MouseEvent):Void{
+        NotificationBus.instance.startUpdateDisplay.dispatch();
+        switch (MapEditor.itemType){
+            case ItemType.POTION:
+                _data.item = new PotionItem();
+            case ItemType.TRAP:
+                _data.item = new TrapItem();
+            case ItemType.PARFUM:
+                _data.item = new ParfumItem();
+        }
+            drawItem();
+        NotificationBus.instance.stopUpdateDisplay.dispatch();
     }
 
     private function getOppositeCell(target:Cell):Cell {

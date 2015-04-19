@@ -42,6 +42,7 @@ class SheepIA implements IIA {
                 result.actions.push(order);
             } else {
                 trace('path null : ' + currentCell.id + "//" + _targetCell.id);
+                _targetCell = null;
             }
         } catch ( e:js.Error ) {
             trace('error : ' + e.message);

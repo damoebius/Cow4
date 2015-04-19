@@ -35,11 +35,21 @@ class IAInfo {
 	 */
     public var pm:Int=1;
 
+    /**
+    * Liste des items récupérées
+    * @property items
+    * @type Array<Item>
+    *
+**/
+    public var items:Array<Item>;
+
+
 
     public function new( id:Float,name:String,avatar:String, pm:Int ) {
         this.id = id;
         this.name= name;
         this.avatar = avatar;
         this.pm = pm;
+        this.items = new Array<Item>();
     }
 }

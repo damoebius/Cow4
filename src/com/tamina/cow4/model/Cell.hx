@@ -14,6 +14,7 @@ class Cell {
     public var right(get, set):Cell;
 
     public var occupant:IAInfo;
+    public var item:Item;
 
     private var _top:Cell;
     private var _bottom:Cell;
@@ -31,6 +32,7 @@ class Cell {
         if (null != result.bottom) result.bottom = this.bottom.id;
         if (null != result.left) result.left = this.left.id;
         if (null != result.right) result.right = this.right.id;
+        result.item = this.item;
         return result;
     }
 
@@ -69,6 +71,7 @@ class Cell {
         var result = new Cell();
         result.id = value.id;
         result.occupant = value.occupant;
+        result.item = value.item;
         return result;
     }
 
