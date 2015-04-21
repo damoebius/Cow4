@@ -16,6 +16,26 @@ package com.tamina.cow4.model;
 	 */
     var MOVE="move";
 
+/**
+	 * ramasser un objet
+	 * @property GET_ITEM
+	 * @type String
+	 * @default getItem
+	 * @static
+	 * @readOnly
+	 */
+    var GET_ITEM="getItem";
+
+/**
+	 * utiliser un objet
+	 * @property USE_ITEM
+	 * @type String
+	 * @default useItem
+	 * @static
+	 * @readOnly
+	 */
+    var USE_ITEM="useItem";
+
     var FAIL="fail";
 
     var SUCCESS="success";

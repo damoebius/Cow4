@@ -1,5 +1,6 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.view.component.IAInfoComponent;
 import js.html.ImageElement;
 import js.html.Element;
 import haxe.Timer;
@@ -37,24 +38,17 @@ class PlayView extends HTMLComponent {
     private var _proxy:PlayerServerProxy;
     private var _updatePool:Array<UpdateRender>;
     private var _map:GameMap;
-    private var _ia1NameElement:Element;
-    private var _ia1LogoImage:ImageElement;
-    private var _ia1PMElement:Element;
-    private var _ia2NameElement:Element;
-    private var _ia2LogoImage:ImageElement;
-    private var _ia2PMElement:Element;
+
+    private var _ia1Info:IAInfoComponent;
+    private var _ia2Info:IAInfoComponent;
 
     public function new(containerId:String = "") {
         super(Browser.document.getElementById(containerId));
         _updatePool = new Array<UpdateRender>();
         _gameContainer = cast Browser.document.getElementById(PlayViewElementId.GAME_CONTAINER);
 
-        _ia1NameElement = cast Browser.document.getElementById(PlayViewElementId.IA1_NAME);
-        _ia1LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA1_LOGO);
-        _ia2NameElement = cast Browser.document.getElementById(PlayViewElementId.IA2_NAME);
-        _ia2LogoImage = cast Browser.document.getElementById(PlayViewElementId.IA2_LOGO);
-        _ia1PMElement = cast Browser.document.getElementById(PlayViewElementId.IA1_PM);
-        _ia2PMElement = cast Browser.document.getElementById(PlayViewElementId.IA2_PM);
+        _ia1Info = new IAInfoComponent(PlayViewElementId.IA1_CONTAINER);
+        _ia2Info = new IAInfoComponent(PlayViewElementId.IA2_CONTAINER);
 
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
@@ -84,9 +78,10 @@ class PlayView extends HTMLComponent {
         if (_updatePool.length > 0 && _stage.runningActions == 0) {
             var msg = _updatePool.shift();
             if (msg.ia.id == _map.iaList[0].id) {
-                _ia1PMElement.innerHTML = 'PM : ' + msg.ia.pm;
+                _ia1Info.updateData(msg.ia);
+
             } else if (msg.ia.id == _map.iaList[1].id) {
-                _ia2PMElement.innerHTML = 'PM : ' + msg.ia.pm;
+                _ia2Info.updateData(msg.ia);
             }
             _stage.updateMap(msg.ia, msg.actions);
         }
@@ -98,10 +93,8 @@ class PlayView extends HTMLComponent {
                 var render:Render = cast message;
                 _map = GameMap.fromGameMapVO(render.map);
                 _stage.data = _map;
-                _ia1NameElement.innerHTML = _map.iaList[0].name;
-                _ia1LogoImage.src = _map.iaList[0].avatar;
-                _ia2NameElement.innerHTML = _map.iaList[1].name;
-                _ia2LogoImage.src = _map.iaList[1].avatar;
+                _ia1Info.updateData(_map.iaList[0]);
+                _ia2Info.updateData(_map.iaList[1]);
             case UpdateRender.MESSAGE_TYPE:
                 var update:UpdateRender = cast message;
                 _updatePool.push(update);

@@ -70,6 +70,10 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
                 this.addChild(_endScreen);
 
                 _endScreen.setMessage('success : ' + ia.name + ' : ' + success.message);
+            case Action.GET_ITEM :
+//todo
+            case Action.USE_ITEM :
+//todo
         }
         _runningActions--;
         updateDisplay();

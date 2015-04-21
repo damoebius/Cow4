@@ -1,9 +1,9 @@
 package com.tamina.cow4.net;
+import js.html.ProgressEvent;
 import org.tamina.log.QuickLogger;
 import msignal.Signal.Signal1;
 import haxe.Json;
 import js.html.XMLHttpRequest;
-import js.html.XMLHttpRequestProgressEvent;
 import com.tamina.cow4.net.request.GetIAInfoList;
 import com.tamina.cow4.model.IAInfo;
 class ServerProxy {
@@ -22,7 +22,7 @@ class ServerProxy {
 
     }
 
-    private function getIaListSuccessHandler( requestResult:XMLHttpRequestProgressEvent ):Void {
+    private function getIaListSuccessHandler( requestResult:ProgressEvent ):Void {
         QuickLogger.info('iaList complete');
         var req:XMLHttpRequest = cast requestResult.target;
         var result:Array<IAInfo> = cast Json.parse(req.response);

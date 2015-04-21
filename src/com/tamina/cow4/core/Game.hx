@@ -103,6 +103,10 @@ class Game {
                     if(result.type != ParseResultType.SUCCESS){
                         break;
                     }
+                case Action.GET_ITEM :
+                    //todo
+                case Action.USE_ITEM :
+                    //todo
                 case Action.FAIL :
                 case Action.SUCCESS :
                     result.type = ParseResultType.ERROR;
