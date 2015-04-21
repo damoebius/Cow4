@@ -1,5 +1,6 @@
 package com.tamina.cow4.view.component;
 
+import com.tamina.cow4.model.ItemType;
 import js.html.ImageElement;
 import com.tamina.cow4.model.IAInfo;
 import js.Browser;
@@ -28,6 +29,9 @@ class IAInfoComponent extends HTMLComponent {
     private var _parfum:Element;
 
     private var _data:IAInfo;
+    private var _trapNumber:Int=0;
+    private var _potionNumber:Int=0;
+    private var _parfumNumber:Int=0;
 
     public function new(containerId:String) {
         super(Browser.document.getElementById(containerId));
@@ -35,11 +39,25 @@ class IAInfoComponent extends HTMLComponent {
 
     public function updateData(data:IAInfo):Void{
        _data  = data;
+        _trapNumber = 0;
+        _potionNumber = 0;
+        _parfumNumber = 0;
+        for(i in 0..._data.items.length){
+            var item = _data.items[i];
+            switch(item.type){
+                case ItemType.POTION:
+                _potionNumber++;
+                case ItemType.PARFUM:
+                    _parfumNumber++;
+                case ItemType.TRAP:
+                    _trapNumber++;
+            }
+        }
         _pm.innerHTML = 'PM : ' + _data.pm;
         _name.innerHTML = _data.name;
         _logo.src = _data.avatar;
-        _trap.innerHTML = 'Trap : ' + _data.pm;
-        _potion.innerHTML = 'Potion : ' + _data.pm;
-        _parfum.innerHTML = 'Parfum : ' + _data.pm;
+        _trap.innerHTML = 'Trap : ' + _trapNumber;
+        _potion.innerHTML = 'Potion : ' + _potionNumber;
+        _parfum.innerHTML = 'Parfum : ' + _parfumNumber;
     }
 }

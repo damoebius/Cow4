@@ -24,7 +24,8 @@ class IAItemRenderer extends HTMLComponent {
     public function new( parent:Element, info:IAInfo ) {
         _info = info;
         clickSignal = new Signal0();
-        super(parent);
+        super();
+        addToElement(parent);
     }
 
     private function get_info():IAInfo{
