@@ -35,7 +35,7 @@ class IADemoApp {
     public function new( ) {
         _potionsPosition = new Array<Point>();
         _potionsPosition.push(new Point(21, 4));
-        _potionsPosition.push(new Point(4, 21));
+        _potionsPosition.push(new Point(3, 20));
         _mode = Mode.GET_A_POTION;
         _socket = new TCPSocket();
         _socket.connect(Config.SOCKET_PORT, 'localhost', connectionHandler);
@@ -81,14 +81,14 @@ class IADemoApp {
         var result = new TurnResult();
         try {
             var wait = Math.round(Math.random()) == 0;
+            var gameData = GameMap.fromGameMapVO(data.data);
+            trace('turn : ' + gameData.currentTurn);
+            if(gameData.currentTurn <= 1){
+                _mode = Mode.GET_A_POTION;
+            }
             if ( wait ) {
                 trace('wait');
             } else {
-                var gameData = GameMap.fromGameMapVO(data.data);
-                trace('turn : ' + gameData.currentTurn);
-                if(gameData.currentTurn == 0){
-                    _mode = Mode.GET_A_POTION;
-                }
                 var myIa = gameData.getIAById(_id);
                 trace('pm : ' + myIa.pm);
                 var currentCell = gameData.getCellByIA(_id);

@@ -28,6 +28,7 @@ class IA extends Client implements IIA {
         items = new Array<Item>();
         _proxy = new ClientProxy(c);
         _proxy.messageSignal.add(clientMessageHandler);
+        _proxy.closeSignal.add(exitHandler);
         _proxy.errorSignal.add(exitHandler);
         turnComplete = new Signal1<TurnResult>();
     }

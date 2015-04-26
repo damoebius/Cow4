@@ -48,6 +48,8 @@ class PlayerCellSprite extends CellSprite {
             } else {
                 _playerSprite.visible = false;
                 _sheepSprite.visible = false;
+            } if(data.item == null && _itemBitmap != null && _itemBitmap.visible){
+                _itemBitmap.visible = false;
             }
         }
     }

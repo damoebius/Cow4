@@ -41,7 +41,7 @@ class PathFinder {
                 break;
             }
         }
-        if (!result && _inc < 50) {
+        if (!result && _inc < 500) {
             find();
         }
     }

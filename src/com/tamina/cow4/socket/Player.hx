@@ -42,10 +42,23 @@ class Player extends Client {
                 nodejs.Console.info('StartBattle');
                 var startBattle:StartBattle = cast message;
                 var iaList = new Array<IA>();
-                iaList.push(SocketServer.getIAById( cast startBattle.IA1));
-                iaList.push(SocketServer.getIAById( cast startBattle.IA2) ) ;
-                var notif = new StartBattleNotification(iaList,this);
-                NotificationBus.instance.startBattle.dispatch(notif);
+                var ia = SocketServer.getIAById( cast startBattle.IA1);
+                if(ia != null){
+                    iaList.push(ia);
+                    var ia = SocketServer.getIAById( cast startBattle.IA2);
+                    if(ia != null){
+                        iaList.push(ia);
+                        var notif = new StartBattleNotification(iaList,this);
+                        NotificationBus.instance.startBattle.dispatch(notif);
+                    } else {
+                        nodejs.Console.error('ia 2 introuvable');
+                        _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'ia 1 introuvable') );
+                    }
+                }  else {
+                   nodejs.Console.error('ia 1 introuvable');
+                    _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'ia1 introuvable') );
+                }
+
             default: _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
         }
