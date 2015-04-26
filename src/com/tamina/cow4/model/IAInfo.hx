@@ -45,11 +45,14 @@ class IAInfo {
 
 
 
-    public function new( id:Float,name:String,avatar:String, pm:Int ) {
+    public function new( id:Float,name:String,avatar:String, pm:Int, items:Array<Item> ) {
         this.id = id;
         this.name= name;
         this.avatar = avatar;
         this.pm = pm;
         this.items = new Array<Item>();
+        for(i in 0...items.length){
+            this.items.push(items[i]);
+        }
     }
 }

@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.model.Item;
 import com.tamina.cow4.socket.message.TurnResult;
 import msignal.Signal;
 import com.tamina.cow4.socket.message.Error;
@@ -18,11 +19,13 @@ class IA extends Client implements IIA {
     public var avatar:URL;
     public var turnComplete:Signal1<TurnResult>;
     public var pm:Int=1;
+    public var items:Array<Item>;
 
     private var _proxy:ClientProxy;
 
     public function new(c:TCPSocket) {
         super();
+        items = new Array<Item>();
         _proxy = new ClientProxy(c);
         _proxy.messageSignal.add(clientMessageHandler);
         _proxy.errorSignal.add(exitHandler);
@@ -30,7 +33,7 @@ class IA extends Client implements IIA {
     }
 
     public function toInfo():IAInfo {
-        return new IAInfo(id, name, avatar.path, pm);
+        return new IAInfo(id, name, avatar.path, pm, items);
     }
 
     public function getTurnOrder(data:GameMap):Void {

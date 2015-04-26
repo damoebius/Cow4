@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.model.Item;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.utils.GameUtils;
 import com.tamina.cow4.model.Cell;
@@ -16,16 +17,18 @@ class SheepIA implements IIA {
     public var name:String = IA_NAME;
     public var turnComplete:Signal1<TurnResult>;
     public var pm:Int = 1;
+    public var items:Array<Item>;
 
     private var _targetCell:Cell;
 
     public function new( ):Void {
         id = UID.getUID();
+        items = new Array<Item>();
         turnComplete = new Signal1<TurnResult>();
     }
 
     public function toInfo( ):IAInfo {
-        return new IAInfo(id, name, "", pm);
+        return new IAInfo(id, name, "", pm, items);
     }
 
     public function getTurnOrder( data:GameMap ):Void {

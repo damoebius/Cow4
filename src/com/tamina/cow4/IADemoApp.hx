@@ -1,4 +1,7 @@
 package com.tamina.cow4;
+import com.tamina.cow4.socket.message.order.GetItemOrder;
+import org.tamina.geom.Point;
+import com.tamina.cow4.ia.Mode;
 import com.tamina.cow4.utils.GameUtils;
 import com.tamina.cow4.model.Direction;
 import com.tamina.cow4.model.Cell;
@@ -26,8 +29,14 @@ class IADemoApp {
     private var _proxy:GameServerProxy;
     private var _id:Float;
     private var _currentDirection:Direction;
+    private var _mode:Mode;
+    private var _potionsPosition:Array<Point>;
 
     public function new( ) {
+        _potionsPosition = new Array<Point>();
+        _potionsPosition.push(new Point(21, 4));
+        _potionsPosition.push(new Point(4, 21));
+        _mode = Mode.GET_A_POTION;
         _socket = new TCPSocket();
         _socket.connect(Config.SOCKET_PORT, 'localhost', connectionHandler);
         _currentDirection = Direction.RIGHT;
@@ -76,11 +85,36 @@ class IADemoApp {
                 trace('wait');
             } else {
                 var gameData = GameMap.fromGameMapVO(data.data);
+                trace('turn : ' + gameData.currentTurn);
+                if(gameData.currentTurn == 0){
+                    _mode = Mode.GET_A_POTION;
+                }
                 var myIa = gameData.getIAById(_id);
                 trace('pm : ' + myIa.pm);
                 var currentCell = gameData.getCellByIA(_id);
-                var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
-                var path = GameUtils.getPath(currentCell, sheepCell, gameData);
+                var targetCell:Cell;
+                if ( _mode == Mode.GET_A_POTION ) {
+                    trace('mode get a potion');
+                    var c1 = gameData.getCellAt(cast(_potionsPosition[0].x), cast( _potionsPosition[0].y));
+                    var c2 = gameData.getCellAt(cast(_potionsPosition[1].x), cast( _potionsPosition[1].y));
+                    if ( currentCell.id == c1.id || currentCell.id == c2.id ) {
+                        trace('potion found');
+                        _mode = Mode.CATCH_THE_CHICKEN;
+                        var order = new GetItemOrder();
+                        result.actions.push(order);
+                        targetCell = gameData.getCellByIA(gameData.iaList[2].id);
+                    } else {
+                        var p1 = GameUtils.getPath(currentCell, c1, gameData);
+                        var p2 = GameUtils.getPath(currentCell, c2, gameData);
+                        targetCell = c1;
+                        if ( p1 != null && p2 != null && p1.length > p2.length ) {
+                            targetCell = c2;
+                        }
+                    }
+                } else {
+                    targetCell = gameData.getCellByIA(gameData.iaList[2].id);
+                }
+                var path = GameUtils.getPath(currentCell, targetCell, gameData);
                 if ( path != null ) {
                     for ( i in 0...myIa.pm ) {
                         trace(currentCell.id + ' -> ' + path.getItemAt(i + 1).id);
@@ -88,7 +122,7 @@ class IADemoApp {
                         result.actions.push(order);
                     }
                 } else {
-                    trace('path null : ' + currentCell.id + "//" + sheepCell.id);
+                    trace('path null : ' + currentCell.id + "//" + targetCell.id);
                 }
             }
         } catch ( e:js.Error ) {
@@ -97,7 +131,7 @@ class IADemoApp {
 
         var timeout = Math.round(Math.random()) == 0;
         if ( false ) {
-           trace('timeout');
+            trace('timeout');
         } else {
             _proxy.sendMessage(result);
         }
