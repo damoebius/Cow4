@@ -1,4 +1,4 @@
-(function () { "use strict";
+(function (console) { "use strict";
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
@@ -39,28 +39,29 @@ Reflect.compareMethods = function(f1,f2) {
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
+	return js_Boot.__string_rec(s,"");
 };
-var com = {};
-com.tamina = {};
-com.tamina.cow4 = {};
-com.tamina.cow4.IADemoApp = function() {
+var com_tamina_cow4_IADemoApp = function() {
+	this._potionsPosition = [];
+	this._potionsPosition.push(new org_tamina_geom_Point(21,4));
+	this._potionsPosition.push(new org_tamina_geom_Point(3,20));
+	this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
 	this._socket = new (require('net').Socket)();
 	this._socket.connect(8127,"localhost",$bind(this,this.connectionHandler));
 	this._currentDirection = 1;
 };
-com.tamina.cow4.IADemoApp.__name__ = true;
-com.tamina.cow4.IADemoApp.main = function() {
-	com.tamina.cow4.IADemoApp._app = new com.tamina.cow4.IADemoApp();
+com_tamina_cow4_IADemoApp.__name__ = true;
+com_tamina_cow4_IADemoApp.main = function() {
+	com_tamina_cow4_IADemoApp._app = new com_tamina_cow4_IADemoApp();
 };
-com.tamina.cow4.IADemoApp.prototype = {
+com_tamina_cow4_IADemoApp.prototype = {
 	connectionHandler: function() {
 		console.log("CONNECTED <br/> Sending Auth message...");
-		this._proxy = new com.tamina.cow4.socket.GameServerProxy(this._socket);
+		this._proxy = new com_tamina_cow4_socket_GameServerProxy(this._socket);
 		this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
 		this._proxy.closeSignal.add($bind(this,this.quit));
-		this._proxy.sendMessage(new com.tamina.cow4.socket.message.Authenticate("DemoIA","http://images.groups.adobe.com/1332a08/logo100x100.gif"));
-		haxe.Timer.delay($bind(this,this.quit),600000);
+		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA","http://images.groups.adobe.com/1332a08/logo100x100.gif"));
+		haxe_Timer.delay($bind(this,this.quit),600000);
 	}
 	,serverMessageHandler: function(message) {
 		console.info("[TestIA] Data recevied ");
@@ -87,29 +88,48 @@ com.tamina.cow4.IADemoApp.prototype = {
 		} else console.warn("[TestIA]  MESSAGE inconnu ");
 	}
 	,processTurn: function(data) {
-		var result = new com.tamina.cow4.socket.message.TurnResult();
+		var result = new com_tamina_cow4_socket_message_TurnResult();
 		try {
 			var wait = Math.round(Math.random()) == 0;
+			var gameData = com_tamina_cow4_model_GameMap.fromGameMapVO(data.data);
+			console.log("turn : " + gameData.currentTurn);
+			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
 			if(wait) console.log("wait"); else {
-				var gameData = com.tamina.cow4.model.GameMap.fromGameMapVO(data.data);
 				var myIa = gameData.getIAById(this._id);
 				console.log("pm : " + myIa.pm);
 				var currentCell = gameData.getCellByIA(this._id);
-				var sheepCell = gameData.getCellByIA(gameData.iaList[2].id);
-				var path = com.tamina.cow4.utils.GameUtils.getPath(currentCell,sheepCell,gameData);
+				var targetCell;
+				if(this._mode == com_tamina_cow4_ia_Mode.GET_A_POTION) {
+					console.log("mode get a potion");
+					var c1 = gameData.getCellAt(this._potionsPosition[0].x,this._potionsPosition[0].y);
+					var c2 = gameData.getCellAt(this._potionsPosition[1].x,this._potionsPosition[1].y);
+					if(currentCell.id == c1.id || currentCell.id == c2.id) {
+						console.log("potion found");
+						this._mode = com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN;
+						var order = new com_tamina_cow4_socket_message_order_GetItemOrder();
+						result.actions.push(order);
+						targetCell = gameData.getCellByIA(gameData.iaList[2].id);
+					} else {
+						var p1 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c1,gameData);
+						var p2 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c2,gameData);
+						targetCell = c1;
+						if(p1 != null && p2 != null && p1.get_length() > p2.get_length()) targetCell = c2;
+					}
+				} else targetCell = gameData.getCellByIA(gameData.iaList[2].id);
+				var path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,targetCell,gameData);
 				if(path != null) {
 					var _g1 = 0;
 					var _g = myIa.pm;
 					while(_g1 < _g) {
 						var i = _g1++;
 						console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
-						var order = new com.tamina.cow4.socket.message.order.MoveOrder(path.getItemAt(i + 1));
-						result.actions.push(order);
+						var order1 = new com_tamina_cow4_socket_message_order_MoveOrder(path.getItemAt(i + 1));
+						result.actions.push(order1);
 					}
-				} else console.log("path null : " + currentCell.id + "//" + sheepCell.id);
+				} else console.log("path null : " + currentCell.id + "//" + targetCell.id);
 			}
 		} catch( e ) {
-			if( js.Boot.__instanceof(e,Error) ) {
+			if( js_Boot.__instanceof(e,Error) ) {
 				console.log("error : " + e.message);
 			} else throw(e);
 		}
@@ -118,29 +138,27 @@ com.tamina.cow4.IADemoApp.prototype = {
 	}
 	,quit: function() {
 		this._socket.destroy();
-		nodejs.NodeJS.get_process().exit(0);
+		nodejs_NodeJS.get_process().exit(0);
 	}
-	,__class__: com.tamina.cow4.IADemoApp
+	,__class__: com_tamina_cow4_IADemoApp
 };
-com.tamina.cow4.config = {};
-com.tamina.cow4.config.Config = function() {
+var com_tamina_cow4_config_Config = function() {
 };
-com.tamina.cow4.config.Config.__name__ = true;
-com.tamina.cow4.config.Config.prototype = {
-	__class__: com.tamina.cow4.config.Config
+com_tamina_cow4_config_Config.__name__ = true;
+com_tamina_cow4_config_Config.prototype = {
+	__class__: com_tamina_cow4_config_Config
 };
-com.tamina.cow4.core = {};
-com.tamina.cow4.core.PathFinder = function() {
+var com_tamina_cow4_core_PathFinder = function() {
 	this._inc = 0;
-	this._paths = new Array();
+	this._paths = [];
 };
-com.tamina.cow4.core.PathFinder.__name__ = true;
-com.tamina.cow4.core.PathFinder.prototype = {
+com_tamina_cow4_core_PathFinder.__name__ = true;
+com_tamina_cow4_core_PathFinder.prototype = {
 	getPath: function(fromCell,toCell,map) {
 		this._map = map;
 		this._source = fromCell;
 		this._target = toCell;
-		var p = new com.tamina.cow4.model.Path();
+		var p = new com_tamina_cow4_model_Path();
 		p.push(this._source);
 		this._paths.push(p);
 		var startDate = new Date();
@@ -160,7 +178,7 @@ com.tamina.cow4.core.PathFinder.prototype = {
 				break;
 			}
 		}
-		if(!result && this._inc < 50) this.find();
+		if(!result && this._inc < 500) this.find();
 	}
 	,checkPath: function(target) {
 		var result = false;
@@ -176,7 +194,7 @@ com.tamina.cow4.core.PathFinder.prototype = {
 				p.push(nextCell);
 				this._result = p;
 				break;
-			} else if(!com.tamina.cow4.model.Path.contains(nextCell,this._paths)) {
+			} else if(!com_tamina_cow4_model_Path.contains(nextCell,this._paths)) {
 				var p1 = target.copy();
 				p1.push(nextCell);
 				this._paths.push(p1);
@@ -185,27 +203,28 @@ com.tamina.cow4.core.PathFinder.prototype = {
 		HxOverrides.remove(this._paths,target);
 		return result;
 	}
-	,__class__: com.tamina.cow4.core.PathFinder
+	,__class__: com_tamina_cow4_core_PathFinder
 };
-com.tamina.cow4.model = {};
-com.tamina.cow4.model._Action = {};
-com.tamina.cow4.model._Action.Action_Impl_ = function() { };
-com.tamina.cow4.model._Action.Action_Impl_.__name__ = true;
-com.tamina.cow4.model.Cell = function() {
-	this.id = org.tamina.utils.UID.getUID();
-	this.changeSignal = new msignal.Signal0();
+var com_tamina_cow4_ia_Mode = { __ename__ : true, __constructs__ : ["GET_A_POTION","CATCH_THE_CHICKEN"] };
+com_tamina_cow4_ia_Mode.GET_A_POTION = ["GET_A_POTION",0];
+com_tamina_cow4_ia_Mode.GET_A_POTION.__enum__ = com_tamina_cow4_ia_Mode;
+com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN = ["CATCH_THE_CHICKEN",1];
+com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN.__enum__ = com_tamina_cow4_ia_Mode;
+var com_tamina_cow4_model_Cell = function() {
+	this.id = org_tamina_utils_UID.getUID();
+	this.changeSignal = new msignal_Signal0();
 };
-com.tamina.cow4.model.Cell.__name__ = true;
-com.tamina.cow4.model.Cell.fromCellVO = function(value) {
-	var result = new com.tamina.cow4.model.Cell();
+com_tamina_cow4_model_Cell.__name__ = true;
+com_tamina_cow4_model_Cell.fromCellVO = function(value) {
+	var result = new com_tamina_cow4_model_Cell();
 	result.id = value.id;
 	result.occupant = value.occupant;
 	result.item = value.item;
 	return result;
 };
-com.tamina.cow4.model.Cell.prototype = {
+com_tamina_cow4_model_Cell.prototype = {
 	toCellVO: function() {
-		var result = new com.tamina.cow4.model.vo.CellVO(this.id,this.occupant);
+		var result = new com_tamina_cow4_model_vo_CellVO(this.id,this.occupant);
 		if(null != result.top) result.top = this.get_top().id;
 		if(null != result.bottom) result.bottom = this.get_bottom().id;
 		if(null != result.left) result.left = this.get_left().id;
@@ -214,7 +233,7 @@ com.tamina.cow4.model.Cell.prototype = {
 		return result;
 	}
 	,getNeighboors: function() {
-		var result = new Array();
+		var result = [];
 		if(this.get_top() != null) result.push(this.get_top());
 		if(this.get_bottom() != null) result.push(this.get_bottom());
 		if(this.get_left() != null) result.push(this.get_left());
@@ -266,19 +285,16 @@ com.tamina.cow4.model.Cell.prototype = {
 		}
 		return this._right;
 	}
-	,__class__: com.tamina.cow4.model.Cell
+	,__class__: com_tamina_cow4_model_Cell
 };
-com.tamina.cow4.model._Direction = {};
-com.tamina.cow4.model._Direction.Direction_Impl_ = function() { };
-com.tamina.cow4.model._Direction.Direction_Impl_.__name__ = true;
-com.tamina.cow4.model.GameMap = function() {
+var com_tamina_cow4_model_GameMap = function() {
 	this.currentTurn = 0;
-	this.cells = new Array();
-	this.iaList = new Array();
+	this.cells = [];
+	this.iaList = [];
 };
-com.tamina.cow4.model.GameMap.__name__ = true;
-com.tamina.cow4.model.GameMap.fromGameMapVO = function(value) {
-	var result = new com.tamina.cow4.model.GameMap();
+com_tamina_cow4_model_GameMap.__name__ = true;
+com_tamina_cow4_model_GameMap.fromGameMapVO = function(value) {
+	var result = new com_tamina_cow4_model_GameMap();
 	result.id = value.id;
 	result.iaList = value.iaList;
 	result.currentTurn = value.currentTurn;
@@ -286,12 +302,12 @@ com.tamina.cow4.model.GameMap.fromGameMapVO = function(value) {
 	var _g = value.cells.length;
 	while(_g1 < _g) {
 		var i = _g1++;
-		result.cells.push(new Array());
+		result.cells.push([]);
 		var _g3 = 0;
 		var _g2 = value.cells[i].length;
 		while(_g3 < _g2) {
 			var j = _g3++;
-			result.cells[i].push(com.tamina.cow4.model.Cell.fromCellVO(value.cells[i][j]));
+			result.cells[i].push(com_tamina_cow4_model_Cell.fromCellVO(value.cells[i][j]));
 		}
 	}
 	var _g11 = 0;
@@ -312,7 +328,7 @@ com.tamina.cow4.model.GameMap.fromGameMapVO = function(value) {
 	}
 	return result;
 };
-com.tamina.cow4.model.GameMap.prototype = {
+com_tamina_cow4_model_GameMap.prototype = {
 	getCellPosition: function(cell) {
 		var result = null;
 		var _g1 = 0;
@@ -324,7 +340,7 @@ com.tamina.cow4.model.GameMap.prototype = {
 			while(_g3 < _g2) {
 				var j = _g3++;
 				if(this.cells[i][j].id == cell.id) {
-					result = new org.tamina.geom.Point(j,i);
+					result = new org_tamina_geom_Point(j,i);
 					break;
 				}
 			}
@@ -368,7 +384,7 @@ com.tamina.cow4.model.GameMap.prototype = {
 		return result;
 	}
 	,toGameMapVO: function() {
-		var result = new com.tamina.cow4.model.vo.GameMapVO();
+		var result = new com_tamina_cow4_model_vo_GameMapVO();
 		result.id = this.id;
 		result.iaList = this.iaList;
 		result.currentTurn = this.currentTurn;
@@ -376,7 +392,7 @@ com.tamina.cow4.model.GameMap.prototype = {
 		var _g = this.cells.length;
 		while(_g1 < _g) {
 			var i = _g1++;
-			result.cells.push(new Array());
+			result.cells.push([]);
 			var _g3 = 0;
 			var _g2 = this.cells[i].length;
 			while(_g3 < _g2) {
@@ -402,35 +418,38 @@ com.tamina.cow4.model.GameMap.prototype = {
 		}
 		return result;
 	}
-	,__class__: com.tamina.cow4.model.GameMap
+	,__class__: com_tamina_cow4_model_GameMap
 };
-com.tamina.cow4.model.IAInfo = function(id,name,avatar,pm) {
+var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items) {
 	this.pm = 1;
 	this.id = id;
 	this.name = name;
 	this.avatar = avatar;
 	this.pm = pm;
-	this.items = new Array();
+	this.items = [];
+	var _g1 = 0;
+	var _g = items.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		this.items.push(items[i]);
+	}
 };
-com.tamina.cow4.model.IAInfo.__name__ = true;
-com.tamina.cow4.model.IAInfo.prototype = {
-	__class__: com.tamina.cow4.model.IAInfo
+com_tamina_cow4_model_IAInfo.__name__ = true;
+com_tamina_cow4_model_IAInfo.prototype = {
+	__class__: com_tamina_cow4_model_IAInfo
 };
-com.tamina.cow4.model.Item = function(type) {
+var com_tamina_cow4_model_Item = function(type) {
 	this.type = type;
 };
-com.tamina.cow4.model.Item.__name__ = true;
-com.tamina.cow4.model.Item.prototype = {
-	__class__: com.tamina.cow4.model.Item
+com_tamina_cow4_model_Item.__name__ = true;
+com_tamina_cow4_model_Item.prototype = {
+	__class__: com_tamina_cow4_model_Item
 };
-com.tamina.cow4.model._ItemType = {};
-com.tamina.cow4.model._ItemType.ItemType_Impl_ = function() { };
-com.tamina.cow4.model._ItemType.ItemType_Impl_.__name__ = true;
-com.tamina.cow4.model.Path = function(content) {
-	if(content == null) this._content = new Array(); else this._content = content;
+var com_tamina_cow4_model_Path = function(content) {
+	if(content == null) this._content = []; else this._content = content;
 };
-com.tamina.cow4.model.Path.__name__ = true;
-com.tamina.cow4.model.Path.contains = function(item,list) {
+com_tamina_cow4_model_Path.__name__ = true;
+com_tamina_cow4_model_Path.contains = function(item,list) {
 	var result = false;
 	var _g1 = 0;
 	var _g = list.length;
@@ -443,7 +462,7 @@ com.tamina.cow4.model.Path.contains = function(item,list) {
 	}
 	return result;
 };
-com.tamina.cow4.model.Path.prototype = {
+com_tamina_cow4_model_Path.prototype = {
 	getLastItem: function() {
 		return this._content[this._content.length - 1];
 	}
@@ -470,49 +489,47 @@ com.tamina.cow4.model.Path.prototype = {
 		return HxOverrides.remove(this._content,item);
 	}
 	,copy: function() {
-		return new com.tamina.cow4.model.Path(this._content.slice());
+		return new com_tamina_cow4_model_Path(this._content.slice());
 	}
 	,get_length: function() {
 		return this._content.length;
 	}
-	,__class__: com.tamina.cow4.model.Path
+	,__class__: com_tamina_cow4_model_Path
 };
-com.tamina.cow4.model.TurnAction = function(type) {
+var com_tamina_cow4_model_TurnAction = function(type) {
 	this.type = type;
 };
-com.tamina.cow4.model.TurnAction.__name__ = true;
-com.tamina.cow4.model.TurnAction.prototype = {
-	__class__: com.tamina.cow4.model.TurnAction
+com_tamina_cow4_model_TurnAction.__name__ = true;
+com_tamina_cow4_model_TurnAction.prototype = {
+	__class__: com_tamina_cow4_model_TurnAction
 };
-com.tamina.cow4.model.vo = {};
-com.tamina.cow4.model.vo.CellVO = function(id,occupant) {
+var com_tamina_cow4_model_vo_CellVO = function(id,occupant) {
 	this.id = id;
 	this.occupant = occupant;
 };
-com.tamina.cow4.model.vo.CellVO.__name__ = true;
-com.tamina.cow4.model.vo.CellVO.prototype = {
-	__class__: com.tamina.cow4.model.vo.CellVO
+com_tamina_cow4_model_vo_CellVO.__name__ = true;
+com_tamina_cow4_model_vo_CellVO.prototype = {
+	__class__: com_tamina_cow4_model_vo_CellVO
 };
-com.tamina.cow4.model.vo.GameMapVO = function() {
+var com_tamina_cow4_model_vo_GameMapVO = function() {
 	this.currentTurn = 0;
-	this.cells = new Array();
-	this.iaList = new Array();
+	this.cells = [];
+	this.iaList = [];
 };
-com.tamina.cow4.model.vo.GameMapVO.__name__ = true;
-com.tamina.cow4.model.vo.GameMapVO.prototype = {
-	__class__: com.tamina.cow4.model.vo.GameMapVO
+com_tamina_cow4_model_vo_GameMapVO.__name__ = true;
+com_tamina_cow4_model_vo_GameMapVO.prototype = {
+	__class__: com_tamina_cow4_model_vo_GameMapVO
 };
-com.tamina.cow4.socket = {};
-com.tamina.cow4.socket.Proxy = function(type) {
+var com_tamina_cow4_socket_Proxy = function(type) {
 	this._type = "proxy";
 	this._data = "";
 	this._type = type;
-	this.errorSignal = new msignal.Signal0();
-	this.closeSignal = new msignal.Signal0();
-	this.messageSignal = new msignal.Signal1();
+	this.errorSignal = new msignal_Signal0();
+	this.closeSignal = new msignal_Signal0();
+	this.messageSignal = new msignal_Signal1();
 };
-com.tamina.cow4.socket.Proxy.__name__ = true;
-com.tamina.cow4.socket.Proxy.prototype = {
+com_tamina_cow4_socket_Proxy.__name__ = true;
+com_tamina_cow4_socket_Proxy.prototype = {
 	sendError: function(error) {
 	}
 	,socketServer_openHandler: function(c) {
@@ -539,156 +556,165 @@ com.tamina.cow4.socket.Proxy.prototype = {
 			message = JSON.parse(this._data);
 			this._data = "";
 		} catch( e ) {
-			if( js.Boot.__instanceof(e,Error) ) {
+			if( js_Boot.__instanceof(e,Error) ) {
 				console.log("[" + this._type + "] impossible de parser le message json : " + e.message);
-				this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
+				this.sendError(new com_tamina_cow4_socket_message_Error(2,"message inconnu"));
 			} else throw(e);
 		}
-		if(message != null && message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com.tamina.cow4.socket.message.Error(2,"message inconnu"));
+		if(message != null && message.type != null) this.messageSignal.dispatch(message); else this.sendError(new com_tamina_cow4_socket_message_Error(2,"message inconnu"));
 	}
-	,__class__: com.tamina.cow4.socket.Proxy
+	,__class__: com_tamina_cow4_socket_Proxy
 };
-com.tamina.cow4.socket.GameServerProxy = function(c) {
-	com.tamina.cow4.socket.Proxy.call(this,"game server proxy");
+var com_tamina_cow4_socket_GameServerProxy = function(c) {
+	com_tamina_cow4_socket_Proxy.call(this,"game server proxy");
 	this._socket = c;
-	this._socket.on(nodejs.net.TCPSocketEventType.Connect,$bind(this,this.socketServer_openHandler));
-	this._socket.on(nodejs.net.TCPSocketEventType.Close,$bind(this,this.socketServer_closeHandler));
-	this._socket.on(nodejs.net.TCPSocketEventType.Error,$bind(this,this.socketServer_errorHandler));
-	this._socket.on(nodejs.net.TCPSocketEventType.Data,$bind(this,this.socketServer_dataHandler));
+	this._socket.on(nodejs_net_TCPSocketEventType.Connect,$bind(this,this.socketServer_openHandler));
+	this._socket.on(nodejs_net_TCPSocketEventType.Close,$bind(this,this.socketServer_closeHandler));
+	this._socket.on(nodejs_net_TCPSocketEventType.Error,$bind(this,this.socketServer_errorHandler));
+	this._socket.on(nodejs_net_TCPSocketEventType.Data,$bind(this,this.socketServer_dataHandler));
 };
-com.tamina.cow4.socket.GameServerProxy.__name__ = true;
-com.tamina.cow4.socket.GameServerProxy.__super__ = com.tamina.cow4.socket.Proxy;
-com.tamina.cow4.socket.GameServerProxy.prototype = $extend(com.tamina.cow4.socket.Proxy.prototype,{
+com_tamina_cow4_socket_GameServerProxy.__name__ = true;
+com_tamina_cow4_socket_GameServerProxy.__super__ = com_tamina_cow4_socket_Proxy;
+com_tamina_cow4_socket_GameServerProxy.prototype = $extend(com_tamina_cow4_socket_Proxy.prototype,{
 	sendMessage: function(message) {
 		try {
 			this._socket.write(message.serialize());
 		} catch( e ) {
-			if( js.Boot.__instanceof(e,Error) ) {
+			if( js_Boot.__instanceof(e,Error) ) {
 				console.log("ERROR : " + e.message);
 			} else throw(e);
 		}
 	}
 	,sendError: function(error) {
 	}
-	,__class__: com.tamina.cow4.socket.GameServerProxy
+	,__class__: com_tamina_cow4_socket_GameServerProxy
 });
-com.tamina.cow4.socket.message = {};
-com.tamina.cow4.socket.message.SocketMessage = function(type) {
+var com_tamina_cow4_socket_message_SocketMessage = function(type) {
 	this.type = "";
 	this.type = type;
 };
-com.tamina.cow4.socket.message.SocketMessage.__name__ = true;
-com.tamina.cow4.socket.message.SocketMessage.prototype = {
+com_tamina_cow4_socket_message_SocketMessage.__name__ = true;
+com_tamina_cow4_socket_message_SocketMessage.prototype = {
 	serialize: function() {
 		return JSON.stringify(this) + "#end#";
 	}
-	,__class__: com.tamina.cow4.socket.message.SocketMessage
+	,__class__: com_tamina_cow4_socket_message_SocketMessage
 };
-com.tamina.cow4.socket.message.ClientMessage = function(type) {
-	com.tamina.cow4.socket.message.SocketMessage.call(this,type);
+var com_tamina_cow4_socket_message_ClientMessage = function(type) {
+	com_tamina_cow4_socket_message_SocketMessage.call(this,type);
 };
-com.tamina.cow4.socket.message.ClientMessage.__name__ = true;
-com.tamina.cow4.socket.message.ClientMessage.__super__ = com.tamina.cow4.socket.message.SocketMessage;
-com.tamina.cow4.socket.message.ClientMessage.prototype = $extend(com.tamina.cow4.socket.message.SocketMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.ClientMessage
+com_tamina_cow4_socket_message_ClientMessage.__name__ = true;
+com_tamina_cow4_socket_message_ClientMessage.__super__ = com_tamina_cow4_socket_message_SocketMessage;
+com_tamina_cow4_socket_message_ClientMessage.prototype = $extend(com_tamina_cow4_socket_message_SocketMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_ClientMessage
 });
-com.tamina.cow4.socket.message.Authenticate = function(name,avatar) {
+var com_tamina_cow4_socket_message_Authenticate = function(name,avatar) {
 	if(avatar == null) avatar = "";
-	com.tamina.cow4.socket.message.ClientMessage.call(this,"authenticate");
+	com_tamina_cow4_socket_message_ClientMessage.call(this,"authenticate");
 	this.name = name;
 	this.avatar = avatar;
 };
-com.tamina.cow4.socket.message.Authenticate.__name__ = true;
-com.tamina.cow4.socket.message.Authenticate.__super__ = com.tamina.cow4.socket.message.ClientMessage;
-com.tamina.cow4.socket.message.Authenticate.prototype = $extend(com.tamina.cow4.socket.message.ClientMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.Authenticate
+com_tamina_cow4_socket_message_Authenticate.__name__ = true;
+com_tamina_cow4_socket_message_Authenticate.__super__ = com_tamina_cow4_socket_message_ClientMessage;
+com_tamina_cow4_socket_message_Authenticate.prototype = $extend(com_tamina_cow4_socket_message_ClientMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_Authenticate
 });
-com.tamina.cow4.socket.message.Error = function(code,message) {
-	com.tamina.cow4.socket.message.SocketMessage.call(this,"error");
+var com_tamina_cow4_socket_message_Error = function(code,message) {
+	com_tamina_cow4_socket_message_SocketMessage.call(this,"error");
 	this.code = code;
 	this.message = message;
 };
-com.tamina.cow4.socket.message.Error.__name__ = true;
-com.tamina.cow4.socket.message.Error.__super__ = com.tamina.cow4.socket.message.SocketMessage;
-com.tamina.cow4.socket.message.Error.prototype = $extend(com.tamina.cow4.socket.message.SocketMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.Error
+com_tamina_cow4_socket_message_Error.__name__ = true;
+com_tamina_cow4_socket_message_Error.__super__ = com_tamina_cow4_socket_message_SocketMessage;
+com_tamina_cow4_socket_message_Error.prototype = $extend(com_tamina_cow4_socket_message_SocketMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_Error
 });
-com.tamina.cow4.socket.message._ErrorCode = {};
-com.tamina.cow4.socket.message._ErrorCode.ErrorCode_Impl_ = function() { };
-com.tamina.cow4.socket.message._ErrorCode.ErrorCode_Impl_.__name__ = true;
-com.tamina.cow4.socket.message.GameServerMessage = function(type) {
-	com.tamina.cow4.socket.message.SocketMessage.call(this,type);
+var com_tamina_cow4_socket_message_GameServerMessage = function(type) {
+	com_tamina_cow4_socket_message_SocketMessage.call(this,type);
 };
-com.tamina.cow4.socket.message.GameServerMessage.__name__ = true;
-com.tamina.cow4.socket.message.GameServerMessage.__super__ = com.tamina.cow4.socket.message.SocketMessage;
-com.tamina.cow4.socket.message.GameServerMessage.prototype = $extend(com.tamina.cow4.socket.message.SocketMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.GameServerMessage
+com_tamina_cow4_socket_message_GameServerMessage.__name__ = true;
+com_tamina_cow4_socket_message_GameServerMessage.__super__ = com_tamina_cow4_socket_message_SocketMessage;
+com_tamina_cow4_socket_message_GameServerMessage.prototype = $extend(com_tamina_cow4_socket_message_SocketMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_GameServerMessage
 });
-com.tamina.cow4.socket.message.GetTurnOrder = function(data) {
-	com.tamina.cow4.socket.message.GameServerMessage.call(this,"getTurnOrder");
+var com_tamina_cow4_socket_message_GetTurnOrder = function(data) {
+	com_tamina_cow4_socket_message_GameServerMessage.call(this,"getTurnOrder");
 	this.data = data;
 };
-com.tamina.cow4.socket.message.GetTurnOrder.__name__ = true;
-com.tamina.cow4.socket.message.GetTurnOrder.__super__ = com.tamina.cow4.socket.message.GameServerMessage;
-com.tamina.cow4.socket.message.GetTurnOrder.prototype = $extend(com.tamina.cow4.socket.message.GameServerMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.GetTurnOrder
+com_tamina_cow4_socket_message_GetTurnOrder.__name__ = true;
+com_tamina_cow4_socket_message_GetTurnOrder.__super__ = com_tamina_cow4_socket_message_GameServerMessage;
+com_tamina_cow4_socket_message_GetTurnOrder.prototype = $extend(com_tamina_cow4_socket_message_GameServerMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_GetTurnOrder
 });
-com.tamina.cow4.socket.message.ID = function(id) {
-	com.tamina.cow4.socket.message.GameServerMessage.call(this,"id");
+var com_tamina_cow4_socket_message_ID = function(id) {
+	com_tamina_cow4_socket_message_GameServerMessage.call(this,"id");
 	this.id = id;
 };
-com.tamina.cow4.socket.message.ID.__name__ = true;
-com.tamina.cow4.socket.message.ID.__super__ = com.tamina.cow4.socket.message.GameServerMessage;
-com.tamina.cow4.socket.message.ID.prototype = $extend(com.tamina.cow4.socket.message.GameServerMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.ID
+com_tamina_cow4_socket_message_ID.__name__ = true;
+com_tamina_cow4_socket_message_ID.__super__ = com_tamina_cow4_socket_message_GameServerMessage;
+com_tamina_cow4_socket_message_ID.prototype = $extend(com_tamina_cow4_socket_message_GameServerMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_ID
 });
-com.tamina.cow4.socket.message.TurnResult = function() {
-	com.tamina.cow4.socket.message.ClientMessage.call(this,"turnResult");
-	this.actions = new Array();
+var com_tamina_cow4_socket_message_TurnResult = function() {
+	com_tamina_cow4_socket_message_ClientMessage.call(this,"turnResult");
+	this.actions = [];
 };
-com.tamina.cow4.socket.message.TurnResult.__name__ = true;
-com.tamina.cow4.socket.message.TurnResult.__super__ = com.tamina.cow4.socket.message.ClientMessage;
-com.tamina.cow4.socket.message.TurnResult.prototype = $extend(com.tamina.cow4.socket.message.ClientMessage.prototype,{
-	__class__: com.tamina.cow4.socket.message.TurnResult
+com_tamina_cow4_socket_message_TurnResult.__name__ = true;
+com_tamina_cow4_socket_message_TurnResult.__super__ = com_tamina_cow4_socket_message_ClientMessage;
+com_tamina_cow4_socket_message_TurnResult.prototype = $extend(com_tamina_cow4_socket_message_ClientMessage.prototype,{
+	__class__: com_tamina_cow4_socket_message_TurnResult
 });
-com.tamina.cow4.socket.message.order = {};
-com.tamina.cow4.socket.message.order.MoveOrder = function(targetCell) {
-	com.tamina.cow4.model.TurnAction.call(this,"move");
+var com_tamina_cow4_socket_message_order_GetItemOrder = function() {
+	com_tamina_cow4_model_TurnAction.call(this,"getItem");
+};
+com_tamina_cow4_socket_message_order_GetItemOrder.__name__ = true;
+com_tamina_cow4_socket_message_order_GetItemOrder.__super__ = com_tamina_cow4_model_TurnAction;
+com_tamina_cow4_socket_message_order_GetItemOrder.prototype = $extend(com_tamina_cow4_model_TurnAction.prototype,{
+	__class__: com_tamina_cow4_socket_message_order_GetItemOrder
+});
+var com_tamina_cow4_socket_message_order_MoveOrder = function(targetCell) {
+	com_tamina_cow4_model_TurnAction.call(this,"move");
 	this.target = targetCell.id;
 };
-com.tamina.cow4.socket.message.order.MoveOrder.__name__ = true;
-com.tamina.cow4.socket.message.order.MoveOrder.__super__ = com.tamina.cow4.model.TurnAction;
-com.tamina.cow4.socket.message.order.MoveOrder.prototype = $extend(com.tamina.cow4.model.TurnAction.prototype,{
-	__class__: com.tamina.cow4.socket.message.order.MoveOrder
+com_tamina_cow4_socket_message_order_MoveOrder.__name__ = true;
+com_tamina_cow4_socket_message_order_MoveOrder.__super__ = com_tamina_cow4_model_TurnAction;
+com_tamina_cow4_socket_message_order_MoveOrder.prototype = $extend(com_tamina_cow4_model_TurnAction.prototype,{
+	__class__: com_tamina_cow4_socket_message_order_MoveOrder
 });
-com.tamina.cow4.utils = {};
-com.tamina.cow4.utils.GameUtils = function() {
+var com_tamina_cow4_utils_GameUtils = function() {
 };
-com.tamina.cow4.utils.GameUtils.__name__ = true;
-com.tamina.cow4.utils.GameUtils.getPath = function(fromCell,toCell,map) {
-	var p = new com.tamina.cow4.core.PathFinder();
+com_tamina_cow4_utils_GameUtils.__name__ = true;
+com_tamina_cow4_utils_GameUtils.getPath = function(fromCell,toCell,map) {
+	var p = new com_tamina_cow4_core_PathFinder();
 	return p.getPath(fromCell,toCell,map);
 };
-com.tamina.cow4.utils.GameUtils.prototype = {
-	__class__: com.tamina.cow4.utils.GameUtils
+com_tamina_cow4_utils_GameUtils.prototype = {
+	__class__: com_tamina_cow4_utils_GameUtils
 };
-var haxe = {};
-haxe.Timer = function(time_ms) {
+var haxe__$Int64__$_$_$Int64 = function(high,low) {
+	this.high = high;
+	this.low = low;
+};
+haxe__$Int64__$_$_$Int64.__name__ = true;
+haxe__$Int64__$_$_$Int64.prototype = {
+	__class__: haxe__$Int64__$_$_$Int64
+};
+var haxe_Timer = function(time_ms) {
 	var me = this;
 	this.id = setInterval(function() {
 		me.run();
 	},time_ms);
 };
-haxe.Timer.__name__ = true;
-haxe.Timer.delay = function(f,time_ms) {
-	var t = new haxe.Timer(time_ms);
+haxe_Timer.__name__ = true;
+haxe_Timer.delay = function(f,time_ms) {
+	var t = new haxe_Timer(time_ms);
 	t.run = function() {
 		t.stop();
 		f();
 	};
 	return t;
 };
-haxe.Timer.prototype = {
+haxe_Timer.prototype = {
 	stop: function() {
 		if(this.id == null) return;
 		clearInterval(this.id);
@@ -696,15 +722,72 @@ haxe.Timer.prototype = {
 	}
 	,run: function() {
 	}
-	,__class__: haxe.Timer
+	,__class__: haxe_Timer
 };
-var js = {};
-js.Boot = function() { };
-js.Boot.__name__ = true;
-js.Boot.getClass = function(o) {
-	if((o instanceof Array) && o.__enum__ == null) return Array; else return o.__class__;
+var haxe_io_Error = { __ename__ : true, __constructs__ : ["Blocked","Overflow","OutsideBounds","Custom"] };
+haxe_io_Error.Blocked = ["Blocked",0];
+haxe_io_Error.Blocked.__enum__ = haxe_io_Error;
+haxe_io_Error.Overflow = ["Overflow",1];
+haxe_io_Error.Overflow.__enum__ = haxe_io_Error;
+haxe_io_Error.OutsideBounds = ["OutsideBounds",2];
+haxe_io_Error.OutsideBounds.__enum__ = haxe_io_Error;
+haxe_io_Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe_io_Error; return $x; };
+var haxe_io_FPHelper = function() { };
+haxe_io_FPHelper.__name__ = true;
+haxe_io_FPHelper.i32ToFloat = function(i) {
+	var sign = 1 - (i >>> 31 << 1);
+	var exp = i >>> 23 & 255;
+	var sig = i & 8388607;
+	if(sig == 0 && exp == 0) return 0.0;
+	return sign * (1 + Math.pow(2,-23) * sig) * Math.pow(2,exp - 127);
 };
-js.Boot.__string_rec = function(o,s) {
+haxe_io_FPHelper.floatToI32 = function(f) {
+	if(f == 0) return 0;
+	var af;
+	if(f < 0) af = -f; else af = f;
+	var exp = Math.floor(Math.log(af) / 0.6931471805599453);
+	if(exp < -127) exp = -127; else if(exp > 128) exp = 128;
+	var sig = Math.round((af / Math.pow(2,exp) - 1) * 8388608) & 8388607;
+	return (f < 0?-2147483648:0) | exp + 127 << 23 | sig;
+};
+haxe_io_FPHelper.i64ToDouble = function(low,high) {
+	var sign = 1 - (high >>> 31 << 1);
+	var exp = (high >> 20 & 2047) - 1023;
+	var sig = (high & 1048575) * 4294967296. + (low >>> 31) * 2147483648. + (low & 2147483647);
+	if(sig == 0 && exp == -1023) return 0.0;
+	return sign * (1.0 + Math.pow(2,-52) * sig) * Math.pow(2,exp);
+};
+haxe_io_FPHelper.doubleToI64 = function(v) {
+	var i64 = haxe_io_FPHelper.i64tmp;
+	if(v == 0) {
+		i64.low = 0;
+		i64.high = 0;
+	} else {
+		var av;
+		if(v < 0) av = -v; else av = v;
+		var exp = Math.floor(Math.log(av) / 0.6931471805599453);
+		var sig;
+		var v1 = (av / Math.pow(2,exp) - 1) * 4503599627370496.;
+		sig = Math.round(v1);
+		var sig_l = sig | 0;
+		var sig_h = sig / 4294967296.0 | 0;
+		i64.low = sig_l;
+		i64.high = (v < 0?-2147483648:0) | exp + 1023 << 20 | sig_h;
+	}
+	return i64;
+};
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.getClass = function(o) {
+	if((o instanceof Array) && o.__enum__ == null) return Array; else {
+		var cl = o.__class__;
+		if(cl != null) return cl;
+		var name = js_Boot.__nativeClassName(o);
+		if(name != null) return js_Boot.__resolveNativeClass(name);
+		return null;
+	}
+};
+js_Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
 	if(s.length >= 5) return "<...>";
 	var t = typeof(o);
@@ -714,24 +797,24 @@ js.Boot.__string_rec = function(o,s) {
 		if(o instanceof Array) {
 			if(o.__enum__) {
 				if(o.length == 2) return o[0];
-				var str = o[0] + "(";
+				var str2 = o[0] + "(";
 				s += "\t";
 				var _g1 = 2;
 				var _g = o.length;
 				while(_g1 < _g) {
-					var i = _g1++;
-					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
+					var i1 = _g1++;
+					if(i1 != 2) str2 += "," + js_Boot.__string_rec(o[i1],s); else str2 += js_Boot.__string_rec(o[i1],s);
 				}
-				return str + ")";
+				return str2 + ")";
 			}
 			var l = o.length;
-			var i1;
+			var i;
 			var str1 = "[";
 			s += "\t";
 			var _g2 = 0;
 			while(_g2 < l) {
 				var i2 = _g2++;
-				str1 += (i2 > 0?",":"") + js.Boot.__string_rec(o[i2],s);
+				str1 += (i2 > 0?",":"") + js_Boot.__string_rec(o[i2],s);
 			}
 			str1 += "]";
 			return str1;
@@ -742,12 +825,12 @@ js.Boot.__string_rec = function(o,s) {
 		} catch( e ) {
 			return "???";
 		}
-		if(tostr != null && tostr != Object.toString) {
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
 			var s2 = o.toString();
 			if(s2 != "[object Object]") return s2;
 		}
 		var k = null;
-		var str2 = "{\n";
+		var str = "{\n";
 		s += "\t";
 		var hasp = o.hasOwnProperty != null;
 		for( var k in o ) {
@@ -757,12 +840,12 @@ js.Boot.__string_rec = function(o,s) {
 		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
 			continue;
 		}
-		if(str2.length != 2) str2 += ", \n";
-		str2 += s + k + " : " + js.Boot.__string_rec(o[k],s);
+		if(str.length != 2) str += ", \n";
+		str += s + k + " : " + js_Boot.__string_rec(o[k],s);
 		}
 		s = s.substring(1);
-		str2 += "\n" + s + "}";
-		return str2;
+		str += "\n" + s + "}";
+		return str;
 	case "function":
 		return "<function>";
 	case "string":
@@ -771,7 +854,7 @@ js.Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-js.Boot.__interfLoop = function(cc,cl) {
+js_Boot.__interfLoop = function(cc,cl) {
 	if(cc == null) return false;
 	if(cc == cl) return true;
 	var intf = cc.__interfaces__;
@@ -781,12 +864,12 @@ js.Boot.__interfLoop = function(cc,cl) {
 		while(_g1 < _g) {
 			var i = _g1++;
 			var i1 = intf[i];
-			if(i1 == cl || js.Boot.__interfLoop(i1,cl)) return true;
+			if(i1 == cl || js_Boot.__interfLoop(i1,cl)) return true;
 		}
 	}
-	return js.Boot.__interfLoop(cc.__super__,cl);
+	return js_Boot.__interfLoop(cc.__super__,cl);
 };
-js.Boot.__instanceof = function(o,cl) {
+js_Boot.__instanceof = function(o,cl) {
 	if(cl == null) return false;
 	switch(cl) {
 	case Int:
@@ -805,7 +888,9 @@ js.Boot.__instanceof = function(o,cl) {
 		if(o != null) {
 			if(typeof(cl) == "function") {
 				if(o instanceof cl) return true;
-				if(js.Boot.__interfLoop(js.Boot.getClass(o),cl)) return true;
+				if(js_Boot.__interfLoop(js_Boot.getClass(o),cl)) return true;
+			} else if(typeof(cl) == "object" && js_Boot.__isNativeObj(cl)) {
+				if(o instanceof cl) return true;
 			}
 		} else return false;
 		if(cl == Class && o.__name__ != null) return true;
@@ -813,15 +898,207 @@ js.Boot.__instanceof = function(o,cl) {
 		return o.__enum__ == cl;
 	}
 };
-var msignal = {};
-msignal.Signal = function(valueClasses) {
+js_Boot.__nativeClassName = function(o) {
+	var name = js_Boot.__toStr.call(o).slice(8,-1);
+	if(name == "Object" || name == "Function" || name == "Math" || name == "JSON") return null;
+	return name;
+};
+js_Boot.__isNativeObj = function(o) {
+	return js_Boot.__nativeClassName(o) != null;
+};
+js_Boot.__resolveNativeClass = function(name) {
+	if(typeof window != "undefined") return window[name]; else return global[name];
+};
+var js_html_compat_ArrayBuffer = function(a) {
+	if((a instanceof Array) && a.__enum__ == null) {
+		this.a = a;
+		this.byteLength = a.length;
+	} else {
+		var len = a;
+		this.a = [];
+		var _g = 0;
+		while(_g < len) {
+			var i = _g++;
+			this.a[i] = 0;
+		}
+		this.byteLength = len;
+	}
+};
+js_html_compat_ArrayBuffer.__name__ = true;
+js_html_compat_ArrayBuffer.sliceImpl = function(begin,end) {
+	var u = new Uint8Array(this,begin,end == null?null:end - begin);
+	var result = new ArrayBuffer(u.byteLength);
+	var resultArray = new Uint8Array(result);
+	resultArray.set(u);
+	return result;
+};
+js_html_compat_ArrayBuffer.prototype = {
+	slice: function(begin,end) {
+		return new js_html_compat_ArrayBuffer(this.a.slice(begin,end));
+	}
+	,__class__: js_html_compat_ArrayBuffer
+};
+var js_html_compat_DataView = function(buffer,byteOffset,byteLength) {
+	this.buf = buffer;
+	if(byteOffset == null) this.offset = 0; else this.offset = byteOffset;
+	if(byteLength == null) this.length = buffer.byteLength - this.offset; else this.length = byteLength;
+	if(this.offset < 0 || this.length < 0 || this.offset + this.length > buffer.byteLength) throw haxe_io_Error.OutsideBounds;
+};
+js_html_compat_DataView.__name__ = true;
+js_html_compat_DataView.prototype = {
+	getInt8: function(byteOffset) {
+		var v = this.buf.a[this.offset + byteOffset];
+		if(v >= 128) return v - 256; else return v;
+	}
+	,getUint8: function(byteOffset) {
+		return this.buf.a[this.offset + byteOffset];
+	}
+	,getInt16: function(byteOffset,littleEndian) {
+		var v = this.getUint16(byteOffset,littleEndian);
+		if(v >= 32768) return v - 65536; else return v;
+	}
+	,getUint16: function(byteOffset,littleEndian) {
+		if(littleEndian) return this.buf.a[this.offset + byteOffset] | this.buf.a[this.offset + byteOffset + 1] << 8; else return this.buf.a[this.offset + byteOffset] << 8 | this.buf.a[this.offset + byteOffset + 1];
+	}
+	,getInt32: function(byteOffset,littleEndian) {
+		var p = this.offset + byteOffset;
+		var a = this.buf.a[p++];
+		var b = this.buf.a[p++];
+		var c = this.buf.a[p++];
+		var d = this.buf.a[p++];
+		if(littleEndian) return a | b << 8 | c << 16 | d << 24; else return d | c << 8 | b << 16 | a << 24;
+	}
+	,getUint32: function(byteOffset,littleEndian) {
+		var v = this.getInt32(byteOffset,littleEndian);
+		if(v < 0) return v + 4294967296.; else return v;
+	}
+	,getFloat32: function(byteOffset,littleEndian) {
+		return haxe_io_FPHelper.i32ToFloat(this.getInt32(byteOffset,littleEndian));
+	}
+	,getFloat64: function(byteOffset,littleEndian) {
+		var a = this.getInt32(byteOffset,littleEndian);
+		var b = this.getInt32(byteOffset + 4,littleEndian);
+		return haxe_io_FPHelper.i64ToDouble(littleEndian?a:b,littleEndian?b:a);
+	}
+	,setInt8: function(byteOffset,value) {
+		if(value < 0) this.buf.a[byteOffset + this.offset] = value + 128 & 255; else this.buf.a[byteOffset + this.offset] = value & 255;
+	}
+	,setUint8: function(byteOffset,value) {
+		this.buf.a[byteOffset + this.offset] = value & 255;
+	}
+	,setInt16: function(byteOffset,value,littleEndian) {
+		this.setUint16(byteOffset,value < 0?value + 65536:value,littleEndian);
+	}
+	,setUint16: function(byteOffset,value,littleEndian) {
+		var p = byteOffset + this.offset;
+		if(littleEndian) {
+			this.buf.a[p] = value & 255;
+			this.buf.a[p++] = value >> 8 & 255;
+		} else {
+			this.buf.a[p++] = value >> 8 & 255;
+			this.buf.a[p] = value & 255;
+		}
+	}
+	,setInt32: function(byteOffset,value,littleEndian) {
+		this.setUint32(byteOffset,value,littleEndian);
+	}
+	,setUint32: function(byteOffset,value,littleEndian) {
+		var p = byteOffset + this.offset;
+		if(littleEndian) {
+			this.buf.a[p++] = value & 255;
+			this.buf.a[p++] = value >> 8 & 255;
+			this.buf.a[p++] = value >> 16 & 255;
+			this.buf.a[p++] = value >>> 24;
+		} else {
+			this.buf.a[p++] = value >>> 24;
+			this.buf.a[p++] = value >> 16 & 255;
+			this.buf.a[p++] = value >> 8 & 255;
+			this.buf.a[p++] = value & 255;
+		}
+	}
+	,setFloat32: function(byteOffset,value,littleEndian) {
+		this.setUint32(byteOffset,haxe_io_FPHelper.floatToI32(value),littleEndian);
+	}
+	,setFloat64: function(byteOffset,value,littleEndian) {
+		var i64 = haxe_io_FPHelper.doubleToI64(value);
+		if(littleEndian) {
+			this.setUint32(byteOffset,i64.low);
+			this.setUint32(byteOffset,i64.high);
+		} else {
+			this.setUint32(byteOffset,i64.high);
+			this.setUint32(byteOffset,i64.low);
+		}
+	}
+	,__class__: js_html_compat_DataView
+};
+var js_html_compat_Uint8Array = function() { };
+js_html_compat_Uint8Array.__name__ = true;
+js_html_compat_Uint8Array._new = function(arg1,offset,length) {
+	var arr;
+	if(typeof(arg1) == "number") {
+		arr = [];
+		var _g = 0;
+		while(_g < arg1) {
+			var i = _g++;
+			arr[i] = 0;
+		}
+		arr.byteLength = arr.length;
+		arr.byteOffset = 0;
+		arr.buffer = new js_html_compat_ArrayBuffer(arr);
+	} else if(js_Boot.__instanceof(arg1,js_html_compat_ArrayBuffer)) {
+		var buffer = arg1;
+		if(offset == null) offset = 0;
+		if(length == null) length = buffer.byteLength - offset;
+		if(offset == 0) arr = buffer.a; else arr = buffer.a.slice(offset,offset + length);
+		arr.byteLength = arr.length;
+		arr.byteOffset = offset;
+		arr.buffer = buffer;
+	} else if((arg1 instanceof Array) && arg1.__enum__ == null) {
+		arr = arg1.slice();
+		arr.byteLength = arr.length;
+		arr.byteOffset = 0;
+		arr.buffer = new js_html_compat_ArrayBuffer(arr);
+	} else throw "TODO " + Std.string(arg1);
+	arr.subarray = js_html_compat_Uint8Array._subarray;
+	arr.set = js_html_compat_Uint8Array._set;
+	return arr;
+};
+js_html_compat_Uint8Array._set = function(arg,offset) {
+	var t = this;
+	if(js_Boot.__instanceof(arg.buffer,js_html_compat_ArrayBuffer)) {
+		var a = arg;
+		if(arg.byteLength + offset > t.byteLength) throw "set() outside of range";
+		var _g1 = 0;
+		var _g = arg.byteLength;
+		while(_g1 < _g) {
+			var i = _g1++;
+			t[i + offset] = a[i];
+		}
+	} else if((arg instanceof Array) && arg.__enum__ == null) {
+		var a1 = arg;
+		if(a1.length + offset > t.byteLength) throw "set() outside of range";
+		var _g11 = 0;
+		var _g2 = a1.length;
+		while(_g11 < _g2) {
+			var i1 = _g11++;
+			t[i1 + offset] = a1[i1];
+		}
+	} else throw "TODO";
+};
+js_html_compat_Uint8Array._subarray = function(start,end) {
+	var t = this;
+	var a = js_html_compat_Uint8Array._new(t.slice(start,end));
+	a.byteOffset = start;
+	return a;
+};
+var msignal_Signal = function(valueClasses) {
 	if(valueClasses == null) valueClasses = [];
 	this.valueClasses = valueClasses;
-	this.slots = msignal.SlotList.NIL;
+	this.slots = msignal_SlotList.NIL;
 	this.priorityBased = false;
 };
-msignal.Signal.__name__ = true;
-msignal.Signal.prototype = {
+msignal_Signal.__name__ = true;
+msignal_Signal.prototype = {
 	add: function(listener) {
 		return this.registerListener(listener);
 	}
@@ -843,7 +1120,7 @@ msignal.Signal.prototype = {
 		return slot;
 	}
 	,removeAll: function() {
-		this.slots = msignal.SlotList.NIL;
+		this.slots = msignal_SlotList.NIL;
 	}
 	,registerListener: function(listener,once,priority) {
 		if(priority == null) priority = 0;
@@ -870,14 +1147,14 @@ msignal.Signal.prototype = {
 	,get_numListeners: function() {
 		return this.slots.get_length();
 	}
-	,__class__: msignal.Signal
+	,__class__: msignal_Signal
 };
-msignal.Signal0 = function() {
-	msignal.Signal.call(this);
+var msignal_Signal0 = function() {
+	msignal_Signal.call(this);
 };
-msignal.Signal0.__name__ = true;
-msignal.Signal0.__super__ = msignal.Signal;
-msignal.Signal0.prototype = $extend(msignal.Signal.prototype,{
+msignal_Signal0.__name__ = true;
+msignal_Signal0.__super__ = msignal_Signal;
+msignal_Signal0.prototype = $extend(msignal_Signal.prototype,{
 	dispatch: function() {
 		var slotsToProcess = this.slots;
 		while(slotsToProcess.nonEmpty) {
@@ -888,16 +1165,16 @@ msignal.Signal0.prototype = $extend(msignal.Signal.prototype,{
 	,createSlot: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
-		return new msignal.Slot0(this,listener,once,priority);
+		return new msignal_Slot0(this,listener,once,priority);
 	}
-	,__class__: msignal.Signal0
+	,__class__: msignal_Signal0
 });
-msignal.Signal1 = function(type) {
-	msignal.Signal.call(this,[type]);
+var msignal_Signal1 = function(type) {
+	msignal_Signal.call(this,[type]);
 };
-msignal.Signal1.__name__ = true;
-msignal.Signal1.__super__ = msignal.Signal;
-msignal.Signal1.prototype = $extend(msignal.Signal.prototype,{
+msignal_Signal1.__name__ = true;
+msignal_Signal1.__super__ = msignal_Signal;
+msignal_Signal1.prototype = $extend(msignal_Signal.prototype,{
 	dispatch: function(value) {
 		var slotsToProcess = this.slots;
 		while(slotsToProcess.nonEmpty) {
@@ -908,16 +1185,16 @@ msignal.Signal1.prototype = $extend(msignal.Signal.prototype,{
 	,createSlot: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
-		return new msignal.Slot1(this,listener,once,priority);
+		return new msignal_Slot1(this,listener,once,priority);
 	}
-	,__class__: msignal.Signal1
+	,__class__: msignal_Signal1
 });
-msignal.Signal2 = function(type1,type2) {
-	msignal.Signal.call(this,[type1,type2]);
+var msignal_Signal2 = function(type1,type2) {
+	msignal_Signal.call(this,[type1,type2]);
 };
-msignal.Signal2.__name__ = true;
-msignal.Signal2.__super__ = msignal.Signal;
-msignal.Signal2.prototype = $extend(msignal.Signal.prototype,{
+msignal_Signal2.__name__ = true;
+msignal_Signal2.__super__ = msignal_Signal;
+msignal_Signal2.prototype = $extend(msignal_Signal.prototype,{
 	dispatch: function(value1,value2) {
 		var slotsToProcess = this.slots;
 		while(slotsToProcess.nonEmpty) {
@@ -928,11 +1205,11 @@ msignal.Signal2.prototype = $extend(msignal.Signal.prototype,{
 	,createSlot: function(listener,once,priority) {
 		if(priority == null) priority = 0;
 		if(once == null) once = false;
-		return new msignal.Slot2(this,listener,once,priority);
+		return new msignal_Slot2(this,listener,once,priority);
 	}
-	,__class__: msignal.Signal2
+	,__class__: msignal_Signal2
 });
-msignal.Slot = function(signal,listener,once,priority) {
+var msignal_Slot = function(signal,listener,once,priority) {
 	if(priority == null) priority = 0;
 	if(once == null) once = false;
 	this.signal = signal;
@@ -941,55 +1218,55 @@ msignal.Slot = function(signal,listener,once,priority) {
 	this.priority = priority;
 	this.enabled = true;
 };
-msignal.Slot.__name__ = true;
-msignal.Slot.prototype = {
+msignal_Slot.__name__ = true;
+msignal_Slot.prototype = {
 	remove: function() {
 		this.signal.remove(this.listener);
 	}
 	,set_listener: function(value) {
 		return this.listener = value;
 	}
-	,__class__: msignal.Slot
+	,__class__: msignal_Slot
 };
-msignal.Slot0 = function(signal,listener,once,priority) {
+var msignal_Slot0 = function(signal,listener,once,priority) {
 	if(priority == null) priority = 0;
 	if(once == null) once = false;
-	msignal.Slot.call(this,signal,listener,once,priority);
+	msignal_Slot.call(this,signal,listener,once,priority);
 };
-msignal.Slot0.__name__ = true;
-msignal.Slot0.__super__ = msignal.Slot;
-msignal.Slot0.prototype = $extend(msignal.Slot.prototype,{
+msignal_Slot0.__name__ = true;
+msignal_Slot0.__super__ = msignal_Slot;
+msignal_Slot0.prototype = $extend(msignal_Slot.prototype,{
 	execute: function() {
 		if(!this.enabled) return;
 		if(this.once) this.remove();
 		this.listener();
 	}
-	,__class__: msignal.Slot0
+	,__class__: msignal_Slot0
 });
-msignal.Slot1 = function(signal,listener,once,priority) {
+var msignal_Slot1 = function(signal,listener,once,priority) {
 	if(priority == null) priority = 0;
 	if(once == null) once = false;
-	msignal.Slot.call(this,signal,listener,once,priority);
+	msignal_Slot.call(this,signal,listener,once,priority);
 };
-msignal.Slot1.__name__ = true;
-msignal.Slot1.__super__ = msignal.Slot;
-msignal.Slot1.prototype = $extend(msignal.Slot.prototype,{
+msignal_Slot1.__name__ = true;
+msignal_Slot1.__super__ = msignal_Slot;
+msignal_Slot1.prototype = $extend(msignal_Slot.prototype,{
 	execute: function(value1) {
 		if(!this.enabled) return;
 		if(this.once) this.remove();
 		if(this.param != null) value1 = this.param;
 		this.listener(value1);
 	}
-	,__class__: msignal.Slot1
+	,__class__: msignal_Slot1
 });
-msignal.Slot2 = function(signal,listener,once,priority) {
+var msignal_Slot2 = function(signal,listener,once,priority) {
 	if(priority == null) priority = 0;
 	if(once == null) once = false;
-	msignal.Slot.call(this,signal,listener,once,priority);
+	msignal_Slot.call(this,signal,listener,once,priority);
 };
-msignal.Slot2.__name__ = true;
-msignal.Slot2.__super__ = msignal.Slot;
-msignal.Slot2.prototype = $extend(msignal.Slot.prototype,{
+msignal_Slot2.__name__ = true;
+msignal_Slot2.__super__ = msignal_Slot;
+msignal_Slot2.prototype = $extend(msignal_Slot.prototype,{
 	execute: function(value1,value2) {
 		if(!this.enabled) return;
 		if(this.once) this.remove();
@@ -997,22 +1274,22 @@ msignal.Slot2.prototype = $extend(msignal.Slot.prototype,{
 		if(this.param2 != null) value2 = this.param2;
 		this.listener(value1,value2);
 	}
-	,__class__: msignal.Slot2
+	,__class__: msignal_Slot2
 });
-msignal.SlotList = function(head,tail) {
+var msignal_SlotList = function(head,tail) {
 	this.nonEmpty = false;
 	if(head == null && tail == null) this.nonEmpty = false; else if(head == null) {
 	} else {
 		this.head = head;
-		if(tail == null) this.tail = msignal.SlotList.NIL; else this.tail = tail;
+		if(tail == null) this.tail = msignal_SlotList.NIL; else this.tail = tail;
 		this.nonEmpty = true;
 	}
 };
-msignal.SlotList.__name__ = true;
-msignal.SlotList.prototype = {
+msignal_SlotList.__name__ = true;
+msignal_SlotList.prototype = {
 	get_length: function() {
 		if(!this.nonEmpty) return 0;
-		if(this.tail == msignal.SlotList.NIL) return 1;
+		if(this.tail == msignal_SlotList.NIL) return 1;
 		var result = 0;
 		var p = this;
 		while(p.nonEmpty) {
@@ -1022,27 +1299,27 @@ msignal.SlotList.prototype = {
 		return result;
 	}
 	,prepend: function(slot) {
-		return new msignal.SlotList(slot,this);
+		return new msignal_SlotList(slot,this);
 	}
 	,append: function(slot) {
 		if(slot == null) return this;
-		if(!this.nonEmpty) return new msignal.SlotList(slot);
-		if(this.tail == msignal.SlotList.NIL) return new msignal.SlotList(slot).prepend(this.head);
-		var wholeClone = new msignal.SlotList(this.head);
+		if(!this.nonEmpty) return new msignal_SlotList(slot);
+		if(this.tail == msignal_SlotList.NIL) return new msignal_SlotList(slot).prepend(this.head);
+		var wholeClone = new msignal_SlotList(this.head);
 		var subClone = wholeClone;
 		var current = this.tail;
 		while(current.nonEmpty) {
-			subClone = subClone.tail = new msignal.SlotList(current.head);
+			subClone = subClone.tail = new msignal_SlotList(current.head);
 			current = current.tail;
 		}
-		subClone.tail = new msignal.SlotList(slot);
+		subClone.tail = new msignal_SlotList(slot);
 		return wholeClone;
 	}
 	,insertWithPriority: function(slot) {
-		if(!this.nonEmpty) return new msignal.SlotList(slot);
+		if(!this.nonEmpty) return new msignal_SlotList(slot);
 		var priority = slot.priority;
 		if(priority >= this.head.priority) return this.prepend(slot);
-		var wholeClone = new msignal.SlotList(this.head);
+		var wholeClone = new msignal_SlotList(this.head);
 		var subClone = wholeClone;
 		var current = this.tail;
 		while(current.nonEmpty) {
@@ -1050,16 +1327,16 @@ msignal.SlotList.prototype = {
 				subClone.tail = current.prepend(slot);
 				return wholeClone;
 			}
-			subClone = subClone.tail = new msignal.SlotList(current.head);
+			subClone = subClone.tail = new msignal_SlotList(current.head);
 			current = current.tail;
 		}
-		subClone.tail = new msignal.SlotList(slot);
+		subClone.tail = new msignal_SlotList(slot);
 		return wholeClone;
 	}
 	,filterNot: function(listener) {
 		if(!this.nonEmpty || listener == null) return this;
 		if(Reflect.compareMethods(this.head.listener,listener)) return this.tail;
-		var wholeClone = new msignal.SlotList(this.head);
+		var wholeClone = new msignal_SlotList(this.head);
 		var subClone = wholeClone;
 		var current = this.tail;
 		while(current.nonEmpty) {
@@ -1067,7 +1344,7 @@ msignal.SlotList.prototype = {
 				subClone.tail = current.tail;
 				return wholeClone;
 			}
-			subClone = subClone.tail = new msignal.SlotList(current.head);
+			subClone = subClone.tail = new msignal_SlotList(current.head);
 			current = current.tail;
 		}
 		return this;
@@ -1090,134 +1367,117 @@ msignal.SlotList.prototype = {
 		}
 		return null;
 	}
-	,__class__: msignal.SlotList
+	,__class__: msignal_SlotList
 };
-var nodejs = {};
-nodejs.NodeJS = function() { };
-nodejs.NodeJS.__name__ = true;
-nodejs.NodeJS.get_dirname = function() {
+var nodejs_NodeJS = function() { };
+nodejs_NodeJS.__name__ = true;
+nodejs_NodeJS.get_dirname = function() {
 	return __dirname;
 };
-nodejs.NodeJS.get_filename = function() {
+nodejs_NodeJS.get_filename = function() {
 	return __filename;
 };
-nodejs.NodeJS.require = function(p_lib) {
+nodejs_NodeJS.require = function(p_lib) {
 	return require(p_lib);
 };
-nodejs.NodeJS.get_process = function() {
+nodejs_NodeJS.get_process = function() {
 	return process;
 };
-nodejs.NodeJS.setTimeout = function(cb,ms) {
+nodejs_NodeJS.setTimeout = function(cb,ms) {
 	return setTimeout(cb,ms);
 };
-nodejs.NodeJS.clearTimeout = function(t) {
-	return clearTimeout(t);
+nodejs_NodeJS.clearTimeout = function(t) {
+	clearTimeout(t);
+	return;
 };
-nodejs.NodeJS.setInterval = function(cb,ms) {
+nodejs_NodeJS.setInterval = function(cb,ms) {
 	return setInterval(cb,ms);
 };
-nodejs.NodeJS.clearInterval = function(t) {
-	return clearInterval(t);
+nodejs_NodeJS.clearInterval = function(t) {
+	clearInterval(t);
+	return;
 };
-nodejs.NodeJS.assert = function(value,message) {
+nodejs_NodeJS.assert = function(value,message) {
 	require('assert')(value,message);
 };
-nodejs.NodeJS.get_global = function() {
+nodejs_NodeJS.get_global = function() {
 	return global;
 };
-nodejs.NodeJS.resolve = function() {
+nodejs_NodeJS.resolve = function() {
 	return require.resolve();
 };
-nodejs.NodeJS.get_cache = function() {
+nodejs_NodeJS.get_cache = function() {
 	return require.cache;
 };
-nodejs.NodeJS.get_extensions = function() {
+nodejs_NodeJS.get_extensions = function() {
 	return require.extensions;
 };
-nodejs.NodeJS.get_module = function() {
+nodejs_NodeJS.get_module = function() {
 	return module;
 };
-nodejs.NodeJS.get_exports = function() {
+nodejs_NodeJS.get_exports = function() {
 	return exports;
 };
-nodejs.NodeJS.get_domain = function() {
+nodejs_NodeJS.get_domain = function() {
 	return domain.create();
 };
-nodejs.NodeJS.get_repl = function() {
+nodejs_NodeJS.get_repl = function() {
 	return require('repl');
 };
-nodejs.ProcessEventType = function() { };
-nodejs.ProcessEventType.__name__ = true;
-nodejs.REPLEventType = function() { };
-nodejs.REPLEventType.__name__ = true;
-nodejs.events = {};
-nodejs.events.EventEmitterEventType = function() { };
-nodejs.events.EventEmitterEventType.__name__ = true;
-nodejs.fs = {};
-nodejs.fs.ReadStreamEventType = function() { };
-nodejs.fs.ReadStreamEventType.__name__ = true;
-nodejs.fs.WriteStreamEventType = function() { };
-nodejs.fs.WriteStreamEventType.__name__ = true;
-nodejs.http = {};
-nodejs.http.HTTPMethod = function() { };
-nodejs.http.HTTPMethod.__name__ = true;
-nodejs.http.HTTPClientRequestEventType = function() { };
-nodejs.http.HTTPClientRequestEventType.__name__ = true;
-nodejs.http.HTTPServerEventType = function() { };
-nodejs.http.HTTPServerEventType.__name__ = true;
-nodejs.stream = {};
-nodejs.stream.ReadableEventType = function() { };
-nodejs.stream.ReadableEventType.__name__ = true;
-nodejs.http.IncomingMessageEventType = function() { };
-nodejs.http.IncomingMessageEventType.__name__ = true;
-nodejs.http.IncomingMessageEventType.__super__ = nodejs.stream.ReadableEventType;
-nodejs.http.IncomingMessageEventType.prototype = $extend(nodejs.stream.ReadableEventType.prototype,{
-	__class__: nodejs.http.IncomingMessageEventType
+var nodejs_ProcessEventType = function() { };
+nodejs_ProcessEventType.__name__ = true;
+var nodejs_REPLEventType = function() { };
+nodejs_REPLEventType.__name__ = true;
+var nodejs_events_EventEmitterEventType = function() { };
+nodejs_events_EventEmitterEventType.__name__ = true;
+var nodejs_fs_ReadStreamEventType = function() { };
+nodejs_fs_ReadStreamEventType.__name__ = true;
+var nodejs_fs_WriteStreamEventType = function() { };
+nodejs_fs_WriteStreamEventType.__name__ = true;
+var nodejs_http_HTTPMethod = function() { };
+nodejs_http_HTTPMethod.__name__ = true;
+var nodejs_http_HTTPClientRequestEventType = function() { };
+nodejs_http_HTTPClientRequestEventType.__name__ = true;
+var nodejs_http_HTTPServerEventType = function() { };
+nodejs_http_HTTPServerEventType.__name__ = true;
+var nodejs_stream_ReadableEventType = function() { };
+nodejs_stream_ReadableEventType.__name__ = true;
+var nodejs_http_IncomingMessageEventType = function() { };
+nodejs_http_IncomingMessageEventType.__name__ = true;
+nodejs_http_IncomingMessageEventType.__super__ = nodejs_stream_ReadableEventType;
+nodejs_http_IncomingMessageEventType.prototype = $extend(nodejs_stream_ReadableEventType.prototype,{
+	__class__: nodejs_http_IncomingMessageEventType
 });
-nodejs.http.ServerResponseEventType = function() { };
-nodejs.http.ServerResponseEventType.__name__ = true;
-nodejs.net = {};
-nodejs.net.TCPServerEventType = function() { };
-nodejs.net.TCPServerEventType.__name__ = true;
-nodejs.net.TCPSocketEventType = function() { };
-nodejs.net.TCPSocketEventType.__name__ = true;
-nodejs.stream.WritableEventType = function() { };
-nodejs.stream.WritableEventType.__name__ = true;
-var org = {};
-org.tamina = {};
-org.tamina.geom = {};
-org.tamina.geom.Point = function(x,y) {
+var nodejs_http_ServerResponseEventType = function() { };
+nodejs_http_ServerResponseEventType.__name__ = true;
+var nodejs_net_TCPServerEventType = function() { };
+nodejs_net_TCPServerEventType.__name__ = true;
+var nodejs_net_TCPSocketEventType = function() { };
+nodejs_net_TCPSocketEventType.__name__ = true;
+var nodejs_stream_WritableEventType = function() { };
+nodejs_stream_WritableEventType.__name__ = true;
+var org_tamina_geom_Point = function(x,y) {
 	if(y == null) y = 0;
 	if(x == null) x = 0;
 	this.x = x;
 	this.y = y;
 };
-org.tamina.geom.Point.__name__ = true;
-org.tamina.geom.Point.prototype = {
-	__class__: org.tamina.geom.Point
+org_tamina_geom_Point.__name__ = true;
+org_tamina_geom_Point.prototype = {
+	__class__: org_tamina_geom_Point
 };
-org.tamina.utils = {};
-org.tamina.utils.UID = function() { };
-org.tamina.utils.UID.__name__ = true;
-org.tamina.utils.UID.getUID = function() {
+var org_tamina_utils_UID = function() { };
+org_tamina_utils_UID.__name__ = true;
+org_tamina_utils_UID.getUID = function() {
 	var result = new Date().getTime();
-	if(result <= org.tamina.utils.UID._lastUID) result = org.tamina.utils.UID._lastUID + 1;
-	org.tamina.utils.UID._lastUID = result;
+	if(result <= org_tamina_utils_UID._lastUID) result = org_tamina_utils_UID._lastUID + 1;
+	org_tamina_utils_UID._lastUID = result;
 	return result;
 };
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
-};
-Math.NaN = Number.NaN;
-Math.NEGATIVE_INFINITY = Number.NEGATIVE_INFINITY;
-Math.POSITIVE_INFINITY = Number.POSITIVE_INFINITY;
-Math.isFinite = function(i) {
-	return isFinite(i);
-};
-Math.isNaN = function(i1) {
-	return isNaN(i1);
 };
 String.prototype.__class__ = String;
 String.__name__ = true;
@@ -1232,85 +1492,85 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
-msignal.SlotList.NIL = new msignal.SlotList(null,null);
-com.tamina.cow4.IADemoApp.ALIVE_DURATION = 600000;
-com.tamina.cow4.config.Config.ROOT_PATH = "server/";
-com.tamina.cow4.config.Config.APP_PORT = 3000;
-com.tamina.cow4.config.Config.SOCKET_PORT = 8127;
-com.tamina.cow4.config.Config.WEB_SOCKET_PORT = 8128;
-com.tamina.cow4.model._Action.Action_Impl_.MOVE = "move";
-com.tamina.cow4.model._Action.Action_Impl_.FAIL = "fail";
-com.tamina.cow4.model._Action.Action_Impl_.SUCCESS = "success";
-com.tamina.cow4.model._Direction.Direction_Impl_.LEFT = 0;
-com.tamina.cow4.model._Direction.Direction_Impl_.RIGHT = 1;
-com.tamina.cow4.model._Direction.Direction_Impl_.TOP = 2;
-com.tamina.cow4.model._Direction.Direction_Impl_.BOTTOM = 3;
-com.tamina.cow4.model._ItemType.ItemType_Impl_.POTION = "potion";
-com.tamina.cow4.model._ItemType.ItemType_Impl_.PARFUM = "parfum";
-com.tamina.cow4.model._ItemType.ItemType_Impl_.TRAP = "trap";
-com.tamina.cow4.socket.message.SocketMessage.END_CHAR = "#end#";
-com.tamina.cow4.socket.message.Authenticate.MESSAGE_TYPE = "authenticate";
-com.tamina.cow4.socket.message.Error.MESSAGE_TYPE = "error";
-com.tamina.cow4.socket.message._ErrorCode.ErrorCode_Impl_.ALREADY_AUTH = 1;
-com.tamina.cow4.socket.message._ErrorCode.ErrorCode_Impl_.UNKNOWN_MESSAGE = 2;
-com.tamina.cow4.socket.message.GetTurnOrder.MESSAGE_TYPE = "getTurnOrder";
-com.tamina.cow4.socket.message.ID.MESSAGE_TYPE = "id";
-com.tamina.cow4.socket.message.TurnResult.MESSAGE_TYPE = "turnResult";
-nodejs.ProcessEventType.Exit = "exit";
-nodejs.ProcessEventType.Exception = "uncaughtException";
-nodejs.REPLEventType.Exit = "exit";
-nodejs.events.EventEmitterEventType.NewListener = "newListener";
-nodejs.events.EventEmitterEventType.RemoveListener = "removeListener";
-nodejs.fs.ReadStreamEventType.Open = "open";
-nodejs.fs.WriteStreamEventType.Open = "open";
-nodejs.http.HTTPMethod.Get = "GET";
-nodejs.http.HTTPMethod.Post = "POST";
-nodejs.http.HTTPMethod.Options = "OPTIONS";
-nodejs.http.HTTPMethod.Head = "HEAD";
-nodejs.http.HTTPMethod.Put = "PUT";
-nodejs.http.HTTPMethod.Delete = "DELETE";
-nodejs.http.HTTPMethod.Trace = "TRACE";
-nodejs.http.HTTPMethod.Connect = "CONNECT";
-nodejs.http.HTTPClientRequestEventType.Response = "response";
-nodejs.http.HTTPClientRequestEventType.Socket = "socket";
-nodejs.http.HTTPClientRequestEventType.Connect = "connect";
-nodejs.http.HTTPClientRequestEventType.Upgrade = "upgrade";
-nodejs.http.HTTPClientRequestEventType.Continue = "continue";
-nodejs.http.HTTPServerEventType.Listening = "listening";
-nodejs.http.HTTPServerEventType.Connection = "connection";
-nodejs.http.HTTPServerEventType.Close = "close";
-nodejs.http.HTTPServerEventType.Error = "error";
-nodejs.http.HTTPServerEventType.Request = "request";
-nodejs.http.HTTPServerEventType.CheckContinue = "checkContinue";
-nodejs.http.HTTPServerEventType.Connect = "connect";
-nodejs.http.HTTPServerEventType.Upgrade = "upgrade";
-nodejs.http.HTTPServerEventType.ClientError = "clientError";
-nodejs.stream.ReadableEventType.Readable = "readable";
-nodejs.stream.ReadableEventType.Data = "data";
-nodejs.stream.ReadableEventType.End = "end";
-nodejs.stream.ReadableEventType.Close = "close";
-nodejs.stream.ReadableEventType.Error = "error";
-nodejs.http.IncomingMessageEventType.Data = "data";
-nodejs.http.IncomingMessageEventType.Close = "close";
-nodejs.http.IncomingMessageEventType.End = "end";
-nodejs.http.ServerResponseEventType.Close = "close";
-nodejs.http.ServerResponseEventType.Finish = "finish";
-nodejs.net.TCPServerEventType.Listening = "listening";
-nodejs.net.TCPServerEventType.Connection = "connection";
-nodejs.net.TCPServerEventType.Close = "close";
-nodejs.net.TCPServerEventType.Error = "error";
-nodejs.net.TCPSocketEventType.Connect = "connect";
-nodejs.net.TCPSocketEventType.Data = "data";
-nodejs.net.TCPSocketEventType.End = "end";
-nodejs.net.TCPSocketEventType.TimeOut = "timeout";
-nodejs.net.TCPSocketEventType.Drain = "drain";
-nodejs.net.TCPSocketEventType.Error = "error";
-nodejs.net.TCPSocketEventType.Close = "close";
-nodejs.stream.WritableEventType.Drain = "drain";
-nodejs.stream.WritableEventType.Finish = "finish";
-nodejs.stream.WritableEventType.Pipe = "pipe";
-nodejs.stream.WritableEventType.Unpipe = "unpipe";
-nodejs.stream.WritableEventType.Error = "error";
-org.tamina.utils.UID._lastUID = 0;
-com.tamina.cow4.IADemoApp.main();
-})();
+var ArrayBuffer = typeof(window) != "undefined" && window.ArrayBuffer || typeof(global) != "undefined" && global.ArrayBuffer || js_html_compat_ArrayBuffer;
+if(ArrayBuffer.prototype.slice == null) ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
+var DataView = typeof(window) != "undefined" && window.DataView || typeof(global) != "undefined" && global.DataView || js_html_compat_DataView;
+var Uint8Array = typeof(window) != "undefined" && window.Uint8Array || typeof(global) != "undefined" && global.Uint8Array || js_html_compat_Uint8Array._new;
+msignal_SlotList.NIL = new msignal_SlotList(null,null);
+com_tamina_cow4_IADemoApp.ALIVE_DURATION = 600000;
+com_tamina_cow4_config_Config.ROOT_PATH = "server/";
+com_tamina_cow4_config_Config.APP_PORT = 3000;
+com_tamina_cow4_config_Config.SOCKET_PORT = 8127;
+com_tamina_cow4_config_Config.WEB_SOCKET_PORT = 8128;
+com_tamina_cow4_socket_message_SocketMessage.END_CHAR = "#end#";
+com_tamina_cow4_socket_message_Authenticate.MESSAGE_TYPE = "authenticate";
+com_tamina_cow4_socket_message_Error.MESSAGE_TYPE = "error";
+com_tamina_cow4_socket_message_GetTurnOrder.MESSAGE_TYPE = "getTurnOrder";
+com_tamina_cow4_socket_message_ID.MESSAGE_TYPE = "id";
+com_tamina_cow4_socket_message_TurnResult.MESSAGE_TYPE = "turnResult";
+haxe_io_FPHelper.i64tmp = (function($this) {
+	var $r;
+	var x = new haxe__$Int64__$_$_$Int64(0,0);
+	$r = x;
+	return $r;
+}(this));
+js_Boot.__toStr = {}.toString;
+js_html_compat_Uint8Array.BYTES_PER_ELEMENT = 1;
+nodejs_ProcessEventType.Exit = "exit";
+nodejs_ProcessEventType.Exception = "uncaughtException";
+nodejs_REPLEventType.Exit = "exit";
+nodejs_events_EventEmitterEventType.NewListener = "newListener";
+nodejs_events_EventEmitterEventType.RemoveListener = "removeListener";
+nodejs_fs_ReadStreamEventType.Open = "open";
+nodejs_fs_WriteStreamEventType.Open = "open";
+nodejs_http_HTTPMethod.Get = "GET";
+nodejs_http_HTTPMethod.Post = "POST";
+nodejs_http_HTTPMethod.Options = "OPTIONS";
+nodejs_http_HTTPMethod.Head = "HEAD";
+nodejs_http_HTTPMethod.Put = "PUT";
+nodejs_http_HTTPMethod.Delete = "DELETE";
+nodejs_http_HTTPMethod.Trace = "TRACE";
+nodejs_http_HTTPMethod.Connect = "CONNECT";
+nodejs_http_HTTPClientRequestEventType.Response = "response";
+nodejs_http_HTTPClientRequestEventType.Socket = "socket";
+nodejs_http_HTTPClientRequestEventType.Connect = "connect";
+nodejs_http_HTTPClientRequestEventType.Upgrade = "upgrade";
+nodejs_http_HTTPClientRequestEventType.Continue = "continue";
+nodejs_http_HTTPServerEventType.Listening = "listening";
+nodejs_http_HTTPServerEventType.Connection = "connection";
+nodejs_http_HTTPServerEventType.Close = "close";
+nodejs_http_HTTPServerEventType.Error = "error";
+nodejs_http_HTTPServerEventType.Request = "request";
+nodejs_http_HTTPServerEventType.CheckContinue = "checkContinue";
+nodejs_http_HTTPServerEventType.Connect = "connect";
+nodejs_http_HTTPServerEventType.Upgrade = "upgrade";
+nodejs_http_HTTPServerEventType.ClientError = "clientError";
+nodejs_stream_ReadableEventType.Readable = "readable";
+nodejs_stream_ReadableEventType.Data = "data";
+nodejs_stream_ReadableEventType.End = "end";
+nodejs_stream_ReadableEventType.Close = "close";
+nodejs_stream_ReadableEventType.Error = "error";
+nodejs_http_IncomingMessageEventType.Data = "data";
+nodejs_http_IncomingMessageEventType.Close = "close";
+nodejs_http_IncomingMessageEventType.End = "end";
+nodejs_http_ServerResponseEventType.Close = "close";
+nodejs_http_ServerResponseEventType.Finish = "finish";
+nodejs_net_TCPServerEventType.Listening = "listening";
+nodejs_net_TCPServerEventType.Connection = "connection";
+nodejs_net_TCPServerEventType.Close = "close";
+nodejs_net_TCPServerEventType.Error = "error";
+nodejs_net_TCPSocketEventType.Connect = "connect";
+nodejs_net_TCPSocketEventType.Data = "data";
+nodejs_net_TCPSocketEventType.End = "end";
+nodejs_net_TCPSocketEventType.TimeOut = "timeout";
+nodejs_net_TCPSocketEventType.Drain = "drain";
+nodejs_net_TCPSocketEventType.Error = "error";
+nodejs_net_TCPSocketEventType.Close = "close";
+nodejs_stream_WritableEventType.Drain = "drain";
+nodejs_stream_WritableEventType.Finish = "finish";
+nodejs_stream_WritableEventType.Pipe = "pipe";
+nodejs_stream_WritableEventType.Unpipe = "unpipe";
+nodejs_stream_WritableEventType.Error = "error";
+org_tamina_utils_UID._lastUID = 0;
+com_tamina_cow4_IADemoApp.main();
+})(typeof console != "undefined" ? console : {log:function(){}});
