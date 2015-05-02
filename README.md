@@ -110,7 +110,7 @@ http://www.codeofwar.net/api/modules/Server.html
 
 ### Le labyrinthe
 
-![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/map.png)
+[Absolute README link](https://github.com/damoebius/Cow4/raw/master/html/server/images/map.png)
 
 ### L'IA du poulet
 
@@ -121,7 +121,7 @@ A partir de ce moment, l'ia va commencer pour calculer le chemin le plus rapide 
 ![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/findIa.png)
 
 Ensuite elle va chercher la premiere intersection disponible sans emprunter une route vers une IA.
-![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/findIntersection.png)
+![alt tag](https://raw.github.com/damoebius/Cow4/blob/master/html/server/images/findIntersection.png)
 
 Et elle y va.
 Arrivée là-bas elle analyse à nouveau la situation.
