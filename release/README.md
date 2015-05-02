@@ -104,3 +104,28 @@ L'IA doit répondre en moins d'une seconde, un message de type TurnResult
 }
 
 Reportez vous à la documentation de l'API pour plus de détails
+
+http://www.codeofwar.net/api/modules/Server.html
+
+
+### Le labyrinthe
+
+![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/map.png)
+
+### L'IA du poulet
+
+A son premier tour, le poulet va foncer vers la case tout à gauche.
+![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/firstMove.png)
+
+A partir de ce moment, l'ia va commencer pour calculer le chemin le plus rapide pour atteindre ses deux adversaires
+![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/findIa.png)
+
+Ensuite elle va chercher la premiere intersection disponible sans emprunter une route vers une IA.
+![alt tag](https://github.com/damoebius/Cow4/blob/master/html/server/images/findIntersection.png)
+
+Et elle y va.
+Arrivée là-bas elle analyse à nouveau la situation.
+
+
+
+
