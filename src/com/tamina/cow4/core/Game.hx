@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.socket.message.order.UseItemOrder;
 import com.tamina.cow4.socket.message.order.GetItemOrder;
 import haxe.Timer;
 import com.tamina.cow4.core.ParseResult.ParseResultType;
@@ -111,7 +112,10 @@ class Game {
                         break;
                     }
                 case Action.USE_ITEM :
-//todo
+                    result = parseUseItemOrder(cast value.actions[i]);
+                    if ( result.type != ParseResultType.SUCCESS ) {
+                        break;
+                    }
                 case Action.FAIL :
                 case Action.SUCCESS :
                     result.type = ParseResultType.ERROR;
@@ -137,6 +141,27 @@ class Game {
             result.message = 'rien à ramasser';
             nodejs.Console.info(result.message);
         }
+        return result;
+    }
+
+    private function parseUseItemOrder( order:UseItemOrder ):ParseResult {
+        var result = new ParseResult();
+        var currentIA = _IAList[_iaTurnIndex];
+        if(currentIA.items.length == 0){
+            result.type = ParseResultType.ERROR;
+            result.message = 'pas de items à utiliser';
+            nodejs.Console.info(result.message);
+        } else {
+            var item = currentIA.getItemByType(order.item.type);
+            if(item == null){
+                result.type = ParseResultType.ERROR;
+                result.message = 'pas de items de ce type';
+                nodejs.Console.info(result.message);
+            } else {
+                currentIA.items.remove(item);
+            }
+        }
+
         return result;
     }
 

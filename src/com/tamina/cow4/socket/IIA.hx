@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
 import com.tamina.cow4.model.GameMap;
 import com.tamina.cow4.model.IAInfo;
@@ -13,4 +14,5 @@ interface IIA {
     public var items:Array<Item>;
     function toInfo():IAInfo;
     function getTurnOrder(data:GameMap):Void;
+    function getItemByType(type:ItemType):Item;
 }

@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.utils.GameUtils;
@@ -108,6 +109,16 @@ class SheepIA implements IIA {
 
 
         return getNextIntersection(currentCell, selectedNeighbor);
+    }
+
+    public function getItemByType(type:ItemType):Item{
+        var result:Item = null;
+        for(i in 0...items.length){
+            if(items[i].type == type){
+                result = items[i];
+            }
+        }
+        return result;
     }
 
 

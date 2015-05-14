@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
 import com.tamina.cow4.socket.message.TurnResult;
 import msignal.Signal;
@@ -39,6 +40,16 @@ class IA extends Client implements IIA {
 
     public function getTurnOrder(data:GameMap):Void {
         _proxy.sendMessage(new GetTurnOrder(data.toGameMapVO()));
+    }
+
+    public function getItemByType(type:ItemType):Item{
+        var result:Item = null;
+        for(i in 0...items.length){
+            if(items[i].type == type){
+                result = items[i];
+            }
+        }
+        return result;
     }
 
 
