@@ -159,6 +159,7 @@ class Game {
                 nodejs.Console.info(result.message);
             } else {
                 currentIA.items.remove(item);
+                currentIA.invisibilityDuration = GameConstants.INVISIBILITY_DURATION;
             }
         }
 
@@ -210,6 +211,9 @@ class Game {
             }
             if ( currentIA.id == _sheep.id ) {
                 currentIA.pm = 1;
+            }
+            if(currentIA.invisibilityDuration > 0){
+                currentIA.invisibilityDuration--;
             }
             result.ia = currentIA.toInfo();
             this._data.getIAById(currentIA.id).pm = currentIA.pm;

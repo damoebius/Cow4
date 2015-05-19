@@ -43,14 +43,23 @@ class IAInfo {
 **/
     public var items:Array<Item>;
 
+/**
+    * Durée en nombre de tour de l'invisibilité
+    * @property invisibilityDuration
+    * @type Int
+    *
+**/
+    public var invisibilityDuration:Int=0;
 
 
-    public function new( id:Float,name:String,avatar:String, pm:Int, items:Array<Item> ) {
+
+    public function new( id:Float,name:String,avatar:String, pm:Int, items:Array<Item>,invisibilityDuration:Int ) {
         this.id = id;
         this.name= name;
         this.avatar = avatar;
         this.pm = pm;
         this.items = new Array<Item>();
+        this.invisibilityDuration = invisibilityDuration;
         for(i in 0...items.length){
             this.items.push(items[i]);
         }

@@ -43,6 +43,11 @@ class PlayerCellSprite extends CellSprite {
                     _sheepSprite.visible = true;
                 } else {
                     _playerSprite.visible = true;
+                    if(data.occupant.invisibilityDuration>0){
+                        _playerSprite.alpha = 0.5;
+                    } else {
+                        _playerSprite.alpha = 1.0;
+                    }
                     _sheepSprite.visible = false;
                 }
             } else {

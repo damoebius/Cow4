@@ -21,6 +21,7 @@ class IA extends Client implements IIA {
     public var turnComplete:Signal1<TurnResult>;
     public var pm:Int=1;
     public var items:Array<Item>;
+    public var invisibilityDuration:Int=0;
 
     private var _proxy:ClientProxy;
 
@@ -35,7 +36,7 @@ class IA extends Client implements IIA {
     }
 
     public function toInfo():IAInfo {
-        return new IAInfo(id, name, avatar.path, pm, items);
+        return new IAInfo(id, name, avatar.path, pm, items, invisibilityDuration);
     }
 
     public function getTurnOrder(data:GameMap):Void {

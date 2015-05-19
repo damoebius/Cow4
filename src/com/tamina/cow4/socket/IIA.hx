@@ -11,7 +11,10 @@ interface IIA {
     var name:String;
     var turnComplete:Signal1<TurnResult>;
     var pm:Int;
-    public var items:Array<Item>;
+    var items:Array<Item>;
+    var invisibilityDuration:Int;
+
+
     function toInfo():IAInfo;
     function getTurnOrder(data:GameMap):Void;
     function getItemByType(type:ItemType):Item;

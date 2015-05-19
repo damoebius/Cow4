@@ -19,6 +19,7 @@ class SheepIA implements IIA {
     public var turnComplete:Signal1<TurnResult>;
     public var pm:Int = 1;
     public var items:Array<Item>;
+    public var invisibilityDuration:Int=0;
 
     private var _targetCell:Cell;
     private var _isFirstTurn:Bool = true;
@@ -33,7 +34,7 @@ class SheepIA implements IIA {
     }
 
     public function toInfo( ):IAInfo {
-        return new IAInfo(id, name, "", pm, items);
+        return new IAInfo(id, name, "", pm, items, invisibilityDuration);
     }
 
     public function getTurnOrder( data:GameMap ):Void {
