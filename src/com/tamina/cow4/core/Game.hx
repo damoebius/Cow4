@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.model.IAInfo;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
 import com.tamina.cow4.socket.message.order.GetItemOrder;
 import haxe.Timer;
@@ -94,7 +95,21 @@ class Game {
         _timeoutWatcher.stop();
         _timeoutWatcher = new Timer(GameConstants.TIMEOUT_DURATION);
         _timeoutWatcher.run = timeoutHandler;
-        targetIA.getTurnOrder(_data);
+        _data.iaList = new Array<IAInfo>();
+        _data.iaList.push(_IAList[0].toInfo());
+        _data.iaList.push(_IAList[1].toInfo());
+        _data.iaList.push(_IAList[2].toInfo());
+        var cloneData = _data.clone();
+        for (i in 0...cloneData.cells.length) {
+            var columns = cloneData.cells[i];
+            for (j in 0...columns.length) {
+                var cell = columns[j];
+                if (cell.occupant != null && cell.occupant.id != targetIA.id && cell.occupant.invisibilityDuration > 0) {
+                    cell.occupant = null;
+                }
+            }
+        }
+        targetIA.getTurnOrder(cloneData);
     }
 
     private function parseTurnResult( value:TurnResult ):ParseResult {

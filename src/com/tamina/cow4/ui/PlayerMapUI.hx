@@ -53,6 +53,8 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
 
     private function parseAction( ia:IAInfo, action:TurnAction ):Void{
         var currentCell:Cell = this.data.getCellByIA(ia.id);
+        currentCell.occupant = ia;
+        trace(ia.invisibilityDuration);
         switch (action.type){
             case Action.MOVE:
                 var move:MoveOrder = cast action;
@@ -73,7 +75,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
             case Action.GET_ITEM :
                 currentCell.item = null;
             case Action.USE_ITEM :
-//todo
+                //
         }
         _runningActions--;
         updateDisplay();

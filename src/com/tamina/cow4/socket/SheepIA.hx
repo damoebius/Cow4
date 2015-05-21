@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.model.Path;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
 import com.tamina.cow4.socket.message.order.MoveOrder;
@@ -91,16 +92,27 @@ class SheepIA implements IIA {
         var currentCell = _data.getCellByIA(id);
 
         var ia1Cell = _data.getCellByIA(_data.iaList[0].id);
+        var ia1Path:Path = null;
+        if(ia1Cell != null){
+            ia1Path = GameUtils.getPath(currentCell, ia1Cell, _data);
+        }
         var ia2Cell = _data.getCellByIA(_data.iaList[1].id);
-        var ia1Path = GameUtils.getPath(currentCell, ia1Cell, _data);
-        var ia2Path = GameUtils.getPath(currentCell, ia2Cell, _data);
+        var ia2Path:Path = null;
+        if(ia2Cell != null){
+            ia2Path = GameUtils.getPath(currentCell, ia2Cell, _data);
+        }
+
 
         var neighbors = currentCell.getNeighboors();
         var selectedNeighbor:Cell = null;
         var neighborIndex:Int = 0;
         while ( neighborIndex < neighbors.length ) {
             selectedNeighbor = neighbors[neighborIndex];
-            if ( neighbors[neighborIndex].id != ia1Path.getItemAt(1).id && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ) {
+            if (
+            (ia1Path == null || (ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) )
+                && (ia2Path == null || (ia2Path != null &&neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ))
+            )
+            {
                 break;
             } else {
                 selectedNeighbor = null;

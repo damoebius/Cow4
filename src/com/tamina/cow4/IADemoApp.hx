@@ -48,7 +48,7 @@ class IADemoApp {
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
         _proxy.closeSignal.add(quit);
-        _proxy.sendMessage(new Authenticate('DemoIA', 'http://images.groups.adobe.com/1332a08/logo100x100.gif'));
+        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://images.groups.adobe.com/1332a08/logo100x100.gif'));
         Timer.delay(quit, ALIVE_DURATION);
     }
 
@@ -109,7 +109,9 @@ class IADemoApp {
                     }
                 }
             } else {
+                trace('---------------------------> ' + myIa.items.length);
                 if(myIa.items.length > 0){
+                    trace('---------------------------> POTION USED');
                     var useItemOrder = new UseItemOrder(myIa.items[0]);
                     result.actions.push(useItemOrder);
                 }
