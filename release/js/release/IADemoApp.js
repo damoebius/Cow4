@@ -60,7 +60,7 @@ com_tamina_cow4_IADemoApp.prototype = {
 		this._proxy = new com_tamina_cow4_socket_GameServerProxy(this._socket);
 		this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
 		this._proxy.closeSignal.add($bind(this,this.quit));
-		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA","http://images.groups.adobe.com/1332a08/logo100x100.gif"));
+		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA " + new Date().getTime(),"http://images.groups.adobe.com/1332a08/logo100x100.gif"));
 		haxe_Timer.delay($bind(this,this.quit),600000);
 	}
 	,serverMessageHandler: function(message) {
@@ -90,44 +90,49 @@ com_tamina_cow4_IADemoApp.prototype = {
 	,processTurn: function(data) {
 		var result = new com_tamina_cow4_socket_message_TurnResult();
 		try {
-			var wait = Math.round(Math.random()) == 0;
 			var gameData = com_tamina_cow4_model_GameMap.fromGameMapVO(data.data);
 			console.log("turn : " + gameData.currentTurn);
 			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
-			if(wait) console.log("wait"); else {
-				var myIa = gameData.getIAById(this._id);
-				console.log("pm : " + myIa.pm);
-				var currentCell = gameData.getCellByIA(this._id);
-				var targetCell;
-				if(this._mode == com_tamina_cow4_ia_Mode.GET_A_POTION) {
-					console.log("mode get a potion");
-					var c1 = gameData.getCellAt(this._potionsPosition[0].x,this._potionsPosition[0].y);
-					var c2 = gameData.getCellAt(this._potionsPosition[1].x,this._potionsPosition[1].y);
-					if(currentCell.id == c1.id || currentCell.id == c2.id) {
-						console.log("potion found");
-						this._mode = com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN;
-						var order = new com_tamina_cow4_socket_message_order_GetItemOrder();
-						result.actions.push(order);
-						targetCell = gameData.getCellByIA(gameData.iaList[2].id);
-					} else {
-						var p1 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c1,gameData);
-						var p2 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c2,gameData);
-						targetCell = c1;
-						if(p1 != null && p2 != null && p1.get_length() > p2.get_length()) targetCell = c2;
-					}
-				} else targetCell = gameData.getCellByIA(gameData.iaList[2].id);
-				var path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,targetCell,gameData);
-				if(path != null) {
-					var _g1 = 0;
-					var _g = myIa.pm;
-					while(_g1 < _g) {
-						var i = _g1++;
-						console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
-						var order1 = new com_tamina_cow4_socket_message_order_MoveOrder(path.getItemAt(i + 1));
-						result.actions.push(order1);
-					}
-				} else console.log("path null : " + currentCell.id + "//" + targetCell.id);
+			var myIa = gameData.getIAById(this._id);
+			console.log("pm : " + myIa.pm);
+			var currentCell = gameData.getCellByIA(this._id);
+			var targetCell;
+			if(this._mode == com_tamina_cow4_ia_Mode.GET_A_POTION) {
+				console.log("mode get a potion");
+				var c1 = gameData.getCellAt(this._potionsPosition[0].x,this._potionsPosition[0].y);
+				var c2 = gameData.getCellAt(this._potionsPosition[1].x,this._potionsPosition[1].y);
+				if(currentCell.id == c1.id || currentCell.id == c2.id) {
+					console.log("potion found");
+					this._mode = com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN;
+					var order = new com_tamina_cow4_socket_message_order_GetItemOrder();
+					result.actions.push(order);
+					targetCell = gameData.getCellByIA(gameData.iaList[2].id);
+				} else {
+					var p1 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c1,gameData);
+					var p2 = com_tamina_cow4_utils_GameUtils.getPath(currentCell,c2,gameData);
+					targetCell = c1;
+					if(p1 != null && p2 != null && p1.get_length() > p2.get_length()) targetCell = c2;
+				}
+			} else {
+				console.log("---------------------------> " + myIa.items.length);
+				if(myIa.items.length > 0) {
+					console.log("---------------------------> POTION USED");
+					var useItemOrder = new com_tamina_cow4_socket_message_order_UseItemOrder(myIa.items[0]);
+					result.actions.push(useItemOrder);
+				}
+				targetCell = gameData.getCellByIA(gameData.iaList[2].id);
 			}
+			var path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,targetCell,gameData);
+			if(path != null) {
+				var _g1 = 0;
+				var _g = myIa.pm;
+				while(_g1 < _g) {
+					var i = _g1++;
+					console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
+					var order1 = new com_tamina_cow4_socket_message_order_MoveOrder(path.getItemAt(i + 1));
+					result.actions.push(order1);
+				}
+			} else console.log("path null : " + currentCell.id + "//" + targetCell.id);
 		} catch( e ) {
 			if( js_Boot.__instanceof(e,Error) ) {
 				console.log("error : " + e.message);
@@ -418,15 +423,21 @@ com_tamina_cow4_model_GameMap.prototype = {
 		}
 		return result;
 	}
+	,clone: function() {
+		var vo = this.toGameMapVO();
+		return com_tamina_cow4_model_GameMap.fromGameMapVO(vo);
+	}
 	,__class__: com_tamina_cow4_model_GameMap
 };
-var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items) {
+var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items,invisibilityDuration) {
+	this.invisibilityDuration = 0;
 	this.pm = 1;
 	this.id = id;
 	this.name = name;
 	this.avatar = avatar;
 	this.pm = pm;
 	this.items = [];
+	this.invisibilityDuration = invisibilityDuration;
 	var _g1 = 0;
 	var _g = items.length;
 	while(_g1 < _g) {
@@ -680,6 +691,15 @@ com_tamina_cow4_socket_message_order_MoveOrder.__name__ = true;
 com_tamina_cow4_socket_message_order_MoveOrder.__super__ = com_tamina_cow4_model_TurnAction;
 com_tamina_cow4_socket_message_order_MoveOrder.prototype = $extend(com_tamina_cow4_model_TurnAction.prototype,{
 	__class__: com_tamina_cow4_socket_message_order_MoveOrder
+});
+var com_tamina_cow4_socket_message_order_UseItemOrder = function(item) {
+	com_tamina_cow4_model_TurnAction.call(this,"useItem");
+	this.item = item;
+};
+com_tamina_cow4_socket_message_order_UseItemOrder.__name__ = true;
+com_tamina_cow4_socket_message_order_UseItemOrder.__super__ = com_tamina_cow4_model_TurnAction;
+com_tamina_cow4_socket_message_order_UseItemOrder.prototype = $extend(com_tamina_cow4_model_TurnAction.prototype,{
+	__class__: com_tamina_cow4_socket_message_order_UseItemOrder
 });
 var com_tamina_cow4_utils_GameUtils = function() {
 };
