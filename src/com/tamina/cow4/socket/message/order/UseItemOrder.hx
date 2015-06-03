@@ -6,7 +6,7 @@ import com.tamina.cow4.model.TurnAction;
 /**
 * Order de ramassage d'item
 * @author d.mouton
-* @class GetItemOrder
+* @class UseItemOrder
 */
 class UseItemOrder extends TurnAction {
 

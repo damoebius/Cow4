@@ -15,6 +15,7 @@ class Cell {
 
     public var occupant:IAInfo;
     public var item:Item;
+    public var hasTrap:Bool = false;
 
     private var _top:Cell;
     private var _bottom:Cell;

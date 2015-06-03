@@ -22,6 +22,7 @@ class IA extends Client implements IIA {
     public var pm:Int=1;
     public var items:Array<Item>;
     public var invisibilityDuration:Int=0;
+    public var trappedDuration:Int=0;
 
     private var _proxy:ClientProxy;
 

@@ -13,6 +13,7 @@ interface IIA {
     var pm:Int;
     var items:Array<Item>;
     var invisibilityDuration:Int;
+    var trappedDuration:Int=0;
 
 
     function toInfo():IAInfo;

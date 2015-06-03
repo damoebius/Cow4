@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.IAInfo;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
 import com.tamina.cow4.socket.message.order.GetItemOrder;
@@ -100,11 +101,11 @@ class Game {
         _data.iaList.push(_IAList[1].toInfo());
         _data.iaList.push(_IAList[2].toInfo());
         var cloneData = _data.clone();
-        for (i in 0...cloneData.cells.length) {
+        for ( i in 0...cloneData.cells.length ) {
             var columns = cloneData.cells[i];
-            for (j in 0...columns.length) {
+            for ( j in 0...columns.length ) {
                 var cell = columns[j];
-                if (cell.occupant != null && cell.occupant.id != targetIA.id && cell.occupant.invisibilityDuration > 0) {
+                if ( cell.occupant != null && cell.occupant.id != targetIA.id && cell.occupant.invisibilityDuration > 0 ) {
                     cell.occupant = null;
                 }
             }
@@ -162,19 +163,33 @@ class Game {
     private function parseUseItemOrder( order:UseItemOrder ):ParseResult {
         var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
-        if(currentIA.items.length == 0){
+        if ( currentIA.items.length == 0 ) {
             result.type = ParseResultType.ERROR;
             result.message = 'pas de items à utiliser';
             nodejs.Console.info(result.message);
         } else {
             var item = currentIA.getItemByType(order.item.type);
-            if(item == null){
+            if ( item == null ) {
                 result.type = ParseResultType.ERROR;
                 result.message = 'pas de items de ce type';
                 nodejs.Console.info(result.message);
             } else {
                 currentIA.items.remove(item);
-                currentIA.invisibilityDuration = GameConstants.INVISIBILITY_DURATION;
+                switch(item.type){
+                    case ItemType.POTION:
+                        nodejs.Console.info("potion utilisée");
+                        currentIA.invisibilityDuration = GameConstants.INVISIBILITY_DURATION;
+                    case ItemType.PARFUM:
+                        nodejs.Console.info("parfum utilisé");
+                        _sheep.pm += GameConstants.PARFUM_PM_BOOST;
+                    case ItemType.TRAP:
+//todo trap
+                        nodejs.Console.info("trap utilisé");
+                        var currentCell = _data.getCellByIA(currentIA.id);
+                        currentCell.hasTrap = true;
+
+                }
+
             }
         }
 
@@ -184,33 +199,40 @@ class Game {
     private function parseMoveOrder( order:MoveOrder ):ParseResult {
         var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
-        var currentCell = _data.getCellByIA(currentIA.id);
-        var targetCell = currentCell.getNeighboorById(order.target);
-        if ( targetCell != null ) {
-            if ( targetCell.occupant != null ) {
-                if ( targetCell.occupant.id == _sheep.id ) {
-                    result.type = ParseResultType.VICTORY;
-                    result.message = 'cible attrapée';
-                    nodejs.Console.info(result.message);
+        if ( currentIA.trappedDuration == 0 ) {
+            var currentCell = _data.getCellByIA(currentIA.id);
+            var targetCell = currentCell.getNeighboorById(order.target);
+            if ( targetCell != null ) {
+                if ( targetCell.occupant != null ) {
+                    if ( targetCell.occupant.id == _sheep.id ) {
+                        result.type = ParseResultType.VICTORY;
+                        result.message = 'cible attrapée';
+                        nodejs.Console.info(result.message);
+                    } else {
+                        result.type = ParseResultType.ERROR;
+                        result.message = 'la case ciblée est deja occupée';
+                        nodejs.Console.info(result.message);
+                    }
                 } else {
-                    result.type = ParseResultType.ERROR;
-                    result.message = 'la case ciblée est deja occupée';
-                    nodejs.Console.info(result.message);
+                    targetCell.occupant = currentCell.occupant;
+                    currentCell.occupant = null;
+                    currentIA.pm--;
+                    if ( currentIA.pm < 0 ) {
+                        result.type = ParseResultType.ERROR;
+                        result.message = 'pas assez de mouvement';
+                        nodejs.Console.info(result.message);
+                    }
+                    if ( currentCell.hasTrap ) {
+                        currentIA.trappedDuration = GameConstants.TRAPED_DURATION;
+                    }
                 }
             } else {
-                targetCell.occupant = currentCell.occupant;
-                currentCell.occupant = null;
-                currentIA.pm--;
-                if ( currentIA.pm < 0 ) {
-                    result.type = ParseResultType.ERROR;
-                    result.message = 'pas assez de mouvement';
-                    nodejs.Console.info(result.message);
-                }
+                result.type = ParseResultType.ERROR;
+                result.message = 'la case ciblée nest pas voisine de la courant';
+                nodejs.Console.info(result.message);
             }
         } else {
-            result.type = ParseResultType.ERROR;
-            result.message = 'la case ciblée nest pas voisine de la courant';
-            nodejs.Console.info(result.message);
+            currentIA.trappedDuration--;
         }
         return result;
     }
@@ -227,7 +249,7 @@ class Game {
             if ( currentIA.id == _sheep.id ) {
                 currentIA.pm = 1;
             }
-            if(currentIA.invisibilityDuration > 0){
+            if ( currentIA.invisibilityDuration > 0 ) {
                 currentIA.invisibilityDuration--;
             }
             result.ia = currentIA.toInfo();

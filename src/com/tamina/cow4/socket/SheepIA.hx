@@ -21,6 +21,7 @@ class SheepIA implements IIA {
     public var pm:Int = 1;
     public var items:Array<Item>;
     public var invisibilityDuration:Int=0;
+    public var trappedDuration:Int=0;
 
     private var _targetCell:Cell;
     private var _isFirstTurn:Bool = true;
@@ -43,7 +44,7 @@ class SheepIA implements IIA {
         _data = data;
         try {
             var currentCell = data.getCellByIA(id);
-
+            var myIa = data.getIAById(id);
             if ( _isFirstTurn ) {
                 initFirstTurn();
             } else {
@@ -53,8 +54,10 @@ class SheepIA implements IIA {
                 }
                 var path = GameUtils.getPath(currentCell, _targetCell, data);
                 if ( path != null ) {
-                    var order = new MoveOrder(path.getItemAt(1));
-                    result.actions.push(order);
+                    for (i in 0...myIa.pm) {
+                        var order = new MoveOrder(path.getItemAt(i + 1));
+                        result.actions.push(order);
+                    }
                 } else {
                     trace('path null : ' + currentCell.id + "//" + _targetCell.id);
                     _targetCell = null;
