@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.model.ItemPosition;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
 import com.tamina.cow4.socket.message.order.GetItemOrder;
 import org.tamina.geom.Point;
@@ -31,19 +32,15 @@ class IADemoApp {
     private var _id:Float;
     private var _currentDirection:Direction;
     private var _mode:Mode;
-    private var _potionsPosition:Array<Point>;
 
-    public function new() {
-        _potionsPosition = new Array<Point>();
-        _potionsPosition.push(new Point(21, 4));
-        _potionsPosition.push(new Point(3, 20));
-        _mode = Mode.GET_A_POTION;
+    public function new( ) {
+        _mode = Mode.GET_A_TRAP;
         _socket = new TCPSocket();
         _socket.connect(Config.SOCKET_PORT, 'localhost', connectionHandler);
         _currentDirection = Direction.RIGHT;
     }
 
-    private function connectionHandler():Void {
+    private function connectionHandler( ):Void {
         nodejs.Console.log('CONNECTED <br/> Sending Auth message...');
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
@@ -52,9 +49,9 @@ class IADemoApp {
         Timer.delay(quit, ALIVE_DURATION);
     }
 
-    private function serverMessageHandler(message:GameServerMessage):Void {
+    private function serverMessageHandler( message:GameServerMessage ):Void {
         nodejs.Console.info('[TestIA] Data recevied ');
-        if (message.type != null) {
+        if ( message.type != null ) {
             switch( message.type){
                 case ID.MESSAGE_TYPE:
                     var idMessage:ID = cast message;
@@ -78,24 +75,42 @@ class IADemoApp {
         }
     }
 
-    private function processTurn(data:GetTurnOrder):Void {
+    private function processTurn( data:GetTurnOrder ):Void {
         var result = new TurnResult();
         try {
             var gameData = GameMap.fromGameMapVO(data.data);
             trace('turn : ' + gameData.currentTurn);
-            if (gameData.currentTurn <= 1) {
-                _mode = Mode.GET_A_POTION;
+            if ( gameData.currentTurn <= 1 ) {
+                _mode = Mode.GET_A_TRAP;
             }
             var myIa = gameData.getIAById(_id);
             trace('pm : ' + myIa.pm);
             var currentCell = gameData.getCellByIA(_id);
             var targetCell:Cell;
-            if (_mode == Mode.GET_A_POTION) {
-                trace('mode get a potion');
-                var c1 = gameData.getCellAt(cast(_potionsPosition[0].x), cast( _potionsPosition[0].y));
-                var c2 = gameData.getCellAt(cast(_potionsPosition[1].x), cast( _potionsPosition[1].y));
-                if (currentCell.id == c1.id || currentCell.id == c2.id) {
-                    trace('potion found');
+            if ( _mode != Mode.CATCH_THE_CHICKEN ) {
+                trace('mode get an item');
+                var c1:Cell = null;
+                var c2:Cell = null;
+                switch (_mode){
+                    case Mode.GET_A_POTION:
+                        trace('mode get a potion');
+                        c1 = gameData.getCellAt(cast(ItemPosition.POTION_TOP.x), cast( ItemPosition.POTION_TOP.y));
+                        c2 = gameData.getCellAt(cast(ItemPosition.POTION_BOTTOM.x), cast( ItemPosition.POTION_BOTTOM.y));
+                    case Mode.GET_A_TRAP:
+                        trace('mode get a TRAP');
+                        c1 = gameData.getCellAt(cast(ItemPosition.TRAP_TOP.x), cast( ItemPosition.TRAP_TOP.y));
+                        c2 = gameData.getCellAt(cast(ItemPosition.TRAP_BOTTOM.x), cast( ItemPosition.TRAP_BOTTOM.y));
+                    case Mode.GET_A_PARFUM:
+                        c1 = gameData.getCellAt(cast(ItemPosition.PARFUM_TOP.x), cast( ItemPosition.PARFUM_TOP.y));
+                        c2 = gameData.getCellAt(cast(ItemPosition.PARFUM_BOTTOM.x), cast( ItemPosition.PARFUM_BOTTOM.y));
+                    default:
+                        trace('unkown mode');
+                        c1 = gameData.getCellAt(cast(ItemPosition.POTION_TOP.x), cast( ItemPosition.POTION_TOP.y));
+                        c2 = gameData.getCellAt(cast(ItemPosition.POTION_BOTTOM.x), cast( ItemPosition.POTION_BOTTOM.y));
+                }
+
+                if ( currentCell.id == c1.id || currentCell.id == c2.id ) {
+                    trace('item found');
                     _mode = Mode.CATCH_THE_CHICKEN;
                     var order = new GetItemOrder();
                     result.actions.push(order);
@@ -104,13 +119,13 @@ class IADemoApp {
                     var p1 = GameUtils.getPath(currentCell, c1, gameData);
                     var p2 = GameUtils.getPath(currentCell, c2, gameData);
                     targetCell = c1;
-                    if (p1 != null && p2 != null && p1.length > p2.length) {
+                    if ( p1 != null && p2 != null && p1.length > p2.length ) {
                         targetCell = c2;
                     }
                 }
             } else {
                 trace('---------------------------> ' + myIa.items.length);
-                if(myIa.items.length > 0){
+                if ( myIa.items.length > 0 ) {
                     trace('---------------------------> POTION USED');
                     var useItemOrder = new UseItemOrder(myIa.items[0]);
                     result.actions.push(useItemOrder);
@@ -118,8 +133,8 @@ class IADemoApp {
                 targetCell = gameData.getCellByIA(gameData.iaList[2].id);
             }
             var path = GameUtils.getPath(currentCell, targetCell, gameData);
-            if (path != null) {
-                for (i in 0...myIa.pm) {
+            if ( path != null ) {
+                for ( i in 0...myIa.pm ) {
                     trace(currentCell.id + ' -> ' + path.getItemAt(i + 1).id);
                     var order = new MoveOrder(path.getItemAt(i + 1));
                     result.actions.push(order);
@@ -127,12 +142,12 @@ class IADemoApp {
             } else {
                 trace('path null : ' + currentCell.id + "//" + targetCell.id);
             }
-        } catch (e:js.Error) {
+        } catch ( e:js.Error ) {
             trace('error : ' + e.message);
         }
 
         var timeout = Math.round(Math.random()) == 0;
-        if (false) {
+        if ( false ) {
             trace('timeout');
         } else {
             _proxy.sendMessage(result);
@@ -140,12 +155,12 @@ class IADemoApp {
     }
 
 
-    private function quit():Void {
+    private function quit( ):Void {
         _socket.destroy();
         NodeJS.process.exit(0);
     }
 
-    public static function main() {
+    public static function main( ) {
         _app = new IADemoApp();
     }
 }

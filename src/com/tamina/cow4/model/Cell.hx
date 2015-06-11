@@ -13,7 +13,7 @@ class Cell {
     public var left(get, set):Cell;
     public var right(get, set):Cell;
 
-    public var occupant:IAInfo;
+    public var occupant(get,set):IAInfo;
     public var item:Item;
     public var hasTrap:Bool = false;
 
@@ -21,10 +21,20 @@ class Cell {
     private var _bottom:Cell;
     private var _left:Cell;
     private var _right:Cell;
+    private var _occupant:IAInfo;
 
     public function new() {
         this.id = UID.getUID();
         changeSignal = new Signal0();
+    }
+
+    private function get_occupant():IAInfo{
+        return _occupant;
+    }
+
+    private function set_occupant(value:IAInfo):IAInfo{
+        _occupant = value;
+        return _occupant;
     }
 
     public function toCellVO():CellVO {

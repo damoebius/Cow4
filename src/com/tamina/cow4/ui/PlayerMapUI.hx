@@ -1,4 +1,6 @@
 package com.tamina.cow4.ui;
+import com.tamina.cow4.model.ItemType;
+import com.tamina.cow4.socket.message.order.UseItemOrder;
 import haxe.Timer;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.socket.message.order.MoveOrder;
@@ -18,10 +20,10 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
     private var _backgroundImage:Image;
     private var _endScreen:EndScreen;
 
-    private var _width:Int=864;
-    private var _height:Int=864;
-    private var _runningActions:Int=0;
-    public var runningActions(get,null):Int;
+    private var _width:Int = 864;
+    private var _height:Int = 864;
+    private var _runningActions:Int = 0;
+    public var runningActions(get, null):Int;
 
     public function new( display:CanvasElement ) {
         super(PlayerCellSprite, display, FPS);
@@ -29,7 +31,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         _backgroundImage = new Image();
         _backgroundImage.addEventListener(ImageEvent.LOAD, backgroundLoadHandler);
         _backgroundImage.src = "images/background.png";
-        _endScreen = new EndScreen(_width,_height);
+        _endScreen = new EndScreen(_width, _height);
         super.addChildAt(_background, 0);
         _cellsContainer.x = 32;
         _cellsContainer.y = 32;
@@ -40,27 +42,42 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         trace('updateMap ' + actions.length);
         _runningActions = actions.length;
         for ( i in 0...actions.length ) {
-            Timer.delay(function():Void{
-               parseAction(ia,actions[i]);
-            }, 250*i);
+            Timer.delay(function( ):Void {
+                parseAction(ia, actions[i]);
+            }, 250 * i);
         }
 
     }
 
-    private function get_runningActions():Int{
+    private function get_runningActions( ):Int {
         return _runningActions;
     }
 
-    private function parseAction( ia:IAInfo, action:TurnAction ):Void{
+    private function parseAction( ia:IAInfo, action:TurnAction ):Void {
         var currentCell:Cell = this.data.getCellByIA(ia.id);
-        currentCell.occupant = ia;
+        if ( currentCell != null ) {
+            currentCell.occupant = ia;
+        } else {
+            trace('ERROR : CELL NULL');
+        }
         trace(ia.invisibilityDuration);
         switch (action.type){
             case Action.MOVE:
                 var move:MoveOrder = cast action;
-                var targetCell = currentCell.getNeighboorById(move.target);
-                targetCell.occupant = currentCell.occupant;
-                currentCell.occupant = null;
+                var targetCell:Cell = super.data.getCellById(move.target);
+
+                if ( targetCell != null ) {
+                    targetCell.occupant = ia;
+                    if(targetCell.id == currentCell.id){
+                        trace('CANNOT MOVE TO THE SAME CELL');
+                    } else {
+                        currentCell.occupant = null;
+                    }
+
+                } else {
+                    trace('TARGET CELL NULL');
+                }
+
             case Action.FAIL:
                 var fail:EndOrder = cast action;
                 trace(fail.message);
@@ -75,10 +92,17 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
             case Action.GET_ITEM :
                 currentCell.item = null;
             case Action.USE_ITEM :
-                //
+                var useAction:UseItemOrder = cast action;
+                if ( useAction.item.type == ItemType.TRAP ) {
+                    trace('use trap');
+                    currentCell.item = useAction.item;
+                }
         }
         _runningActions--;
         updateDisplay();
+        if(super.data.getCellByIA(ia.id) == null){
+            trace('BUUUUG : DISAPARED IA');
+        }
     }
 
     private function backgroundLoadHandler( evt:Event ):Void {

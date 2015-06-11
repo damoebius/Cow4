@@ -28,6 +28,19 @@ class GameMap {
         return result;
     }
 
+    public function getCellById(cellId:Float):Cell {
+        var result:Cell = null;
+        for (i in 0...cells.length) {
+            for (j in 0...cells[i].length) {
+                if (cells[i][j].id == cellId) {
+                    result = cells[i][j];
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
     public function getCellAt(column:Int, row:Int):Cell {
         return cells[row][column];
     }

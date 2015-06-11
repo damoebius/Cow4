@@ -51,10 +51,11 @@ class CellSprite extends Container {
         _bottomWall.display = (_data.bottom == null);
         _rightWall.display = (_data.right == null);
         _leftWall.display = (_data.left == null);
+        drawItem();
     }
 
     private function drawItem():Void{
-        if(_data.item != null){
+        if(_data.item != null && !contains(_itemBitmap)){
             switch(_data.item.type){
                 case ItemType.POTION:
                     _itemBitmap = new Bitmap('images/potion_sprite.png');

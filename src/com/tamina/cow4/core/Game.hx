@@ -115,31 +115,38 @@ class Game {
 
     private function parseTurnResult( value:TurnResult ):ParseResult {
         var result = new ParseResult();
-        for ( i in 0...value.actions.length ) {
-            switch(value.actions[i].type){
-                case Action.MOVE :
-                    result = parseMoveOrder(cast value.actions[i]);
-                    if ( result.type != ParseResultType.SUCCESS ) {
+        var currentIA = _IAList[_iaTurnIndex];
+        if ( currentIA.trappedDuration == 0 ) {
+            for ( i in 0...value.actions.length ) {
+                switch(value.actions[i].type){
+                    case Action.MOVE :
+                        result = parseMoveOrder(cast value.actions[i]);
+                        if ( result.type != ParseResultType.SUCCESS ) {
+                            break;
+                        }
+                    case Action.GET_ITEM :
+                        result = parseGetItemOrder(cast value.actions[i]);
+                        if ( result.type != ParseResultType.SUCCESS ) {
+                            break;
+                        }
+                    case Action.USE_ITEM :
+                        result = parseUseItemOrder(cast value.actions[i]);
+                        if ( result.type != ParseResultType.SUCCESS ) {
+                            break;
+                        }
+                    case Action.FAIL :
+                    case Action.SUCCESS :
+                        result.type = ParseResultType.ERROR;
+                        result.message = 'action interdite';
+                        end(Action.FAIL, result.message);
                         break;
-                    }
-                case Action.GET_ITEM :
-                    result = parseGetItemOrder(cast value.actions[i]);
-                    if ( result.type != ParseResultType.SUCCESS ) {
-                        break;
-                    }
-                case Action.USE_ITEM :
-                    result = parseUseItemOrder(cast value.actions[i]);
-                    if ( result.type != ParseResultType.SUCCESS ) {
-                        break;
-                    }
-                case Action.FAIL :
-                case Action.SUCCESS :
-                    result.type = ParseResultType.ERROR;
-                    result.message = 'action interdite';
-                    end(Action.FAIL, result.message);
-                    break;
-            }
+                }
 
+            }
+        } else {
+            nodejs.Console.info('TRAPPED for ' + currentIA.trappedDuration);
+            currentIA.trappedDuration--;
+            value.actions = new Array<TurnAction>();
         }
 
         return result;
@@ -199,40 +206,36 @@ class Game {
     private function parseMoveOrder( order:MoveOrder ):ParseResult {
         var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
-        if ( currentIA.trappedDuration == 0 ) {
-            var currentCell = _data.getCellByIA(currentIA.id);
-            var targetCell = currentCell.getNeighboorById(order.target);
-            if ( targetCell != null ) {
-                if ( targetCell.occupant != null ) {
-                    if ( targetCell.occupant.id == _sheep.id ) {
-                        result.type = ParseResultType.VICTORY;
-                        result.message = 'cible attrapée';
-                        nodejs.Console.info(result.message);
-                    } else {
-                        result.type = ParseResultType.ERROR;
-                        result.message = 'la case ciblée est deja occupée';
-                        nodejs.Console.info(result.message);
-                    }
+        var currentCell = _data.getCellByIA(currentIA.id);
+        var targetCell = currentCell.getNeighboorById(order.target);
+        if ( targetCell != null ) {
+            if ( targetCell.occupant != null ) {
+                if ( targetCell.occupant.id == _sheep.id ) {
+                    result.type = ParseResultType.VICTORY;
+                    result.message = 'cible attrapée';
+                    nodejs.Console.info(result.message);
                 } else {
-                    targetCell.occupant = currentCell.occupant;
-                    currentCell.occupant = null;
-                    currentIA.pm--;
-                    if ( currentIA.pm < 0 ) {
-                        result.type = ParseResultType.ERROR;
-                        result.message = 'pas assez de mouvement';
-                        nodejs.Console.info(result.message);
-                    }
-                    if ( currentCell.hasTrap ) {
-                        currentIA.trappedDuration = GameConstants.TRAPED_DURATION;
-                    }
+                    result.type = ParseResultType.ERROR;
+                    result.message = 'la case ciblée est deja occupée';
+                    nodejs.Console.info(result.message);
                 }
             } else {
-                result.type = ParseResultType.ERROR;
-                result.message = 'la case ciblée nest pas voisine de la courant';
-                nodejs.Console.info(result.message);
+                targetCell.occupant = currentCell.occupant;
+                currentCell.occupant = null;
+                currentIA.pm--;
+                if ( currentIA.pm < 0 ) {
+                    result.type = ParseResultType.ERROR;
+                    result.message = 'pas assez de mouvement';
+                    nodejs.Console.info(result.message);
+                }
+                if ( currentCell.hasTrap ) {
+                    currentIA.trappedDuration = GameConstants.TRAPED_DURATION;
+                }
             }
         } else {
-            currentIA.trappedDuration--;
+            result.type = ParseResultType.ERROR;
+            result.message = 'la case ciblée nest pas voisine de la courante';
+            nodejs.Console.info(result.message);
         }
         return result;
     }

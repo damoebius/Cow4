@@ -20,8 +20,8 @@ class SheepIA implements IIA {
     public var turnComplete:Signal1<TurnResult>;
     public var pm:Int = 1;
     public var items:Array<Item>;
-    public var invisibilityDuration:Int=0;
-    public var trappedDuration:Int=0;
+    public var invisibilityDuration:Int = 0;
+    public var trappedDuration:Int = 0;
 
     private var _targetCell:Cell;
     private var _isFirstTurn:Bool = true;
@@ -52,15 +52,19 @@ class SheepIA implements IIA {
                 if ( _targetCell == null || _targetCell.id == currentCell.id ) {
                     _targetCell = getNewDestination();
                 }
-                var path = GameUtils.getPath(currentCell, _targetCell, data);
-                if ( path != null ) {
-                    for (i in 0...myIa.pm) {
-                        var order = new MoveOrder(path.getItemAt(i + 1));
-                        result.actions.push(order);
+                if ( _targetCell != null ) {
+                    var path = GameUtils.getPath(currentCell, _targetCell, data);
+                    if ( path != null ) {
+                        for ( i in 0...myIa.pm ) {
+                            var order = new MoveOrder(path.getItemAt(i + 1));
+                            result.actions.push(order);
+                        }
+                    } else {
+                        trace('path null : ' + currentCell.id + "//" + _targetCell.id);
+                        _targetCell = null;
                     }
                 } else {
-                    trace('path null : ' + currentCell.id + "//" + _targetCell.id);
-                    _targetCell = null;
+                    trace('Sheep : targetCell NULL');
                 }
             }
 
@@ -78,15 +82,19 @@ class SheepIA implements IIA {
 
     private function getNextIntersection( fromCell:Cell, byCell:Cell ):Cell {
         var result:Cell = null;
-        var neighbors = byCell.getNeighboors();
-        if(neighbors.length == 1 || neighbors.length > 2){
-            result = byCell;
-        } else {
-            var nextCell = neighbors[0];
-            if(nextCell.id == fromCell.id){
-                nextCell = neighbors[1];
+        if ( byCell != null ) {
+            var neighbors = byCell.getNeighboors();
+            if ( neighbors.length == 1 || neighbors.length > 2 ) {
+                result = byCell;
+            } else {
+                var nextCell = neighbors[0];
+                if ( nextCell.id == fromCell.id ) {
+                    nextCell = neighbors[1];
+                }
+                result = getNextIntersection(byCell, nextCell);
             }
-            result = getNextIntersection(byCell,nextCell);
+        } else {
+            trace('byCell NULL');
         }
         return result;
     }
@@ -96,12 +104,12 @@ class SheepIA implements IIA {
 
         var ia1Cell = _data.getCellByIA(_data.iaList[0].id);
         var ia1Path:Path = null;
-        if(ia1Cell != null){
+        if ( ia1Cell != null ) {
             ia1Path = GameUtils.getPath(currentCell, ia1Cell, _data);
         }
         var ia2Cell = _data.getCellByIA(_data.iaList[1].id);
         var ia2Path:Path = null;
-        if(ia2Cell != null){
+        if ( ia2Cell != null ) {
             ia2Path = GameUtils.getPath(currentCell, ia2Cell, _data);
         }
 
@@ -113,9 +121,8 @@ class SheepIA implements IIA {
             selectedNeighbor = neighbors[neighborIndex];
             if (
             (ia1Path == null || (ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) )
-                && (ia2Path == null || (ia2Path != null &&neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ))
-            )
-            {
+            && (ia2Path == null || (ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ))
+            ) {
                 break;
             } else {
                 selectedNeighbor = null;
@@ -127,10 +134,10 @@ class SheepIA implements IIA {
         return getNextIntersection(currentCell, selectedNeighbor);
     }
 
-    public function getItemByType(type:ItemType):Item{
+    public function getItemByType( type:ItemType ):Item {
         var result:Item = null;
-        for(i in 0...items.length){
-            if(items[i].type == type){
+        for ( i in 0...items.length ) {
+            if ( items[i].type == type ) {
                 result = items[i];
             }
         }
