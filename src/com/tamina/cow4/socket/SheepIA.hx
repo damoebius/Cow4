@@ -125,7 +125,7 @@ class SheepIA implements IIA {
             ) {
                 break;
             } else {
-                selectedNeighbor = null;
+                //selectedNeighbor = null;
                 neighborIndex++;
             }
         }

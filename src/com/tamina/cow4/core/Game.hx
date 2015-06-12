@@ -116,7 +116,7 @@ class Game {
     private function parseTurnResult( value:TurnResult ):ParseResult {
         var result = new ParseResult();
         var currentIA = _IAList[_iaTurnIndex];
-        if ( currentIA.trappedDuration == 0 ) {
+        if ( currentIA.trappedDuration <= 0 ) {
             for ( i in 0...value.actions.length ) {
                 switch(value.actions[i].type){
                     case Action.MOVE :
@@ -228,7 +228,7 @@ class Game {
                     result.message = 'pas assez de mouvement';
                     nodejs.Console.info(result.message);
                 }
-                if ( currentCell.hasTrap ) {
+                if ( targetCell.hasTrap ) {
                     currentIA.trappedDuration = GameConstants.TRAPED_DURATION;
                 }
             }

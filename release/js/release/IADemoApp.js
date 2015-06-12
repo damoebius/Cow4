@@ -42,10 +42,7 @@ Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
 var com_tamina_cow4_IADemoApp = function() {
-	this._potionsPosition = [];
-	this._potionsPosition.push(new org_tamina_geom_Point(21,4));
-	this._potionsPosition.push(new org_tamina_geom_Point(3,20));
-	this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
+	this._mode = com_tamina_cow4_ia_Mode.GET_A_TRAP;
 	this._socket = new (require('net').Socket)();
 	this._socket.connect(8127,"localhost",$bind(this,this.connectionHandler));
 	this._currentDirection = 1;
@@ -92,17 +89,38 @@ com_tamina_cow4_IADemoApp.prototype = {
 		try {
 			var gameData = com_tamina_cow4_model_GameMap.fromGameMapVO(data.data);
 			console.log("turn : " + gameData.currentTurn);
-			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
+			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_TRAP;
 			var myIa = gameData.getIAById(this._id);
 			console.log("pm : " + myIa.pm);
 			var currentCell = gameData.getCellByIA(this._id);
 			var targetCell;
-			if(this._mode == com_tamina_cow4_ia_Mode.GET_A_POTION) {
-				console.log("mode get a potion");
-				var c1 = gameData.getCellAt(this._potionsPosition[0].x,this._potionsPosition[0].y);
-				var c2 = gameData.getCellAt(this._potionsPosition[1].x,this._potionsPosition[1].y);
+			if(this._mode != com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN) {
+				console.log("mode get an item");
+				var c1 = null;
+				var c2 = null;
+				var _g = this._mode;
+				switch(_g[1]) {
+				case 0:
+					console.log("mode get a potion");
+					c1 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.POTION_TOP.x,com_tamina_cow4_model_ItemPosition.POTION_TOP.y);
+					c2 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.POTION_BOTTOM.x,com_tamina_cow4_model_ItemPosition.POTION_BOTTOM.y);
+					break;
+				case 1:
+					console.log("mode get a TRAP");
+					c1 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.TRAP_TOP.x,com_tamina_cow4_model_ItemPosition.TRAP_TOP.y);
+					c2 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.TRAP_BOTTOM.x,com_tamina_cow4_model_ItemPosition.TRAP_BOTTOM.y);
+					break;
+				case 2:
+					c1 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.PARFUM_TOP.x,com_tamina_cow4_model_ItemPosition.PARFUM_TOP.y);
+					c2 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.PARFUM_BOTTOM.x,com_tamina_cow4_model_ItemPosition.PARFUM_BOTTOM.y);
+					break;
+				default:
+					console.log("unkown mode");
+					c1 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.POTION_TOP.x,com_tamina_cow4_model_ItemPosition.POTION_TOP.y);
+					c2 = gameData.getCellAt(com_tamina_cow4_model_ItemPosition.POTION_BOTTOM.x,com_tamina_cow4_model_ItemPosition.POTION_BOTTOM.y);
+				}
 				if(currentCell.id == c1.id || currentCell.id == c2.id) {
-					console.log("potion found");
+					console.log("item found");
 					this._mode = com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN;
 					var order = new com_tamina_cow4_socket_message_order_GetItemOrder();
 					result.actions.push(order);
@@ -125,8 +143,8 @@ com_tamina_cow4_IADemoApp.prototype = {
 			var path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,targetCell,gameData);
 			if(path != null) {
 				var _g1 = 0;
-				var _g = myIa.pm;
-				while(_g1 < _g) {
+				var _g2 = myIa.pm;
+				while(_g1 < _g2) {
 					var i = _g1++;
 					console.log(currentCell.id + " -> " + path.getItemAt(i + 1).id);
 					var order1 = new com_tamina_cow4_socket_message_order_MoveOrder(path.getItemAt(i + 1));
@@ -210,12 +228,17 @@ com_tamina_cow4_core_PathFinder.prototype = {
 	}
 	,__class__: com_tamina_cow4_core_PathFinder
 };
-var com_tamina_cow4_ia_Mode = { __ename__ : true, __constructs__ : ["GET_A_POTION","CATCH_THE_CHICKEN"] };
+var com_tamina_cow4_ia_Mode = { __ename__ : true, __constructs__ : ["GET_A_POTION","GET_A_TRAP","GET_A_PARFUM","CATCH_THE_CHICKEN"] };
 com_tamina_cow4_ia_Mode.GET_A_POTION = ["GET_A_POTION",0];
 com_tamina_cow4_ia_Mode.GET_A_POTION.__enum__ = com_tamina_cow4_ia_Mode;
-com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN = ["CATCH_THE_CHICKEN",1];
+com_tamina_cow4_ia_Mode.GET_A_TRAP = ["GET_A_TRAP",1];
+com_tamina_cow4_ia_Mode.GET_A_TRAP.__enum__ = com_tamina_cow4_ia_Mode;
+com_tamina_cow4_ia_Mode.GET_A_PARFUM = ["GET_A_PARFUM",2];
+com_tamina_cow4_ia_Mode.GET_A_PARFUM.__enum__ = com_tamina_cow4_ia_Mode;
+com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN = ["CATCH_THE_CHICKEN",3];
 com_tamina_cow4_ia_Mode.CATCH_THE_CHICKEN.__enum__ = com_tamina_cow4_ia_Mode;
 var com_tamina_cow4_model_Cell = function() {
+	this.hasTrap = false;
 	this.id = org_tamina_utils_UID.getUID();
 	this.changeSignal = new msignal_Signal0();
 };
@@ -223,13 +246,20 @@ com_tamina_cow4_model_Cell.__name__ = true;
 com_tamina_cow4_model_Cell.fromCellVO = function(value) {
 	var result = new com_tamina_cow4_model_Cell();
 	result.id = value.id;
-	result.occupant = value.occupant;
+	result.set_occupant(value.occupant);
 	result.item = value.item;
 	return result;
 };
 com_tamina_cow4_model_Cell.prototype = {
-	toCellVO: function() {
-		var result = new com_tamina_cow4_model_vo_CellVO(this.id,this.occupant);
+	get_occupant: function() {
+		return this._occupant;
+	}
+	,set_occupant: function(value) {
+		this._occupant = value;
+		return this._occupant;
+	}
+	,toCellVO: function() {
+		var result = new com_tamina_cow4_model_vo_CellVO(this.id,this.get_occupant());
 		if(null != result.top) result.top = this.get_top().id;
 		if(null != result.bottom) result.bottom = this.get_bottom().id;
 		if(null != result.left) result.left = this.get_left().id;
@@ -352,6 +382,24 @@ com_tamina_cow4_model_GameMap.prototype = {
 		}
 		return result;
 	}
+	,getCellById: function(cellId) {
+		var result = null;
+		var _g1 = 0;
+		var _g = this.cells.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			var _g3 = 0;
+			var _g2 = this.cells[i].length;
+			while(_g3 < _g2) {
+				var j = _g3++;
+				if(this.cells[i][j].id == cellId) {
+					result = this.cells[i][j];
+					break;
+				}
+			}
+		}
+		return result;
+	}
 	,getCellAt: function(column,row) {
 		return this.cells[row][column];
 	}
@@ -380,7 +428,7 @@ com_tamina_cow4_model_GameMap.prototype = {
 			while(_g3 < _g2) {
 				var j = _g3++;
 				var cell = columns[j];
-				if(cell.occupant != null && cell.occupant.id == id) {
+				if(cell.get_occupant() != null && cell.get_occupant().id == id) {
 					result = cell;
 					break;
 				}
@@ -456,6 +504,18 @@ com_tamina_cow4_model_Item.__name__ = true;
 com_tamina_cow4_model_Item.prototype = {
 	__class__: com_tamina_cow4_model_Item
 };
+var org_tamina_geom_Point = function(x,y) {
+	if(y == null) y = 0;
+	if(x == null) x = 0;
+	this.x = x;
+	this.y = y;
+};
+org_tamina_geom_Point.__name__ = true;
+org_tamina_geom_Point.prototype = {
+	__class__: org_tamina_geom_Point
+};
+var com_tamina_cow4_model_ItemPosition = function() { };
+com_tamina_cow4_model_ItemPosition.__name__ = true;
 var com_tamina_cow4_model_Path = function(content) {
 	if(content == null) this._content = []; else this._content = content;
 };
@@ -1476,16 +1536,6 @@ var nodejs_net_TCPSocketEventType = function() { };
 nodejs_net_TCPSocketEventType.__name__ = true;
 var nodejs_stream_WritableEventType = function() { };
 nodejs_stream_WritableEventType.__name__ = true;
-var org_tamina_geom_Point = function(x,y) {
-	if(y == null) y = 0;
-	if(x == null) x = 0;
-	this.x = x;
-	this.y = y;
-};
-org_tamina_geom_Point.__name__ = true;
-org_tamina_geom_Point.prototype = {
-	__class__: org_tamina_geom_Point
-};
 var org_tamina_utils_UID = function() { };
 org_tamina_utils_UID.__name__ = true;
 org_tamina_utils_UID.getUID = function() {
@@ -1522,6 +1572,12 @@ com_tamina_cow4_config_Config.ROOT_PATH = "server/";
 com_tamina_cow4_config_Config.APP_PORT = 3000;
 com_tamina_cow4_config_Config.SOCKET_PORT = 8127;
 com_tamina_cow4_config_Config.WEB_SOCKET_PORT = 8128;
+com_tamina_cow4_model_ItemPosition.POTION_TOP = new org_tamina_geom_Point(21,4);
+com_tamina_cow4_model_ItemPosition.POTION_BOTTOM = new org_tamina_geom_Point(3,20);
+com_tamina_cow4_model_ItemPosition.TRAP_TOP = new org_tamina_geom_Point(7,3);
+com_tamina_cow4_model_ItemPosition.TRAP_BOTTOM = new org_tamina_geom_Point(17,21);
+com_tamina_cow4_model_ItemPosition.PARFUM_TOP = new org_tamina_geom_Point(7,10);
+com_tamina_cow4_model_ItemPosition.PARFUM_BOTTOM = new org_tamina_geom_Point(17,13);
 com_tamina_cow4_socket_message_SocketMessage.END_CHAR = "#end#";
 com_tamina_cow4_socket_message_Authenticate.MESSAGE_TYPE = "authenticate";
 com_tamina_cow4_socket_message_Error.MESSAGE_TYPE = "error";
