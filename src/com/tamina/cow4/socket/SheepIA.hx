@@ -99,6 +99,27 @@ class SheepIA implements IIA {
         return result;
     }
 
+    private function hasNextIntersection( fromCell:Cell, byCell:Cell ):Bool {
+        var result:Bool = false;
+        if ( byCell != null ) {
+            var neighbors = byCell.getNeighboors();
+            if ( neighbors.length > 2 ) {
+                result = true;
+            } else if(neighbors.length == 1){
+               result = false;
+            } else {
+                var nextCell = neighbors[0];
+                if ( nextCell.id == fromCell.id ) {
+                    nextCell = neighbors[1];
+                }
+                result = hasNextIntersection(byCell, nextCell);
+            }
+        } else {
+            trace('byCell NULL');
+        }
+        return result;
+    }
+
     private function getNewDestination( ):Cell {
         var currentCell = _data.getCellByIA(id);
 
@@ -117,15 +138,18 @@ class SheepIA implements IIA {
         var neighbors = currentCell.getNeighboors();
         var selectedNeighbor:Cell = null;
         var neighborIndex:Int = 0;
+        trace('SHEEP : recherche de sorties : ' + neighbors.length);
         while ( neighborIndex < neighbors.length ) {
             selectedNeighbor = neighbors[neighborIndex];
             if (
             (ia1Path == null || (ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) )
             && (ia2Path == null || (ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ))
+            && hasNextIntersection(currentCell,selectedNeighbor)
             ) {
+                trace('sortie trouvée : ' + selectedNeighbor.id);
                 break;
             } else {
-                //selectedNeighbor = null;
+//selectedNeighbor = null;
                 neighborIndex++;
             }
         }
