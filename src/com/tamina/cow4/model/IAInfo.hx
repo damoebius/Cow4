@@ -51,15 +51,23 @@ class IAInfo {
 **/
     public var invisibilityDuration:Int=0;
 
+/**
+	 * le profil de l'ia
+	 * @property profil
+	 * @type Profil
+	 */
+    public var profil:Profil;
 
 
-    public function new( id:Float,name:String,avatar:String, pm:Int, items:Array<Item>,invisibilityDuration:Int ) {
+
+    public function new( id:Float,name:String,avatar:String, pm:Int, items:Array<Item>,invisibilityDuration:Int, profil:Profil ) {
         this.id = id;
         this.name= name;
         this.avatar = avatar;
         this.pm = pm;
         this.items = new Array<Item>();
         this.invisibilityDuration = invisibilityDuration;
+        this.profil = profil;
         for(i in 0...items.length){
             this.items.push(items[i]);
         }

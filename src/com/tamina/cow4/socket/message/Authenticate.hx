@@ -6,6 +6,7 @@ package com.tamina.cow4.socket.message;
 * @class Authenticate
 * @extends SocketMessage
 */
+import com.tamina.cow4.model.Profil;
 class Authenticate extends ClientMessage{
 
 /**
@@ -32,9 +33,26 @@ class Authenticate extends ClientMessage{
 	 */
     public var avatar:String;
 
-    public function new(name:String, avatar:String='' ) {
+/**
+	 * le profil de l'ia
+	 * @property profil
+	 * @type Profil
+	 */
+    public var profil:Profil;
+
+
+/**
+	 * le token pour controler l'identité de l'IA. www.codeofwar.net pour obtenir un token.
+	 * @property token
+	 * @type String
+	 */
+    public var token:String;
+
+    public function new(name:String, avatar:String='', token:String='', profil:Profil=Profil.TECH_WIZARD ) {
         super( MESSAGE_TYPE);
         this.name = name;
         this.avatar = avatar;
+        this.token = token;
+        this.profil = profil;
     }
 }

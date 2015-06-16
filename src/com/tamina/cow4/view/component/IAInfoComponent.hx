@@ -28,6 +28,9 @@ class IAInfoComponent extends HTMLComponent {
     @skinpart("")
     private var _parfum:Element;
 
+    @skinpart("")
+    private var _profil:Element;
+
     private var _data:IAInfo;
     private var _trapNumber:Int=0;
     private var _potionNumber:Int=0;
@@ -59,5 +62,6 @@ class IAInfoComponent extends HTMLComponent {
         _trap.innerHTML = 'Trap : ' + _trapNumber;
         _potion.innerHTML = 'Potion : ' + _potionNumber;
         _parfum.innerHTML = 'Parfum : ' + _parfumNumber;
+        _profil.innerHTML = 'Profil : ' + _data.profil;
     }
 }

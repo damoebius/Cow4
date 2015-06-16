@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.Path;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
@@ -22,6 +23,7 @@ class SheepIA implements IIA {
     public var items:Array<Item>;
     public var invisibilityDuration:Int = 0;
     public var trappedDuration:Int = 0;
+    public var profil:Profil = Profil.SHEEP;
 
     private var _targetCell:Cell;
     private var _isFirstTurn:Bool = true;
@@ -36,7 +38,7 @@ class SheepIA implements IIA {
     }
 
     public function toInfo( ):IAInfo {
-        return new IAInfo(id, name, "", pm, items, invisibilityDuration);
+        return new IAInfo(id, name, "", pm, items, invisibilityDuration, profil);
     }
 
     public function getTurnOrder( data:GameMap ):Void {

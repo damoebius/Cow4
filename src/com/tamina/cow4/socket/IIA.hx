@@ -1,4 +1,5 @@
 package com.tamina.cow4.socket;
+import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.Item;
 import com.tamina.cow4.model.GameMap;
@@ -14,6 +15,7 @@ interface IIA {
     var items:Array<Item>;
     var invisibilityDuration:Int;
     var trappedDuration:Int=0;
+    var profil:Profil;
 
 
     function toInfo():IAInfo;
