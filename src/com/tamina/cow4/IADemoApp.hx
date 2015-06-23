@@ -1,4 +1,5 @@
 package com.tamina.cow4;
+import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.ItemPosition;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
 import com.tamina.cow4.socket.message.order.GetItemOrder;
@@ -45,7 +46,7 @@ class IADemoApp {
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
         _proxy.closeSignal.add(quit);
-        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://images.groups.adobe.com/1332a08/logo100x100.gif', 'tokendemo',2));
+        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://images.groups.adobe.com/1332a08/logo100x100.gif', 'tokendemo',Profil.MASTER_OF_COINS));
         Timer.delay(quit, ALIVE_DURATION);
     }
 
