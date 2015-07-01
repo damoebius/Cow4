@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.IAInfo;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
@@ -105,7 +106,10 @@ class Game {
             var columns = cloneData.cells[i];
             for ( j in 0...columns.length ) {
                 var cell = columns[j];
-                if ( cell.occupant != null && cell.occupant.id != targetIA.id && cell.occupant.invisibilityDuration > 0 ) {
+                if ( cell.occupant != null
+                && cell.occupant.id != targetIA.id
+                && cell.occupant.invisibilityDuration > 0
+                && targetIA.profil != Profil.TECH_WIZARD ) {
                     cell.occupant = null;
                 }
             }
@@ -188,9 +192,13 @@ class Game {
                         currentIA.invisibilityDuration = GameConstants.INVISIBILITY_DURATION;
                     case ItemType.PARFUM:
                         nodejs.Console.info("parfum utilisé");
-                        _sheep.pm += GameConstants.PARFUM_PM_BOOST;
+                        var opponent = getOpponent(currentIA);
+                        if ( opponent.profil != Profil.HAND_OF_THE_KING ) {
+                            _sheep.pm += GameConstants.PARFUM_PM_BOOST;
+                        } else {
+                            nodejs.Console.info("opposant immunisé");
+                        }
                     case ItemType.TRAP:
-//todo trap
                         nodejs.Console.info("trap utilisé");
                         var currentCell = _data.getCellByIA(currentIA.id);
                         currentCell.hasTrap = true;
@@ -200,6 +208,15 @@ class Game {
             }
         }
 
+        return result;
+    }
+
+
+    private function getOpponent( target:IIA ):IIA {
+        var result = _IAList[0];
+        if ( target.id == result.id ) {
+            result = _IAList[1];
+        }
         return result;
     }
 
@@ -228,8 +245,10 @@ class Game {
                     result.message = 'pas assez de mouvement';
                     nodejs.Console.info(result.message);
                 }
-                if ( targetCell.hasTrap ) {
+                if ( targetCell.hasTrap && currentIA.profil != Profil.MASTER_OF_COINS ) {
                     currentIA.trappedDuration = GameConstants.TRAPED_DURATION;
+                } else {
+                    nodejs.Console.info("immunisé trap");
                 }
             }
         } else {

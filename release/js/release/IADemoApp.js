@@ -57,7 +57,7 @@ com_tamina_cow4_IADemoApp.prototype = {
 		this._proxy = new com_tamina_cow4_socket_GameServerProxy(this._socket);
 		this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
 		this._proxy.closeSignal.add($bind(this,this.quit));
-		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA " + new Date().getTime(),"http://images.groups.adobe.com/1332a08/logo100x100.gif"));
+		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA " + new Date().getTime(),"http://images.groups.adobe.com/1332a08/logo100x100.gif","tokendemo",1));
 		haxe_Timer.delay($bind(this,this.quit),600000);
 	}
 	,serverMessageHandler: function(message) {
@@ -477,7 +477,7 @@ com_tamina_cow4_model_GameMap.prototype = {
 	}
 	,__class__: com_tamina_cow4_model_GameMap
 };
-var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items,invisibilityDuration) {
+var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items,invisibilityDuration,profil) {
 	this.invisibilityDuration = 0;
 	this.pm = 1;
 	this.id = id;
@@ -486,6 +486,7 @@ var com_tamina_cow4_model_IAInfo = function(id,name,avatar,pm,items,invisibility
 	this.pm = pm;
 	this.items = [];
 	this.invisibilityDuration = invisibilityDuration;
+	this.profil = profil;
 	var _g1 = 0;
 	var _g = items.length;
 	while(_g1 < _g) {
@@ -679,11 +680,15 @@ com_tamina_cow4_socket_message_ClientMessage.__super__ = com_tamina_cow4_socket_
 com_tamina_cow4_socket_message_ClientMessage.prototype = $extend(com_tamina_cow4_socket_message_SocketMessage.prototype,{
 	__class__: com_tamina_cow4_socket_message_ClientMessage
 });
-var com_tamina_cow4_socket_message_Authenticate = function(name,avatar) {
+var com_tamina_cow4_socket_message_Authenticate = function(name,avatar,token,profil) {
+	if(profil == null) profil = 0;
+	if(token == null) token = "";
 	if(avatar == null) avatar = "";
 	com_tamina_cow4_socket_message_ClientMessage.call(this,"authenticate");
 	this.name = name;
 	this.avatar = avatar;
+	this.token = token;
+	this.profil = profil;
 };
 com_tamina_cow4_socket_message_Authenticate.__name__ = true;
 com_tamina_cow4_socket_message_Authenticate.__super__ = com_tamina_cow4_socket_message_ClientMessage;
