@@ -64,15 +64,15 @@ class PlayerCellSprite extends CellSprite {
 
     override private function drawWalls():Void {
         _topWall = new BitmapWallSprite("images/fence_top.png");
-        _topWall.y = -16;
+        //_topWall.y = -16;
         addChild(_topWall);
 
         _leftWall = new BitmapWallSprite("images/fence_left.png");
-        _leftWall.y = -16;
+        //_leftWall.y = -16;
         addChild(_leftWall);
 
         _rightWall = new BitmapWallSprite("images/fence_right.png");
-        _rightWall.y = -16;
+        //_rightWall.y = -16;
         addChild(_rightWall);
 
         _bottomWall = new BitmapWallSprite("images/fence_bottom.png");

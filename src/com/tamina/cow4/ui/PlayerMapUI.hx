@@ -14,14 +14,14 @@ import js.html.Image;
 import createjs.easeljs.Shape;
 import js.html.CanvasElement;
 class PlayerMapUI extends MapUI<PlayerCellSprite> {
-    private static inline var FPS:Float = 30.0;
+    private static inline var FPS:Float = 10.0;
 
     private var _background:Shape;
     private var _backgroundImage:Image;
     private var _endScreen:EndScreen;
 
-    private var _width:Int = 864;
-    private var _height:Int = 864;
+    private var _width:Int = 1000;
+    private var _height:Int = 1000;
     private var _runningActions:Int = 0;
     public var runningActions(get, null):Int;
 
@@ -33,8 +33,8 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         _backgroundImage.src = "images/background.png";
         _endScreen = new EndScreen(_width, _height);
         super.addChildAt(_background, 0);
-        _cellsContainer.x = 32;
-        _cellsContainer.y = 32;
+        _cellsContainer.x = 0;
+        _cellsContainer.y = 0;
 
     }
 
