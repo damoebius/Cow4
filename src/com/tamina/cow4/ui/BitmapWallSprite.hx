@@ -34,7 +34,7 @@ class BitmapWallSprite extends WallSprite {
         if ( _isLoaded ) {
             _backgroundShape.graphics.clear();
             _backgroundShape.graphics.beginBitmapFill(_backgroundImage);
-            _backgroundShape.graphics.drawRect(0, 0, 32, 32);
+            _backgroundShape.graphics.drawRect(0, 0, _backgroundImage.width, _backgroundImage.height);
             _backgroundShape.graphics.endFill();
         }
     }

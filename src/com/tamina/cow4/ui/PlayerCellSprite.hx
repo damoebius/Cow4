@@ -29,11 +29,11 @@ class PlayerCellSprite extends CellSprite {
     }
 
     override public function get_width():Int {
-        return 32;
+        return 38;
     }
 
     override public function get_height():Int {
-        return 32;
+        return 38;
     }
 
     override public function updateDisplay():Void {
