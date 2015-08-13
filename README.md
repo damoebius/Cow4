@@ -42,11 +42,38 @@ Une nouvelle page affiche alors la partie entre les deux IA.
 ## Les regles du jeu
 
 Le but du jeu est de parcourir un labyrinthe pour attraper le premier le poulet.
+Les joueurs ont au maximum [200 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx) pour l'attraper.
 
+### Tour de jeu
+
+Les tours s'enchainent toujours dans le même ordre : joueur 1, joueur2, puis coq.
+
+Tous les tours, un joueur gagne 1 point de mouvement (PM) qu'il peut conserver jusqu'à un maximum de [5 PM](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx). Le coq ne peut pas cumuler ses PM.
+
+Durant son tour, un joueur peut se déplacer vers une case voisine, et/ou ramasser un item, et/ou utiliser un item.
+- Il peut se déplacer tant qu'il a un nombre de PM suffisant.
+- Il peut utiliser autant d'item qu'il possède.
+- Il ne peut pas se déplacer vers une case déjà occupée (sauf par le coq).
+
+### Les items
+
+*La potion d'invisibilité*
+
+Utiliser une potion d'invisibilité va masquer la position du joueur au joueur adverse et au coq pendant [42 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
+
+*Le piège*
+
+Utiliser un piège va le déposer sur la case courante. Si un joueur ou le coq tombent dedans, ils ne pourront plus bouger pendant [10 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
+
+*Le parfum de poulette*
+
+Utiliser cet item va offrir au coq un bonus de [10 PM](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
 
 ## Développer sa propre IA
 
 Vous pouvez coder votre IA dans le langage de votre choix dans la mesure où il peut établir une connection socket.
+
+Quelques SDK Open Source sont disponibles ici https://github.com/damoebius/Cow4_SDK
 
 ### Documentation
 http://www.codeofwar.net/api/modules/Server.html
