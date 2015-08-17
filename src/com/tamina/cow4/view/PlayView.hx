@@ -37,7 +37,7 @@ class PlayView extends HTMLComponent {
     private var _socket:WebSocket;
     private var _proxy:PlayerServerProxy;
     private var _updatePool:Array<UpdateRender>;
-    private var _map:GameMap;
+    private static var _map:GameMap;
 
     private var _ia1Info:IAInfoComponent;
     private var _ia2Info:IAInfoComponent;
@@ -66,6 +66,14 @@ class PlayView extends HTMLComponent {
         var t = new Timer(100);
         t.run = updateHandler;
 
+    }
+
+    public static function getIAIndex(id:Float):Int{
+        var result = 0;
+        if(_map.iaList[1].id == id){
+            result = 1;
+        }
+        return result;
     }
 
     private function socketOpenHandler(evt:Dynamic):Void {
