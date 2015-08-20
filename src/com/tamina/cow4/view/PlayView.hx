@@ -52,10 +52,19 @@ class PlayView extends HTMLComponent {
 
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
-        _applicationCanvas.width = APPLICATION_WIDTH;
-        _applicationCanvas.height = APPLICATION_HEIGHT;
+        _applicationCanvas.width = _gameContainer.offsetWidth;
+        _applicationCanvas.height = _gameContainer.offsetHeight;
+
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
+        if(_gameContainer.offsetWidth != APPLICATION_WIDTH || _gameContainer.offsetHeight != APPLICATION_HEIGHT){
+            var scale =  _gameContainer.offsetWidth / APPLICATION_WIDTH;
+            if(_gameContainer.offsetWidth> _gameContainer.offsetHeight){
+                scale = _gameContainer.offsetHeight / APPLICATION_HEIGHT ;
+            }
+            _stage.scaleX=scale;
+            _stage.scaleY=scale;
+        }
         _socket = new WebSocket( 'ws://localhost:' + Config.WEB_SOCKET_PORT);
 
         _socket.addEventListener('open', socketOpenHandler);
