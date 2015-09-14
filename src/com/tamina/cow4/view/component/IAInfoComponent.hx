@@ -56,12 +56,12 @@ class IAInfoComponent extends HTMLComponent {
                     _trapNumber++;
             }
         }
-        _pm.innerHTML = 'PM : ' + _data.pm;
+        _pm.innerHTML = '' + _data.pm;
         _name.innerHTML = _data.name;
         _logo.src = _data.avatar;
-        _trap.innerHTML = 'Trap : ' + _trapNumber;
-        _potion.innerHTML = 'Potion : ' + _potionNumber;
-        _parfum.innerHTML = 'Parfum : ' + _parfumNumber;
-        _profil.innerHTML = 'Profil : ' + _data.profil;
+        _trap.innerHTML = '' + _trapNumber;
+        _potion.innerHTML = '' + _potionNumber;
+        _parfum.innerHTML = '' + _parfumNumber;
+        _profil.innerHTML = '' + _data.profil;
     }
 }

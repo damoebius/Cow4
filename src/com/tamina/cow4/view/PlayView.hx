@@ -49,18 +49,22 @@ class PlayView extends HTMLComponent {
 
         _ia1Info = new IAInfoComponent(PlayViewElementId.IA1_CONTAINER);
         _ia2Info = new IAInfoComponent(PlayViewElementId.IA2_CONTAINER);
-
+        var containerWidth = Browser.window.innerHeight;
+        var containerHeight = Browser.window.innerHeight;
+        _gameContainer.style.width = containerWidth +"px";
+        _gameContainer.style.height = containerHeight +"px";
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
-        _applicationCanvas.width = _gameContainer.offsetWidth;
-        _applicationCanvas.height = _gameContainer.offsetHeight;
+        _applicationCanvas.width = containerWidth;
+        _applicationCanvas.height = containerHeight;
 
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
-        if(_gameContainer.offsetWidth != APPLICATION_WIDTH || _gameContainer.offsetHeight != APPLICATION_HEIGHT){
-            var scale =  _gameContainer.offsetWidth / APPLICATION_WIDTH;
-            if(_gameContainer.offsetWidth> _gameContainer.offsetHeight){
-                scale = _gameContainer.offsetHeight / APPLICATION_HEIGHT ;
+
+        if(containerWidth != APPLICATION_WIDTH || containerHeight != APPLICATION_HEIGHT){
+            var scale =  containerWidth / APPLICATION_WIDTH;
+            if(containerWidth> containerHeight){
+                scale = containerHeight / APPLICATION_HEIGHT ;
             }
             _stage.scaleX=scale;
             _stage.scaleY=scale;

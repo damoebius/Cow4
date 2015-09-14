@@ -95,7 +95,7 @@ class PlayerCellSprite extends CellSprite {
     }
 
     private function getPictureNameByIA( ia:IAInfo ):String {
-        var result = "ia_sprite.png";
+        var result = "images/ia_sprite.png";
         if ( ia != null ) {
             switch(ia.profil){
                 case Profil.TECH_WIZARD:

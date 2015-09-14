@@ -39,7 +39,6 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
     }
 
     public function updateMap( ia:IAInfo, actions:Array<TurnAction> ):Void {
-        trace('updateMap ' + actions.length);
         _runningActions = actions.length;
         for ( i in 0...actions.length ) {
             Timer.delay(function( ):Void {
@@ -60,7 +59,6 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         } else {
             trace('ERROR : CELL NULL');
         }
-        trace(ia.invisibilityDuration);
         switch (action.type){
             case Action.MOVE:
                 var move:MoveOrder = cast action;
