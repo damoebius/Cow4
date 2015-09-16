@@ -310,7 +310,6 @@ html section #gameContainer canvas {
     background-color: #fff;
     z-index: 10;
     position: relative;
-    background-image: url("../../img/gameMap.png");
     background-position: center;
     background-repeat: no-repeat; }
 @media screen and (max-width: 1150px) {

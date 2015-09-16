@@ -29,7 +29,7 @@ class IAInfoComponent extends HTMLComponent {
     private var _parfum:Element;
 
     @skinpart("")
-    private var _profil:Element;
+    private var _profil:ImageElement;
 
     private var _data:IAInfo;
     private var _trapNumber:Int=0;
@@ -63,5 +63,6 @@ class IAInfoComponent extends HTMLComponent {
         _potion.innerHTML = '' + _potionNumber;
         _parfum.innerHTML = '' + _parfumNumber;
         _profil.innerHTML = '' + _data.profil;
+        _profil.src = "images/profil-"+_data.profil+"-1.svg";
     }
 }

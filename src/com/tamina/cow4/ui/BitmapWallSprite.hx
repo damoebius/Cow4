@@ -22,18 +22,14 @@ class BitmapWallSprite extends WallSprite {
 
     override private function set_display(value:Bool):Bool{
         _display = value;
-        if(_display){
-            _backgroundShape.visible = true;
-        }    else {
-            _backgroundShape.visible = false;
-        }
+        this.visible = _display;
         return _display;
     }
 
     override private function drawWall( color:String = "" ):Void {
         if ( _isLoaded ) {
             _backgroundShape.graphics.clear();
-            _backgroundShape.graphics.beginBitmapFill(_backgroundImage);
+            _backgroundShape.graphics.beginBitmapFill(_backgroundImage,"no-repeat");
             _backgroundShape.graphics.drawRect(0, 0, _backgroundImage.width, _backgroundImage.height);
             _backgroundShape.graphics.endFill();
         }

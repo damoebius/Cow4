@@ -28,11 +28,7 @@ class WallSprite extends Container{
 
     private function set_display(value:Bool):Bool{
         _display = value;
-        if(_display){
-            _backgroundShape.alpha = 1;
-        }    else {
-            _backgroundShape.alpha = 0.1;
-        }
+        _backgroundShape.visible = _display;
         return _display;
     }
 
