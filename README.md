@@ -87,19 +87,29 @@ Une fois la connection avec le Serveur établie, il faut lui envoyer un messsage
 
 ```javascript
 {
-    type:'authenticate'
-    name:'monIa'
-    avatar:'http://monsite/monavatar.jpg'
+    "type":"authenticate",
+    "name":"monIa",
+    "avatar":"http://monsite/monavatar.jpg",
+    "token":"yourtokenifone",
+    "profil":1
+    
 }
 ```
+Vous pouvez, ou non, précisez le token qui vous a été communiqué lors de votre inscription. Celà serait necessaire uniquement pour la phase de qualification.
+
+Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/Profil.hx) de votre IA, sachant que :
+
+- le Nain est immunisé contre les pieges
+- le Magicien est immunisé contre la potion d'invisibilité
+- le Chevalier immunise le poulet contre le parfum de poulette.
 
 Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
 
 
 ```javascript
 {
-    type:'id'
-    id:3254898715
+    "type":"id",
+    "id":3254898715
 }
 ```
 
@@ -109,8 +119,8 @@ Lorsque c'est à son tour de jouer, le server envoit à l'IA un message GetTurnO
 
 ```javascript
 {
-    type:'getTurnOrder'
-    data:{
+    "type":"getTurnOrder",
+    "data":{
         // GameMap Object
     }
 }
@@ -121,11 +131,11 @@ L'IA doit répondre en moins d'une seconde, un message de type TurnResult
 
 ```javascript
 {
-    type:'turnResult'
-    ia:{
+    "type":"turnResult",
+    "ia":{
         // IAInfo Object, contient les info sur l'auteur du tour
-    }
-    actions:[
+    },
+    "actions":[
         {} // TurnAction Object, une action à exécuter
     ]
 }
