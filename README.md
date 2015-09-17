@@ -99,9 +99,9 @@ Vous pouvez, ou non, précisez le token qui vous a été communiqué lors de vot
 
 Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/Profil.hx) de votre IA, sachant que :
 
-- le Nain est immunisé contre les pieges
-- le Magicien est immunisé contre la potion d'invisibilité
-- le Chevalier immunise le poulet contre le parfum de poulette.
+- le MASTER_OF_COINS est immunisé contre les pieges
+- le TECH_WIZARD est immunisé contre la potion d'invisibilité
+- le HAND_OF_THE_KING immunise le poulet contre le parfum de poulette.
 
 Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
 
