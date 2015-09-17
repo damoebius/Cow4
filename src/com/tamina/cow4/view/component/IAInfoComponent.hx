@@ -35,9 +35,13 @@ class IAInfoComponent extends HTMLComponent {
     private var _trapNumber:Int=0;
     private var _potionNumber:Int=0;
     private var _parfumNumber:Int=0;
+    private var _playerIndex:Int=2;
 
     public function new(containerId:String) {
         super(Browser.document.getElementById(containerId));
+        if(containerId == PlayViewElementId.IA2_CONTAINER){
+            _playerIndex = 1;
+        }
     }
 
     public function updateData(data:IAInfo):Void{
@@ -63,6 +67,6 @@ class IAInfoComponent extends HTMLComponent {
         _potion.innerHTML = '' + _potionNumber;
         _parfum.innerHTML = '' + _parfumNumber;
         _profil.innerHTML = '' + _data.profil;
-        _profil.src = "images/profil-"+_data.profil+"-1.svg";
+        _profil.src = "images/profil-"+_data.profil+"-"+_playerIndex+".svg";
     }
 }

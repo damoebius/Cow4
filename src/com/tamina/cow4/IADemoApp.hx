@@ -46,7 +46,7 @@ class IADemoApp {
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
         _proxy.closeSignal.add(quit);
-        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://images.groups.adobe.com/1332a08/logo100x100.gif', 'tokendemo',Profil.MASTER_OF_COINS));
+        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://3.bp.blogspot.com/_XMH6qEyqIPU/S9YSkGiuZyI/AAAAAAAAB4g/8PoYjbZcNfY/s400/sakura2.jpg', 'tokendemo',Profil.MASTER_OF_COINS));
         Timer.delay(quit, ALIVE_DURATION);
     }
 
