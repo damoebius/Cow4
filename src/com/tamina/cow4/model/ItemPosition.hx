@@ -9,5 +9,5 @@ class ItemPosition {
     public static var TRAP_BOTTOM:Point = new Point(17, 21);
 
     public static var PARFUM_TOP:Point = new Point(7, 10);
-    public static var PARFUM_BOTTOM:Point = new Point(17, 13);
+    public static var PARFUM_BOTTOM:Point = new Point(17, 14);
 }

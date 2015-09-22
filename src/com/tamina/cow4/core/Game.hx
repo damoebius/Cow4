@@ -101,11 +101,32 @@ class Game {
         _data.iaList.push(_IAList[0].toInfo());
         _data.iaList.push(_IAList[1].toInfo());
         _data.iaList.push(_IAList[2].toInfo());
+
+        _data.getCellByIA(_data.iaList[0].id).occupant = _data.iaList[0];
+        _data.getCellByIA(_data.iaList[1].id).occupant = _data.iaList[1];
+        _data.getCellByIA(_data.iaList[2].id).occupant = _data.iaList[2];
+
+        for ( i in 0..._data.cells.length ) {
+            var columns = _data.cells[i];
+            for ( j in 0...columns.length ) {
+                var cell = columns[j];
+                if(cell.occupant != null && cell.occupant.invisibilityDuration > 0){
+                    trace ('INVISIBLE !!!');
+                }
+            }
+        }
+
         var cloneData = _data.clone();
         for ( i in 0...cloneData.cells.length ) {
             var columns = cloneData.cells[i];
             for ( j in 0...columns.length ) {
                 var cell = columns[j];
+                if(cell.occupant != null){
+                    trace ('cell occupée');
+                }
+                if(cell.occupant != null && cell.occupant.invisibilityDuration > 0){
+                    trace ('INVISIBLE !!!');
+                }
                 if ( cell.occupant != null
                 && cell.occupant.id != targetIA.id
                 && cell.occupant.invisibilityDuration > 0

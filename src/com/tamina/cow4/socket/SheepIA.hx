@@ -129,11 +129,15 @@ class SheepIA implements IIA {
         var ia1Path:Path = null;
         if ( ia1Cell != null ) {
             ia1Path = GameUtils.getPath(currentCell, ia1Cell, _data);
+        } else {
+            trace('---------------------------------> IA 1 invisible');
         }
         var ia2Cell = _data.getCellByIA(_data.iaList[1].id);
         var ia2Path:Path = null;
         if ( ia2Cell != null ) {
             ia2Path = GameUtils.getPath(currentCell, ia2Cell, _data);
+        } else {
+            trace('--------------------------------------> IA 2 invisible');
         }
 
 
