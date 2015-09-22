@@ -20,7 +20,7 @@ npm install codeofwar
 
 ```shell
 cd node_modules/codeofwar/
-node js/release/Server.js 
+node js/release/Server.js
 ```
 
 * Mettre à jour le serveur
@@ -63,7 +63,7 @@ Utiliser une potion d'invisibilité va masquer la position du joueur au joueur a
 
 *Le piège*
 
-Utiliser un piège va le déposer sur la case courante. Si un joueur ou le coq tombent dedans, ils ne pourront plus bouger pendant [10 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
+Utiliser un piège va le déposer sur la case courante. Si un joueur ou le coq tombent dedans, ils ne pourront plus bouger pendant [10 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx). **Le joueur qui pose le piège peut donc tomber dedans !**
 
 *Le parfum de poulette*
 
@@ -92,16 +92,16 @@ Une fois la connection avec le Serveur établie, il faut lui envoyer un messsage
     "avatar":"http://monsite/monavatar.jpg",
     "token":"yourtokenifone",
     "profil":1
-    
 }
 ```
 Vous pouvez, ou non, précisez le token qui vous a été communiqué lors de votre inscription. Celà serait necessaire uniquement pour la phase de qualification.
 
-Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/Profil.hx) de votre IA, sachant que :
+Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/Profil.hx) de votre IA.
 
-- le MASTER_OF_COINS est immunisé contre les pieges
-- le TECH_WIZARD est immunisé contre la potion d'invisibilité
-- le HAND_OF_THE_KING immunise le poulet contre le parfum de poulette.
+### Les profils
+- le **MASTER_OF_COINS** est immunisé contre les pieges
+- le **TECH_WIZARD** est immunisé contre la potion d'invisibilité (immunise aussi le poulet)
+- le **HAND_OF_THE_KING** immunise le poulet contre le parfum de poulette.
 
 Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
 
@@ -146,6 +146,7 @@ http://www.codeofwar.net/api/modules/Server.html
 
 ### Le labyrinthe
 
+> À noter que la référence de la grille du labyrinthe se trouve en haut à gauche.
 
 ![Alt la map](https://github.com/damoebius/Cow4/raw/master/html/server/images/map.png "La map")
 
