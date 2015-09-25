@@ -73,7 +73,11 @@ Utiliser cet item va offrir au coq un bonus de [10 PM](https://github.com/damoeb
 
 Vous pouvez coder votre IA dans le langage de votre choix dans la mesure où il peut établir une connection socket.
 
-Quelques SDK Open Source sont disponibles ici https://github.com/damoebius/Cow4_SDK
+Quelques SDK Open Source sont disponibles ici :
+
+https://github.com/damoebius/Cow4_SDK
+
+https://github.com/thearsenik/CoW4-Java8
 
 ### Documentation
 http://www.codeofwar.net/api/modules/Server.html
