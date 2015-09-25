@@ -80,7 +80,7 @@ https://github.com/damoebius/Cow4_SDK
 https://github.com/thearsenik/CoW4-Java8
 
 ### Documentation
-http://www.codeofwar.net/api/modules/Server.html
+http://api.codeofwar.net/modules/Server.html
 
 ### Se connecter au serveur
 La connection au serveur se fait en socket sur le port 8127.
