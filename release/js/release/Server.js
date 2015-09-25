@@ -134,18 +134,36 @@ com_tamina_cow4_core_Game.prototype = {
 		this._data.iaList.push(this._IAList[0].toInfo());
 		this._data.iaList.push(this._IAList[1].toInfo());
 		this._data.iaList.push(this._IAList[2].toInfo());
-		var cloneData = this._data.clone();
+		this._data.getCellByIA(this._data.iaList[0].id).set_occupant(this._data.iaList[0]);
+		this._data.getCellByIA(this._data.iaList[1].id).set_occupant(this._data.iaList[1]);
+		this._data.getCellByIA(this._data.iaList[2].id).set_occupant(this._data.iaList[2]);
 		var _g1 = 0;
-		var _g = cloneData.cells.length;
+		var _g = this._data.cells.length;
 		while(_g1 < _g) {
 			var i = _g1++;
-			var columns = cloneData.cells[i];
+			var columns = this._data.cells[i];
 			var _g3 = 0;
 			var _g2 = columns.length;
 			while(_g3 < _g2) {
 				var j = _g3++;
 				var cell = columns[j];
-				if(cell.get_occupant() != null && cell.get_occupant().id != targetIA.id && cell.get_occupant().invisibilityDuration > 0 && targetIA.profil != 0) cell.set_occupant(null);
+				if(cell.get_occupant() != null && cell.get_occupant().invisibilityDuration > 0) haxe_Log.trace("INVISIBLE !!!",{ fileName : "Game.hx", lineNumber : 114, className : "com.tamina.cow4.core.Game", methodName : "retrieveIAOrders"});
+			}
+		}
+		var cloneData = this._data.clone();
+		var _g11 = 0;
+		var _g4 = cloneData.cells.length;
+		while(_g11 < _g4) {
+			var i1 = _g11++;
+			var columns1 = cloneData.cells[i1];
+			var _g31 = 0;
+			var _g21 = columns1.length;
+			while(_g31 < _g21) {
+				var j1 = _g31++;
+				var cell1 = columns1[j1];
+				if(cell1.get_occupant() != null) haxe_Log.trace("cell occupée",{ fileName : "Game.hx", lineNumber : 125, className : "com.tamina.cow4.core.Game", methodName : "retrieveIAOrders"});
+				if(cell1.get_occupant() != null && cell1.get_occupant().invisibilityDuration > 0) haxe_Log.trace("INVISIBLE !!!",{ fileName : "Game.hx", lineNumber : 128, className : "com.tamina.cow4.core.Game", methodName : "retrieveIAOrders"});
+				if(cell1.get_occupant() != null && cell1.get_occupant().id != targetIA.id && cell1.get_occupant().invisibilityDuration > 0 && targetIA.profil != 0) cell1.set_occupant(null);
 			}
 		}
 		targetIA.getTurnOrder(cloneData);
@@ -1198,18 +1216,18 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 		var currentCell = this._data.getCellByIA(this.id);
 		var ia1Cell = this._data.getCellByIA(this._data.iaList[0].id);
 		var ia1Path = null;
-		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data);
+		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data); else haxe_Log.trace("---------------------------------> IA 1 invisible",{ fileName : "SheepIA.hx", lineNumber : 133, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var ia2Cell = this._data.getCellByIA(this._data.iaList[1].id);
 		var ia2Path = null;
-		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data);
+		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data); else haxe_Log.trace("--------------------------------------> IA 2 invisible",{ fileName : "SheepIA.hx", lineNumber : 140, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var neighbors = currentCell.getNeighboors();
 		var selectedNeighbor = null;
 		var neighborIndex = 0;
-		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 143, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 147, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		while(neighborIndex < neighbors.length) {
 			selectedNeighbor = neighbors[neighborIndex];
 			if((ia1Path == null || ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) && (ia2Path == null || ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id) && this.hasNextIntersection(currentCell,selectedNeighbor)) {
-				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 151, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 155, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 				break;
 			} else neighborIndex++;
 		}
@@ -1730,7 +1748,7 @@ js_Boot.__isNativeObj = function(o) {
 	return js_Boot.__nativeClassName(o) != null;
 };
 js_Boot.__resolveNativeClass = function(name) {
-	if(typeof window != "undefined") return window[name]; else return global[name];
+	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
 };
 var js_html_compat_ArrayBuffer = function(a) {
 	if((a instanceof Array) && a.__enum__ == null) {
@@ -2397,10 +2415,10 @@ Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
 var __map_reserved = {}
-var ArrayBuffer = typeof(window) != "undefined" && window.ArrayBuffer || typeof(global) != "undefined" && global.ArrayBuffer || js_html_compat_ArrayBuffer;
+var ArrayBuffer = (Function("return typeof ArrayBuffer != 'undefined' ? ArrayBuffer : null"))() || js_html_compat_ArrayBuffer;
 if(ArrayBuffer.prototype.slice == null) ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
-var DataView = typeof(window) != "undefined" && window.DataView || typeof(global) != "undefined" && global.DataView || js_html_compat_DataView;
-var Uint8Array = typeof(window) != "undefined" && window.Uint8Array || typeof(global) != "undefined" && global.Uint8Array || js_html_compat_Uint8Array._new;
+var DataView = (Function("return typeof DataView != 'undefined' ? DataView : null"))() || js_html_compat_DataView;
+var Uint8Array = (Function("return typeof Uint8Array != 'undefined' ? Uint8Array : null"))() || js_html_compat_Uint8Array._new;
 msignal_SlotList.NIL = new msignal_SlotList(null,null);
 com_tamina_cow4_config_Config.ROOT_PATH = "server/";
 com_tamina_cow4_config_Config.APP_PORT = 3000;

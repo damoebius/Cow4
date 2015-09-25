@@ -57,7 +57,7 @@ com_tamina_cow4_IADemoApp.prototype = {
 		this._proxy = new com_tamina_cow4_socket_GameServerProxy(this._socket);
 		this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
 		this._proxy.closeSignal.add($bind(this,this.quit));
-		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA " + new Date().getTime(),"http://images.groups.adobe.com/1332a08/logo100x100.gif","tokendemo",1));
+		this._proxy.sendMessage(new com_tamina_cow4_socket_message_Authenticate("DemoIA " + new Date().getTime(),"http://3.bp.blogspot.com/_XMH6qEyqIPU/S9YSkGiuZyI/AAAAAAAAB4g/8PoYjbZcNfY/s400/sakura2.jpg","tokendemo",1));
 		haxe_Timer.delay($bind(this,this.quit),600000);
 	}
 	,serverMessageHandler: function(message) {
@@ -89,7 +89,7 @@ com_tamina_cow4_IADemoApp.prototype = {
 		try {
 			var gameData = com_tamina_cow4_model_GameMap.fromGameMapVO(data.data);
 			console.log("turn : " + gameData.currentTurn);
-			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_TRAP;
+			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
 			var myIa = gameData.getIAById(this._id);
 			console.log("pm : " + myIa.pm);
 			var currentCell = gameData.getCellByIA(this._id);
@@ -992,7 +992,7 @@ js_Boot.__isNativeObj = function(o) {
 	return js_Boot.__nativeClassName(o) != null;
 };
 js_Boot.__resolveNativeClass = function(name) {
-	if(typeof window != "undefined") return window[name]; else return global[name];
+	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
 };
 var js_html_compat_ArrayBuffer = function(a) {
 	if((a instanceof Array) && a.__enum__ == null) {
@@ -1567,10 +1567,10 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = { __name__ : ["Class"]};
 var Enum = { };
-var ArrayBuffer = typeof(window) != "undefined" && window.ArrayBuffer || typeof(global) != "undefined" && global.ArrayBuffer || js_html_compat_ArrayBuffer;
+var ArrayBuffer = (Function("return typeof ArrayBuffer != 'undefined' ? ArrayBuffer : null"))() || js_html_compat_ArrayBuffer;
 if(ArrayBuffer.prototype.slice == null) ArrayBuffer.prototype.slice = js_html_compat_ArrayBuffer.sliceImpl;
-var DataView = typeof(window) != "undefined" && window.DataView || typeof(global) != "undefined" && global.DataView || js_html_compat_DataView;
-var Uint8Array = typeof(window) != "undefined" && window.Uint8Array || typeof(global) != "undefined" && global.Uint8Array || js_html_compat_Uint8Array._new;
+var DataView = (Function("return typeof DataView != 'undefined' ? DataView : null"))() || js_html_compat_DataView;
+var Uint8Array = (Function("return typeof Uint8Array != 'undefined' ? Uint8Array : null"))() || js_html_compat_Uint8Array._new;
 msignal_SlotList.NIL = new msignal_SlotList(null,null);
 com_tamina_cow4_IADemoApp.ALIVE_DURATION = 600000;
 com_tamina_cow4_config_Config.ROOT_PATH = "server/";
@@ -1582,7 +1582,7 @@ com_tamina_cow4_model_ItemPosition.POTION_BOTTOM = new org_tamina_geom_Point(3,2
 com_tamina_cow4_model_ItemPosition.TRAP_TOP = new org_tamina_geom_Point(7,3);
 com_tamina_cow4_model_ItemPosition.TRAP_BOTTOM = new org_tamina_geom_Point(17,21);
 com_tamina_cow4_model_ItemPosition.PARFUM_TOP = new org_tamina_geom_Point(7,10);
-com_tamina_cow4_model_ItemPosition.PARFUM_BOTTOM = new org_tamina_geom_Point(17,13);
+com_tamina_cow4_model_ItemPosition.PARFUM_BOTTOM = new org_tamina_geom_Point(17,14);
 com_tamina_cow4_socket_message_SocketMessage.END_CHAR = "#end#";
 com_tamina_cow4_socket_message_Authenticate.MESSAGE_TYPE = "authenticate";
 com_tamina_cow4_socket_message_Error.MESSAGE_TYPE = "error";
