@@ -1,332 +1,486 @@
 @import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700,900,500,100);
+
 @-webkit-keyframes characters {
-  0% {
-    margin-top: 0; }
-  50% {
-    margin-top: -10px; }
-  100% {
-    margin-top: 0; } }
+    0% {
+        margin-top: 0;
+    }
+    50% {
+        margin-top: -10px;
+    }
+    100% {
+        margin-top: 0;
+    }
+}
+
 @keyframes characters {
-  0% {
-    margin-top: 0; }
-  50% {
-    margin-top: -10px; }
-  100% {
-    margin-top: 0; } }
+    0% {
+        margin-top: 0;
+    }
+    50% {
+        margin-top: -10px;
+    }
+    100% {
+        margin-top: 0;
+    }
+}
+
 @-webkit-keyframes shadow {
-  0% {
-    opacity: 0.5; }
-  50% {
-    opacity: 0.3; }
-  100% {
-    opacity: 0.5; } }
+    0% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0.5;
+    }
+}
+
 @keyframes shadow {
-  0% {
-    opacity: 0.5; }
-  50% {
-    opacity: 0.3; }
-  100% {
-    opacity: 0.5; } }
+    0% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0.5;
+    }
+}
+
 /* line 6, ../sass/style.scss */
 html {
-  background-color: #cd081c;
-  height: 100%; }
-  /* line 10, ../sass/style.scss */
-  html body {
+    background-color: #cd081c;
     height: 100%;
-    overflow: hidden; }
-    @media screen and (min-width: 1151px) {
-      /* line 14, ../sass/style.scss */
-      html body .mainContainer {
+}
+
+/* line 10, ../sass/style.scss */
+html body {
+    height: 100%;
+    overflow: hidden;
+}
+
+@media screen and (min-width: 1151px) {
+    /* line 14, ../sass/style.scss */
+    html body .mainContainer {
         display: table;
-        margin: 0 auto; } }
-    /* line 21, ../sass/style.scss */
-    html body * {
-      font-family: "Roboto"; }
-    @media screen and (max-width: 1150px) {
-      /* line 10, ../sass/style.scss */
-      html body {
-        overflow-y: visible; } }
-  /* line 30, ../sass/style.scss */
-  html section {
+        margin: 0 auto;
+    }
+}
+
+/* line 21, ../sass/style.scss */
+html body * {
+    font-family: "Roboto";
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 10, ../sass/style.scss */
+    html body {
+        overflow-y: visible;
+    }
+}
+
+/* line 30, ../sass/style.scss */
+html section {
     height: 100%;
-    text-align: center; }
+    text-align: center;
+}
+
+/* line 34, ../sass/style.scss */
+html section #players {
+    height: 100%;
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+}
+
+@media screen and (min-width: 1151px) {
     /* line 34, ../sass/style.scss */
     html section #players {
-      height: 100%;
-      position: relative;
-      display: inline-block;
-      vertical-align: top; }
-      @media screen and (min-width: 1151px) {
-        /* line 34, ../sass/style.scss */
-        html section #players {
-          display: table-cell;
-          z-index: -1; } }
-      @media screen and (max-width: 1150px) {
-        /* line 34, ../sass/style.scss */
-        html section #players {
-          width: 100%;
-          z-index: 10;
-          position: relative;
-          height: auto; } }
-      /* line 52, ../sass/style.scss */
-      html section #players #logoCow {
-        display: block;
-        width: 95%;
-        position: absolute;
-        z-index: 10;
-        text-align: center;
-        margin-top: 22px; }
-        /* line 60, ../sass/style.scss */
-        html section #players #logoCow img {
-          width: 290px; }
-        @media screen and (max-width: 1150px) {
-          /* line 52, ../sass/style.scss */
-          html section #players #logoCow {
-            width: 100%;
-            z-index: 15; } }
-      /* line 70, ../sass/style.scss */
-      html section #players .player {
-        background-color: #faf6ef;
-        display: inline-block;
-        width: 200px;
-        height: 102%;
-        box-shadow: 2px 0px 15px rgba(0, 0, 0, 0.4);
-        box-sizing: border-box;
-        margin-top: -10px;
-        text-align: left; }
-        /* line 80, ../sass/style.scss */
-        html section #players .player:nth-child(2) {
-          transform: rotate(1deg);
-          padding-left: 5px; }
-          /* line 84, ../sass/style.scss */
-          html section #players .player:nth-child(2) .content {
-            transform: rotate(-1deg); }
-          @media screen and (max-width: 1150px) {
-            /* line 80, ../sass/style.scss */
-            html section #players .player:nth-child(2) {
-              z-index: 10;
-              width: 108%;
-              padding-bottom: 15px; } }
-          @media screen and (max-width: 870px) {
-            /* line 80, ../sass/style.scss */
-            html section #players .player:nth-child(2) {
-              padding-bottom: 0; } }
-          /* line 98, ../sass/style.scss */
-          html section #players .player:nth-child(2) .total {
-            color: #f1c266; }
-            /* line 101, ../sass/style.scss */
-            html section #players .player:nth-child(2) .total:after {
-              border-color: #f1c266; }
-        /* line 107, ../sass/style.scss */
-        html section #players .player:nth-child(3) {
-          transform: rotate(-2deg);
-          margin-left: -45px;
-          padding-left: 10px; }
-          @media screen and (max-width: 1150px) {
-            /* line 107, ../sass/style.scss */
-            html section #players .player:nth-child(3) {
-              margin-top: -130px;
-              width: 109%; } }
-          /* line 117, ../sass/style.scss */
-          html section #players .player:nth-child(3) .content {
-            transform: rotate(2deg); }
-          /* line 121, ../sass/style.scss */
-          html section #players .player:nth-child(3) .total {
-            color: #45b9b9; }
-            /* line 124, ../sass/style.scss */
-            html section #players .player:nth-child(3) .total:after {
-              border-color: #45b9b9; }
-        @media screen and (max-width: 1150px) {
-          /* line 70, ../sass/style.scss */
-          html section #players .player {
-            position: relative;
-            display: block;
-            height: initial;
-            margin-left: -15px !important;
-            text-align: center; } }
-        /* line 138, ../sass/style.scss */
-        html section #players .player .content {
-          margin-top: 150px;
-          text-align: center;
-          width: 150px;
-          display: inline-block; }
-          @media screen and (max-width: 1150px) {
-            /* line 138, ../sass/style.scss */
-            html section #players .player .content {
-              width: 100%; }
-              /* line 148, ../sass/style.scss */
-              html section #players .player .content > * {
-                vertical-align: middle;
-                display: inline-block; } }
-          @media screen and (max-width: 870px) {
-            /* line 138, ../sass/style.scss */
-            html section #players .player .content {
-              max-width: 470px; } }
-          @media screen and (max-width: 470px) {
-            /* line 138, ../sass/style.scss */
-            html section #players .player .content {
-              max-width: 440px; } }
-          /* line 162, ../sass/style.scss */
-          html section #players .player .content .team,
-          html section #players .player .content .character {
-            font-size: 18px;
-            font-weight: 300; }
-          /* line 168, ../sass/style.scss */
-          html section #players .player .content .avatar {
-            border-radius: 50%;
-            overflow: hidden; }
-          /* line 174, ../sass/style.scss */
-          html section #players .player .content .team .avatar {
-            width: 60px;
-            height: 60px;
-            text-align: center;
-            display: inline-block;
-            margin-bottom: 5px; }
-            /* line 181, ../sass/style.scss */
-            html section #players .player .content .team .avatar img {
-              display: inline-block;
-              vertical-align: middle;
-              width: 100%; }
-          /* line 189, ../sass/style.scss */
-          html section #players .player .content .arrowSeparator {
-            height: 40px;
-            width: 15px;
-            margin: 15px 0; }
-            @media screen and (max-width: 1150px) {
-              /* line 189, ../sass/style.scss */
-              html section #players .player .content .arrowSeparator {
-                transform: rotate(-90deg);
-                margin: 0 15px; } }
-          /* line 201, ../sass/style.scss */
-          html section #players .player .content .character img {
-            width: 100px;
-            height: 100px; }
-            @media screen and (max-width: 1150px) {
-              /* line 201, ../sass/style.scss */
-              html section #players .player .content .character img {
-                width: 60px;
-                height: 65px; } }
-          /* line 212, ../sass/style.scss */
-          html section #players .player .content .score {
-            font-weight: 700;
-            font-size: 24px;
-            margin: 55px 0; }
-            @media screen and (max-width: 1150px) {
-              /* line 212, ../sass/style.scss */
-              html section #players .player .content .score {
-                margin: 0 55px; } }
-            /* line 222, ../sass/style.scss */
-            html section #players .player .content .score .total:after {
-              content: "pts";
-              display: inline-block;
-              line-height: 37px;
-              border: solid 2px;
-              border-radius: 50%;
-              width: 37px;
-              height: 37px;
-              font-size: 20px;
-              margin-left: 5px; }
-            /* line 235, ../sass/style.scss */
-            html section #players .player .content .score .pointSup {
-              font-size: 15px;
-              color: #5c5a58;
-              position: absolute;
-              width: 100%; }
-              @media screen and (max-width: 1150px) {
-                /* line 235, ../sass/style.scss */
-                html section #players .player .content .score .pointSup {
-                  width: inherit; } }
-          /* line 247, ../sass/style.scss */
-          html section #players .player .content .bonus {
-            text-align: left;
-            padding-left: 35px; }
-            @media screen and (max-width: 1150px) {
-              /* line 247, ../sass/style.scss */
-              html section #players .player .content .bonus {
-                padding: 0;
-                margin: 25px 0; } }
-            /* line 256, ../sass/style.scss */
-            html section #players .player .content .bonus li {
-              margin-bottom: 15px; }
-              @media screen and (max-width: 1150px) {
-                /* line 256, ../sass/style.scss */
-                html section #players .player .content .bonus li {
-                  display: inline-block;
-                  margin: 0 10px; } }
-              /* line 264, ../sass/style.scss */
-              html section #players .player .content .bonus li img,
-              html section #players .player .content .bonus li p {
-                display: inline-block;
-                vertical-align: middle; }
-              /* line 270, ../sass/style.scss */
-              html section #players .player .content .bonus li img {
-                height: 40px;
-                width: 40px;
-                margin-right: 10px; }
-              /* line 276, ../sass/style.scss */
-              html section #players .player .content .bonus li p {
-                font-size: 18px;
-                font-weight: 700;
-                color: #e10d1a; }
-    /* line 287, ../sass/style.scss */
-    html section #gameContainer {
-      display: inline-block;
-      margin-left: -20px;
-      height: 100%;
-      position: relative;
-      padding: 20px;
-      box-sizing: border-box;
-      background-color: white; }
-      @media screen and (max-width: 1150px) {
-        /* line 287, ../sass/style.scss */
-        html section #gameContainer {
-          z-index: 1;
-          position: relative;
-          display: block;
-          margin: 0;
-          margin-top: -30px; } }
-      /* line 304, ../sass/style.scss */
-      html section #gameContainer:before, html section #gameContainer:after {
-        content: "";
-        display: inline-block;
-        height: 101%;
-        width: 60px;
-        background-color: #fff;
-        position: absolute;
+        display: table-cell;
         z-index: -1;
-        box-shadow: 2px 0px 15px rgba(0, 0, 0, 0.4);
-        vertical-align: top;
-        top: 0;
-        margin-top: -5px; }
-        @media screen and (max-width: 1150px) {
-          /* line 304, ../sass/style.scss */
-          html section #gameContainer:before, html section #gameContainer:after {
-            content: none; } }
-      /* line 323, ../sass/style.scss */
-      html section #gameContainer:before {
-        transform: rotate(2deg);
-        left: 0;
-        margin-left: -30px; }
-      /* line 329, ../sass/style.scss */
-      html section #gameContainer:after {
-        transform: rotate(-2deg);
-        right: 0;
-        margin-right: -30px; }
-      /* line 335, ../sass/style.scss */
-      html section #gameContainer canvas {
-        display: inline-block;
-        height: 100%;
+    }
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 34, ../sass/style.scss */
+    html section #players {
         width: 100%;
-        box-sizing: border-box;
-        background-color: #fff;
         z-index: 10;
         position: relative;
-        background-image: url("../../img/gameMap.png");
-        background-position: center;
-        background-repeat: no-repeat; }
-        @media screen and (max-width: 1150px) {
-          /* line 335, ../sass/style.scss */
-          html section #gameContainer canvas {
-            width: 100%;
-            padding-top: 70px; } }
+        height: auto;
+    }
+}
+
+/* line 52, ../sass/style.scss */
+html section #players #logoCow {
+    display: block;
+    width: 95%;
+    position: absolute;
+    z-index: 10;
+    text-align: center;
+    margin-top: 22px;
+}
+
+/* line 60, ../sass/style.scss */
+html section #players #logoCow img {
+    width: 290px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 52, ../sass/style.scss */
+    html section #players #logoCow {
+        width: 100%;
+        z-index: 15;
+    }
+}
+
+/* line 70, ../sass/style.scss */
+html section #players .player {
+    background-color: #faf6ef;
+    display: inline-block;
+    width: 200px;
+    height: 102%;
+    box-shadow: 2px 0px 15px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    margin-top: -10px;
+    text-align: left;
+}
+
+/* line 80, ../sass/style.scss */
+html section #players .player:nth-child(2) {
+    transform: rotate(1deg);
+    padding-left: 5px;
+}
+
+/* line 84, ../sass/style.scss */
+html section #players .player:nth-child(2) .content {
+    transform: rotate(-1deg);
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 80, ../sass/style.scss */
+    html section #players .player:nth-child(2) {
+        z-index: 10;
+        width: 108%;
+        padding-bottom: 15px;
+    }
+}
+
+@media screen and (max-width: 870px) {
+    /* line 80, ../sass/style.scss */
+    html section #players .player:nth-child(2) {
+        padding-bottom: 0;
+    }
+}
+
+/* line 98, ../sass/style.scss */
+html section #players .player:nth-child(2) .total {
+    color: #f1c266;
+}
+
+/* line 101, ../sass/style.scss */
+html section #players .player:nth-child(2) .total:after {
+    border-color: #f1c266;
+}
+
+/* line 107, ../sass/style.scss */
+html section #players .player:nth-child(3) {
+    transform: rotate(-2deg);
+    margin-left: -45px;
+    padding-left: 10px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 107, ../sass/style.scss */
+    html section #players .player:nth-child(3) {
+        margin-top: -130px;
+        width: 109%;
+    }
+}
+
+/* line 117, ../sass/style.scss */
+html section #players .player:nth-child(3) .content {
+    transform: rotate(2deg);
+}
+
+/* line 121, ../sass/style.scss */
+html section #players .player:nth-child(3) .total {
+    color: #45b9b9;
+}
+
+/* line 124, ../sass/style.scss */
+html section #players .player:nth-child(3) .total:after {
+    border-color: #45b9b9;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 70, ../sass/style.scss */
+    html section #players .player {
+        position: relative;
+        display: block;
+        height: initial;
+        margin-left: -15px !important;
+        text-align: center;
+    }
+}
+
+/* line 138, ../sass/style.scss */
+html section #players .player .content {
+    margin-top: 150px;
+    text-align: center;
+    width: 150px;
+    display: inline-block;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 138, ../sass/style.scss */
+    html section #players .player .content {
+        width: 100%;
+    }
+
+    /* line 148, ../sass/style.scss */
+    html section #players .player .content > * {
+        vertical-align: middle;
+        display: inline-block;
+    }
+}
+
+@media screen and (max-width: 870px) {
+    /* line 138, ../sass/style.scss */
+    html section #players .player .content {
+        max-width: 470px;
+    }
+}
+
+@media screen and (max-width: 470px) {
+    /* line 138, ../sass/style.scss */
+    html section #players .player .content {
+        max-width: 440px;
+    }
+}
+
+/* line 162, ../sass/style.scss */
+html section #players .player .content .team,
+html section #players .player .content .character {
+    font-size: 18px;
+    font-weight: 300;
+}
+
+/* line 168, ../sass/style.scss */
+html section #players .player .content .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* line 174, ../sass/style.scss */
+html section #players .player .content .team .avatar {
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+/* line 181, ../sass/style.scss */
+html section #players .player .content .team .avatar img {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+}
+
+/* line 189, ../sass/style.scss */
+html section #players .player .content .arrowSeparator {
+    height: 40px;
+    width: 15px;
+    margin: 15px 0;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 189, ../sass/style.scss */
+    html section #players .player .content .arrowSeparator {
+        transform: rotate(-90deg);
+        margin: 0 15px;
+    }
+}
+
+/* line 201, ../sass/style.scss */
+html section #players .player .content .character img {
+    width: 100px;
+    height: 100px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 201, ../sass/style.scss */
+    html section #players .player .content .character img {
+        width: 60px;
+        height: 65px;
+    }
+}
+
+/* line 212, ../sass/style.scss */
+html section #players .player .content .score {
+    font-weight: 700;
+    font-size: 24px;
+    margin: 55px 0;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 212, ../sass/style.scss */
+    html section #players .player .content .score {
+        margin: 0 55px;
+    }
+}
+
+/* line 222, ../sass/style.scss */
+html section #players .player .content .score .total:after {
+    content: "pts";
+    display: inline-block;
+    line-height: 37px;
+    border: solid 2px;
+    border-radius: 50%;
+    width: 37px;
+    height: 37px;
+    font-size: 20px;
+    margin-left: 5px;
+}
+
+/* line 235, ../sass/style.scss */
+html section #players .player .content .score .pointSup {
+    font-size: 15px;
+    color: #5c5a58;
+    position: absolute;
+    width: 100%;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 235, ../sass/style.scss */
+    html section #players .player .content .score .pointSup {
+        width: inherit;
+    }
+}
+
+/* line 247, ../sass/style.scss */
+html section #players .player .content .bonus {
+    text-align: left;
+    padding-left: 35px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 247, ../sass/style.scss */
+    html section #players .player .content .bonus {
+        padding: 0;
+        margin: 25px 0;
+    }
+}
+
+/* line 256, ../sass/style.scss */
+html section #players .player .content .bonus li {
+    margin-bottom: 15px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 256, ../sass/style.scss */
+    html section #players .player .content .bonus li {
+        display: inline-block;
+        margin: 0 10px;
+    }
+}
+
+/* line 264, ../sass/style.scss */
+html section #players .player .content .bonus li img,
+html section #players .player .content .bonus li p {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* line 270, ../sass/style.scss */
+html section #players .player .content .bonus li img {
+    height: 40px;
+    width: 40px;
+    margin-right: 10px;
+}
+
+/* line 276, ../sass/style.scss */
+html section #players .player .content .bonus li p {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e10d1a;
+}
+
+/* line 287, ../sass/style.scss */
+html section #gameContainer {
+    display: inline-block;
+    margin-left: -20px;
+    height: 100%;
+    position: relative;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 287, ../sass/style.scss */
+    html section #gameContainer {
+        z-index: 1;
+        position: relative;
+        display: block;
+        margin: 0;
+        margin-top: -30px;
+    }
+}
+
+/* line 304, ../sass/style.scss */
+html section #gameContainer:before, html section #gameContainer:after {
+    content: "";
+    display: inline-block;
+    height: 101%;
+    width: 60px;
+    background-color: #fff;
+    position: absolute;
+    z-index: -1;
+    box-shadow: 2px 0px 15px rgba(0, 0, 0, 0.4);
+    vertical-align: top;
+    top: 0;
+    margin-top: -5px;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 304, ../sass/style.scss */
+    html section #gameContainer:before, html section #gameContainer:after {
+        content: none;
+    }
+}
+
+/* line 323, ../sass/style.scss */
+html section #gameContainer:before {
+    transform: rotate(2deg);
+    left: 0;
+    margin-left: -30px;
+}
+
+/* line 329, ../sass/style.scss */
+html section #gameContainer:after {
+    transform: rotate(-2deg);
+    right: 0;
+    margin-right: -30px;
+}
+
+/* line 335, ../sass/style.scss */
+html section #gameContainer canvas {
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #fff;
+    z-index: 10;
+    position: relative;
+}
+
+@media screen and (max-width: 1150px) {
+    /* line 335, ../sass/style.scss */
+    html section #gameContainer canvas {
+        width: 100%;
+        padding-top: 70px;
+    }
+}
