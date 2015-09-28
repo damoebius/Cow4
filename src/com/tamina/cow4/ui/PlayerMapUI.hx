@@ -1,4 +1,5 @@
 package com.tamina.cow4.ui;
+import msignal.Signal;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.socket.message.order.UseItemOrder;
 import haxe.Timer;
@@ -16,9 +17,10 @@ import js.html.CanvasElement;
 class PlayerMapUI extends MapUI<PlayerCellSprite> {
     private static inline var FPS:Float = 10.0;
 
+    public var endSignal:Signal2<IAInfo,EndOrder>;
+
     private var _background:Shape;
     private var _backgroundImage:Image;
-    private var _endScreen:EndScreen;
 
     private var _width:Int = 1000;
     private var _height:Int = 1000;
@@ -31,10 +33,11 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         _backgroundImage = new Image();
         _backgroundImage.addEventListener(ImageEvent.LOAD, backgroundLoadHandler);
         _backgroundImage.src = "images/background.png";
-        _endScreen = new EndScreen(_width, _height);
+        //_endScreen = new EndScreen(_width, _height);
         super.addChildAt(_background, 0);
         _cellsContainer.x = 0;
         _cellsContainer.y = 0;
+        endSignal = new Signal2<IAInfo,EndOrder>();
 
     }
 
@@ -79,14 +82,10 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
             case Action.FAIL:
                 var fail:EndOrder = cast action;
                 trace(fail.message);
-                this.addChild(_endScreen);
-
-                _endScreen.setMessage('fail : ' + ia.name + ' : ' + fail.message);
+                endSignal.dispatch(ia, fail);
             case Action.SUCCESS:
                 var success:EndOrder = cast action;
-                this.addChild(_endScreen);
-
-                _endScreen.setMessage('success : ' + ia.name + ' : ' + success.message);
+                endSignal.dispatch(ia, success);
             case Action.GET_ITEM :
                 currentCell.item = null;
             case Action.USE_ITEM :

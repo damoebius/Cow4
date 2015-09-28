@@ -1,5 +1,8 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.socket.message.order.EndOrder;
+import com.tamina.cow4.model.IAInfo;
+import com.tamina.cow4.view.component.EndScreen;
 import com.tamina.cow4.view.component.IAInfoComponent;
 import js.html.ImageElement;
 import js.html.Element;
@@ -41,6 +44,7 @@ class PlayView extends HTMLComponent {
 
     private var _ia1Info:IAInfoComponent;
     private var _ia2Info:IAInfoComponent;
+    private var _endScreen:EndScreen;
 
     public function new(containerId:String = "") {
         super(Browser.document.getElementById(containerId));
@@ -49,6 +53,8 @@ class PlayView extends HTMLComponent {
 
         _ia1Info = new IAInfoComponent(PlayViewElementId.IA1_CONTAINER);
         _ia2Info = new IAInfoComponent(PlayViewElementId.IA2_CONTAINER);
+        _endScreen = new EndScreen(PlayViewElementId.END_SCREEN_CONTAINER);
+
         var containerWidth = Browser.window.innerHeight;
         var containerHeight = Browser.window.innerHeight;
         _gameContainer.style.width = containerWidth +"px";
@@ -60,7 +66,7 @@ class PlayView extends HTMLComponent {
 
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
-
+        _stage.endSignal.add(endHandler);
         if(containerWidth != APPLICATION_WIDTH || containerHeight != APPLICATION_HEIGHT){
             var scale =  containerWidth / APPLICATION_WIDTH;
             if(containerWidth> containerHeight){
@@ -87,6 +93,10 @@ class PlayView extends HTMLComponent {
             result = 1;
         }
         return result;
+    }
+
+    private function endHandler(ia:IAInfo,message:EndOrder):Void{
+        _endScreen.updateData(ia,message);
     }
 
     private function socketOpenHandler(evt:Dynamic):Void {
