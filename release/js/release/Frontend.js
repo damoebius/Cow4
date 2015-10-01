@@ -1766,7 +1766,7 @@ var com_tamina_cow4_view_PlayView = function(containerId) {
 		this._stage.scaleX = scale;
 		this._stage.scaleY = scale;
 	}
-	this._socket = new WebSocket("ws://localhost:" + 8128);
+	this._socket = new WebSocket("ws://" + location.hostname + ":" + 8128);
 	this._socket.addEventListener("open",$bind(this,this.socketOpenHandler));
 	this._proxy = new com_tamina_cow4_socket_PlayerServerProxy(this._socket);
 	this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
