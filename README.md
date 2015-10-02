@@ -146,7 +146,7 @@ L'IA doit répondre en moins d'une seconde, un message de type TurnResult
 ```
 Reportez vous à la documentation de l'API pour plus de détails
 
-http://www.codeofwar.net/api/modules/Server.html
+http://api.codeofwar.net/modules/Server.html
 
 ### Le labyrinthe
 
@@ -170,3 +170,11 @@ Ensuite elle va chercher la premiere intersection disponible sans emprunter une 
 
 Et elle y va.
 Arrivée là-bas elle analyse à nouveau la situation.
+
+### Où trouver de l'aide
+
+Vous pouvez remonter des annomalies ou des demandes d'évolution ici : https://github.com/damoebius/Cow4/issues
+
+Vous pouvez échanger avec la communauté sur notre groupe : https://groups.google.com/forum/#!forum/expantion-origin
+
+Enfin vous pouvez contacter l'équipe à cette adresse : contact@ttfx.fr
