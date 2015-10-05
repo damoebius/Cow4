@@ -39,14 +39,14 @@ Cette page liste les IA connectées au serveur. Vous pouvez en selectionner deux
 Une nouvelle page affiche alors la partie entre les deux IA.
 
 
-## Les regles du jeu
+## Les règles du jeu
 
 Le but du jeu est de parcourir un labyrinthe pour attraper le premier le poulet.
 Les joueurs ont au maximum [200 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx) pour l'attraper.
 
 ### Tour de jeu
 
-Les tours s'enchainent toujours dans le même ordre : joueur 1, joueur2, puis coq.
+Les tours s'enchainent toujours dans le même ordre : joueur 1, joueur 2, puis coq.
 
 Tous les tours, un joueur gagne 1 point de mouvement (PM) qu'il peut conserver jusqu'à un maximum de [5 PM](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx). Le coq ne peut pas cumuler ses PM.
 
@@ -98,14 +98,14 @@ Une fois la connection avec le Serveur établie, il faut lui envoyer un messsage
     "profil":1
 }
 ```
-Vous pouvez, ou non, précisez le token qui vous a été communiqué lors de votre inscription. Celà serait necessaire uniquement pour la phase de qualification.
+Vous pouvez, ou non, préciser le token qui vous a été communiqué lors de votre inscription. Cela serait necessaire uniquement pour la phase de qualification.
 
 Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/Profil.hx) de votre IA.
 
 ### Les profils
-- le **MASTER_OF_COINS** est immunisé contre les pieges
-- le **TECH_WIZARD** est immunisé contre la potion d'invisibilité (immunise aussi le poulet)
-- le **HAND_OF_THE_KING** immunise le poulet contre le parfum de poulette.
+- le **MASTER_OF_COINS** (le nain) est immunisé contre les pièges : profil 1
+- le **TECH_WIZARD** (l'alchimiste) est immunisé contre la potion d'invisibilité (immunise aussi le poulet) : profil 0
+- le **HAND_OF_THE_KING** (l'elfe) immunise le poulet contre le parfum de poulette : profil 2
 
 Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
 
@@ -119,7 +119,7 @@ Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erre
 
 ### Combat d'IA
 
-Lorsque c'est à son tour de jouer, le server envoit à l'IA un message GetTurnOrder
+Lorsque c'est à son tour de jouer, le server envoie à l'IA un message GetTurnOrder
 
 ```javascript
 {
@@ -160,11 +160,11 @@ A son premier tour, le poulet va foncer vers la case tout à gauche.
 
 ![Alt premier coup](https://github.com/damoebius/Cow4/raw/master/html/server/images/firstmove.png "Premier coup")
 
-A partir de ce moment, l'ia va commencer pour calculer le chemin le plus rapide pour atteindre ses deux adversaires
+A partir de ce moment, l'ia va commencer par calculer le chemin le plus rapide pour atteindre ses deux adversaires
 
 ![Alt scan ia](https://github.com/damoebius/Cow4/raw/master/html/server/images/findIa.png "recherche ia")
 
-Ensuite elle va chercher la premiere intersection disponible sans emprunter une route vers une IA.
+Ensuite elle va chercher la première intersection disponible sans emprunter une route vers une IA.
 
 ![Alt goto intersection](https://github.com/damoebius/Cow4/raw/master/html/server/images/fondItersection.png "goto intersection")
 
