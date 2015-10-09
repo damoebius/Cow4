@@ -42,11 +42,14 @@ Une nouvelle page affiche alors la partie entre les deux IA.
 ## Les règles du jeu
 
 Le but du jeu est de parcourir un labyrinthe pour attraper le premier le poulet.
+Le labyrinthe est figé.
 Les joueurs ont au maximum [200 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx) pour l'attraper.
 
 ### Tour de jeu
 
 Les tours s'enchainent toujours dans le même ordre : joueur 1, joueur 2, puis coq.
+
+Le temps de tour de jeu d'une IA est limité : [GameConstants.TIMEOUT_DURATION:Int = 2*1000;](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
 
 Tous les tours, un joueur gagne 1 point de mouvement (PM) qu'il peut conserver jusqu'à un maximum de [5 PM](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx). Le coq ne peut pas cumuler ses PM.
 
