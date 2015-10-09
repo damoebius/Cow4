@@ -1,5 +1,6 @@
 package com.tamina.cow4;
 
+import nodejs.NodeJS;
 import com.tamina.cow4.core.GameManager;
 import com.tamina.cow4.socket.WSocketServer;
 import com.tamina.cow4.routes.PlayRoute;
@@ -29,6 +30,7 @@ class Server {
 
     public function new() {
 
+        Config.ROOT_PATH = NodeJS.dirname+'/../../server/';
         _express = Express.GetApplication();
         _express.listen(Config.APP_PORT);
         _express.use(Express.Static(Config.ROOT_PATH));

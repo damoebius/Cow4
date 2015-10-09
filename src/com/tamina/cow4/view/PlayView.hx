@@ -53,7 +53,7 @@ class PlayView extends HTMLComponent {
 
         _ia1Info = new IAInfoComponent(PlayViewElementId.IA1_CONTAINER);
         _ia2Info = new IAInfoComponent(PlayViewElementId.IA2_CONTAINER);
-        _endScreen = new EndScreen(PlayViewElementId.END_SCREEN_CONTAINER);
+
 
         var containerWidth = Browser.window.innerHeight;
         var containerHeight = Browser.window.innerHeight;
@@ -63,6 +63,11 @@ class PlayView extends HTMLComponent {
         _gameContainer.appendChild(_applicationCanvas);
         _applicationCanvas.width = containerWidth;
         _applicationCanvas.height = containerHeight;
+
+        var endScreen = Browser.document.createDivElement();
+        endScreen.id = PlayViewElementId.END_SCREEN_CONTAINER;
+        _gameContainer.appendChild(endScreen);
+        _endScreen = new EndScreen(PlayViewElementId.END_SCREEN_CONTAINER);
 
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
@@ -97,6 +102,7 @@ class PlayView extends HTMLComponent {
 
     private function endHandler(ia:IAInfo,message:EndOrder):Void{
         _endScreen.updateData(ia,message);
+        _endScreen.parent.style.display = "table";
     }
 
     private function socketOpenHandler(evt:Dynamic):Void {

@@ -29,7 +29,7 @@ class SheepIA implements IIA {
     private var _isFirstTurn:Bool = true;
     private var _data:GameMap;
 
-    public function new( ):Void {
+    public function new():Void {
         id = UID.getUID();
         items = new Array<Item>();
         turnComplete = new Signal1<TurnResult>();
@@ -37,29 +37,33 @@ class SheepIA implements IIA {
 
     }
 
-    public function toInfo( ):IAInfo {
+    public function toInfo():IAInfo {
         return new IAInfo(id, name, "", pm, items, invisibilityDuration, profil);
     }
 
-    public function getTurnOrder( data:GameMap ):Void {
+    public function getTurnOrder(data:GameMap):Void {
         var result = new TurnResult();
         _data = data;
         try {
             var currentCell = data.getCellByIA(id);
             var myIa = data.getIAById(id);
-            if ( _isFirstTurn ) {
+            if (_isFirstTurn) {
                 initFirstTurn();
             } else {
 
-                if ( _targetCell == null || _targetCell.id == currentCell.id ) {
+                if (_targetCell == null || _targetCell.id == currentCell.id) {
                     _targetCell = getNewDestination();
                 }
-                if ( _targetCell != null ) {
+                if (_targetCell != null) {
                     var path = GameUtils.getPath(currentCell, _targetCell, data);
-                    if ( path != null ) {
-                        for ( i in 0...myIa.pm ) {
-                            var order = new MoveOrder(path.getItemAt(i + 1));
-                            result.actions.push(order);
+                    if (path != null) {
+                        for (i in 0...myIa.pm) {
+                            if (path.getItemAt(i + 1).occupant == null) {
+                                var order = new MoveOrder(path.getItemAt(i + 1));
+                                result.actions.push(order);
+                            } else {
+                                trace('case déja occupée');
+                            }
                         }
                     } else {
                         trace('path null : ' + currentCell.id + "//" + _targetCell.id);
@@ -71,26 +75,26 @@ class SheepIA implements IIA {
             }
 
 
-        } catch ( e:js.Error ) {
+        } catch (e:js.Error) {
             trace('error : ' + e.message);
         }
         turnComplete.dispatch(result);
     }
 
-    private function initFirstTurn( ):Void {
+    private function initFirstTurn():Void {
         _targetCell = _data.getCellAt(0, 12);
         _isFirstTurn = false;
     }
 
-    private function getNextIntersection( fromCell:Cell, byCell:Cell ):Cell {
+    private function getNextIntersection(fromCell:Cell, byCell:Cell):Cell {
         var result:Cell = null;
-        if ( byCell != null ) {
+        if (byCell != null) {
             var neighbors = byCell.getNeighboors();
-            if ( neighbors.length == 1 || neighbors.length > 2 ) {
+            if (neighbors.length == 1 || neighbors.length > 2) {
                 result = byCell;
             } else {
                 var nextCell = neighbors[0];
-                if ( nextCell.id == fromCell.id ) {
+                if (nextCell.id == fromCell.id) {
                     nextCell = neighbors[1];
                 }
                 result = getNextIntersection(byCell, nextCell);
@@ -101,17 +105,17 @@ class SheepIA implements IIA {
         return result;
     }
 
-    private function hasNextIntersection( fromCell:Cell, byCell:Cell ):Bool {
+    private function hasNextIntersection(fromCell:Cell, byCell:Cell):Bool {
         var result:Bool = false;
-        if ( byCell != null ) {
+        if (byCell != null) {
             var neighbors = byCell.getNeighboors();
-            if ( neighbors.length > 2 ) {
+            if (neighbors.length > 2) {
                 result = true;
-            } else if(neighbors.length == 1){
-               result = false;
+            } else if (neighbors.length == 1) {
+                result = false;
             } else {
                 var nextCell = neighbors[0];
-                if ( nextCell.id == fromCell.id ) {
+                if (nextCell.id == fromCell.id) {
                     nextCell = neighbors[1];
                 }
                 result = hasNextIntersection(byCell, nextCell);
@@ -122,19 +126,19 @@ class SheepIA implements IIA {
         return result;
     }
 
-    private function getNewDestination( ):Cell {
+    private function getNewDestination():Cell {
         var currentCell = _data.getCellByIA(id);
 
         var ia1Cell = _data.getCellByIA(_data.iaList[0].id);
         var ia1Path:Path = null;
-        if ( ia1Cell != null ) {
+        if (ia1Cell != null) {
             ia1Path = GameUtils.getPath(currentCell, ia1Cell, _data);
         } else {
             trace('---------------------------------> IA 1 invisible');
         }
         var ia2Cell = _data.getCellByIA(_data.iaList[1].id);
         var ia2Path:Path = null;
-        if ( ia2Cell != null ) {
+        if (ia2Cell != null) {
             ia2Path = GameUtils.getPath(currentCell, ia2Cell, _data);
         } else {
             trace('--------------------------------------> IA 2 invisible');
@@ -145,12 +149,12 @@ class SheepIA implements IIA {
         var selectedNeighbor:Cell = null;
         var neighborIndex:Int = 0;
         trace('SHEEP : recherche de sorties : ' + neighbors.length);
-        while ( neighborIndex < neighbors.length ) {
+        while (neighborIndex < neighbors.length) {
             selectedNeighbor = neighbors[neighborIndex];
             if (
             (ia1Path == null || (ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) )
             && (ia2Path == null || (ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id ))
-            && hasNextIntersection(currentCell,selectedNeighbor)
+            && hasNextIntersection(currentCell, selectedNeighbor)
             ) {
                 trace('sortie trouvée : ' + selectedNeighbor.id);
                 break;
@@ -164,10 +168,10 @@ class SheepIA implements IIA {
         return getNextIntersection(currentCell, selectedNeighbor);
     }
 
-    public function getItemByType( type:ItemType ):Item {
+    public function getItemByType(type:ItemType):Item {
         var result:Item = null;
-        for ( i in 0...items.length ) {
-            if ( items[i].type == type ) {
+        for (i in 0...items.length) {
+            if (items[i].type == type) {
                 result = items[i];
             }
         }

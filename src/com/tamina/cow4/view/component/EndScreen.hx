@@ -35,6 +35,8 @@ class EndScreen  extends HTMLComponent{
         _message.innerHTML = message.message;
         if(message.type == Action.FAIL){
             _title.innerHTML = 'ECHEC';
+        } else {
+            _title.innerHTML = 'VICTOIRE';
         }
     }
 }
