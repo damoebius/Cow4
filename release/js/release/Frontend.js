@@ -254,9 +254,10 @@ com_tamina_cow4_Frontend.main = function() {
 	org_tamina_utils_ClassUtils.expose(com_tamina_cow4_Frontend._instance,"Frontend");
 };
 com_tamina_cow4_Frontend.prototype = {
-	init: function(endpoint,viewName) {
+	init: function(config,viewName) {
 		if(viewName == null) viewName = "Home";
-		org_tamina_net_BaseRequest.endpoint = new org_tamina_net_URL(endpoint);
+		com_tamina_cow4_Frontend.config = config;
+		org_tamina_net_BaseRequest.endpoint = new org_tamina_net_URL("http://" + com_tamina_cow4_Frontend.config.server + ":" + com_tamina_cow4_Frontend.config.port);
 		switch(viewName) {
 		case "Home":
 			this._homeView = new com_tamina_cow4_view_HomeView("frontend_app");
@@ -273,6 +274,11 @@ var com_tamina_cow4_config_Config = function() {
 com_tamina_cow4_config_Config.__name__ = ["com","tamina","cow4","config","Config"];
 com_tamina_cow4_config_Config.prototype = {
 	__class__: com_tamina_cow4_config_Config
+};
+var com_tamina_cow4_config_FrontendConfig = function() { };
+com_tamina_cow4_config_FrontendConfig.__name__ = ["com","tamina","cow4","config","FrontendConfig"];
+com_tamina_cow4_config_FrontendConfig.prototype = {
+	__class__: com_tamina_cow4_config_FrontendConfig
 };
 var com_tamina_cow4_core_PathFinder = function() {
 	this._inc = 0;
@@ -1752,7 +1758,7 @@ var com_tamina_cow4_view_PlayView = function(containerId) {
 		this._stage.scaleX = scale;
 		this._stage.scaleY = scale;
 	}
-	this._socket = new WebSocket("ws://localhost:" + 8128);
+	this._socket = new WebSocket("ws://" + com_tamina_cow4_Frontend.config.server + ":" + 8128);
 	this._socket.addEventListener("open",$bind(this,this.socketOpenHandler));
 	this._proxy = new com_tamina_cow4_socket_PlayerServerProxy(this._socket);
 	this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));

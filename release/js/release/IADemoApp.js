@@ -42,9 +42,12 @@ Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
 var com_tamina_cow4_IADemoApp = function() {
+	this._server = "localhost";
 	this._mode = com_tamina_cow4_ia_Mode.GET_A_TRAP;
+	this._process = nodejs_NodeJS.get_process();
+	if(this._process.argv[2] != null) this._server = this._process.argv[2];
 	this._socket = new (require('net').Socket)();
-	this._socket.connect(8127,"localhost",$bind(this,this.connectionHandler));
+	this._socket.connect(8127,this._server,$bind(this,this.connectionHandler));
 	this._currentDirection = 1;
 };
 com_tamina_cow4_IADemoApp.__name__ = true;

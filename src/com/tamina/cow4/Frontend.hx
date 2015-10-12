@@ -1,4 +1,6 @@
 package com.tamina.cow4;
+import com.tamina.cow4.Frontend;
+import com.tamina.cow4.config.FrontendConfig;
 import com.tamina.cow4.view.PlayView;
 import com.tamina.cow4.view.ViewName;
 import org.tamina.net.URL;
@@ -9,6 +11,7 @@ import org.tamina.log.QuickLogger;
 @:expose class Frontend {
 
     public static inline var MODULE_NAME:String = 'frontend_app';
+    public static var config:FrontendConfig;
 
     private static var _instance:Frontend;
 
@@ -20,8 +23,9 @@ import org.tamina.log.QuickLogger;
         QuickLogger.info("instantiation de l'application ");
     }
 
-    public function init(endpoint:String,viewName:ViewName=ViewName.Home):Void{
-        BaseRequest.endpoint =  new URL(endpoint);
+    public function init(config:FrontendConfig,viewName:ViewName=ViewName.Home):Void{
+        Frontend.config = config;
+        BaseRequest.endpoint =  new URL('http://'+Frontend.config.server+':'+Frontend.config.port);
         switch(viewName){
             case ViewName.Home:
                 _homeView = new HomeView(MODULE_NAME);

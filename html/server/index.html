@@ -14,7 +14,12 @@
    <script src="js/easeljs-0.7.1.min.js"></script>
    <script src="js/Frontend.js"></script>
    <script>
-       Frontend.init('http://' + location.host);
+       var config = {
+           server:location.hostname,
+           port:location.port
+       }
+
+       Frontend.init(config);
    </script>
 </body>
 </html>

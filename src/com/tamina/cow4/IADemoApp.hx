@@ -33,11 +33,17 @@ class IADemoApp {
     private var _id:Float;
     private var _currentDirection:Direction;
     private var _mode:Mode;
+    private var _process:Process;
+    private var _server:String='localhost';
 
     public function new( ) {
         _mode = Mode.GET_A_TRAP;
+        _process = NodeJS.process;
+        if(_process.argv[2] != null){
+            _server = _process.argv[2];
+        }
         _socket = new TCPSocket();
-        _socket.connect(Config.SOCKET_PORT, 'localhost', connectionHandler);
+        _socket.connect(Config.SOCKET_PORT, _server, connectionHandler);
         _currentDirection = Direction.RIGHT;
     }
 

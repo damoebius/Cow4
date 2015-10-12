@@ -1,5 +1,6 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.config.FrontendConfig;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.model.IAInfo;
 import com.tamina.cow4.view.component.EndScreen;
@@ -80,7 +81,7 @@ class PlayView extends HTMLComponent {
             _stage.scaleX=scale;
             _stage.scaleY=scale;
         }
-        _socket = new WebSocket( 'ws://localhost:' + Config.WEB_SOCKET_PORT);
+        _socket = new WebSocket( 'ws://'+ Frontend.config.server+':' + Config.WEB_SOCKET_PORT);
 
         _socket.addEventListener('open', socketOpenHandler);
 

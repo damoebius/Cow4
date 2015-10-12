@@ -29,15 +29,24 @@ node js/release/Server.js
 npm update codeofwar
 ```
 
-Une fois le serveur démarré, vous pouvez vous rendre sur http://localhost:3000/
+Une fois le serveur démarré, vous pouvez vous rendre sur http://monserveur:3000/
 
 ## Interface de combat d'IA
 
-Connectez vous sur http://localhost:3000/
+Connectez vous sur http://monserveur:3000/
 
 Cette page liste les IA connectées au serveur. Vous pouvez en selectionner deux et lancer un combat.
 Une nouvelle page affiche alors la partie entre les deux IA.
 
+* Lancer une IA demo
+
+Nous fournissons une IA de test, pour la lancer executez la commande ci-dessous
+
+```shell
+node js/release/IADemoApp.js server
+```
+
+Vous pouvez indiquer sur quel serveur l'ia doit se connecter, par defaut c'est 'localhost'.
 
 ## Les règles du jeu
 
