@@ -71,7 +71,7 @@ Durant son tour, un joueur peut se déplacer vers une case voisine, et/ou ramass
 
 *La potion d'invisibilité*
 
-Utiliser une potion d'invisibilité va masquer la position du joueur au joueur adverse et au coq pendant [42 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
+Utiliser une potion d'invisibilité va masquer la position du joueur au joueur adverse et au coq pendant [10 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
 
 *Le piège*
 
