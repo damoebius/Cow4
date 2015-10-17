@@ -1,6 +1,7 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.config.Config;
 import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.ItemType;
 import com.tamina.cow4.model.IAInfo;
@@ -49,9 +50,9 @@ class Game {
         _data.iaList.push(_IAList[2].toInfo());
         _data.id = gameId;
 
-        _data.getCellAt(0, 0).occupant = _IAList[0].toInfo();
-        _data.getCellAt(24, 24).occupant = _IAList[1].toInfo();
-        _data.getCellAt(12, 12).occupant = _sheep.toInfo();
+        _data.getCellAt(Config.PLAYER_1_START_POSITION.x,Config.PLAYER_1_START_POSITION.y).occupant = _IAList[0].toInfo();
+        _data.getCellAt(Config.PLAYER_2_START_POSITION.x, Config.PLAYER_2_START_POSITION.y).occupant = _IAList[1].toInfo();
+        _data.getCellAt(Config.SHEEP_START_POSITION.x, Config.SHEEP_START_POSITION.y).occupant = _sheep.toInfo();
     }
 
     public function start( ):Void {

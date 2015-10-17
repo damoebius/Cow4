@@ -23,6 +23,12 @@ cd node_modules/codeofwar/
 node js/release/Server.js
 ```
 
+Vous pouvez choisir la position de départ des IA
+
+```shell
+node js/release/Server.js -p1_pos 8,8 -p2_pos 12,12 _c_pos 24,24
+```
+
 * Mettre à jour le serveur
 
 ```shell

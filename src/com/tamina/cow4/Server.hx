@@ -1,5 +1,7 @@
 package com.tamina.cow4;
 
+import com.tamina.cow4.model.vo.Position;
+import nodejs.Process;
 import nodejs.NodeJS;
 import com.tamina.cow4.core.GameManager;
 import com.tamina.cow4.socket.WSocketServer;
@@ -27,10 +29,29 @@ class Server {
     private var _socketServer:SocketServer;
     private var _websocketServer:WSocketServer;
     private var _gameManager:GameManager;
+    private var _process:Process;
 
-    public function new() {
+    public function new( ) {
 
-        Config.ROOT_PATH = NodeJS.dirname+'/../../server/';
+        Config.ROOT_PATH = NodeJS.dirname + '/../../server/';
+
+        _process = NodeJS.process;
+        for ( i in 0..._process.argv.length ) {
+            var arg = _process.argv[i];
+            var posArg:Array<Int >= null;
+            switch(arg){
+                case '-p1_pos':
+                    posArg = cast _process.argv[i + 1].split(',');
+                    Config.PLAYER_1_START_POSITION = new Position(posArg[0], posArg[1]);
+                case '-p2_pos':
+                    posArg = cast _process.argv[i + 1].split(',');
+                    Config.PLAYER_2_START_POSITION = new Position(posArg[0], posArg[1]);
+                case '-c_pos':
+                    posArg = cast _process.argv[i+1].split(',');
+                    Config.SHEEP_START_POSITION = new Position(posArg[0],posArg[1]);
+            }
+        }
+
         _express = Express.GetApplication();
         _express.listen(Config.APP_PORT);
         _express.use(Express.Static(Config.ROOT_PATH));
@@ -54,12 +75,12 @@ class Server {
         _gameManager = new GameManager();
     }
 
-    public static function main() {
+    public static function main( ) {
         haxe.Log.trace = myTrace;
         _server = new Server();
     }
 
-    private static function myTrace(v:Dynamic, ?inf:haxe.PosInfos) {
+    private static function myTrace( v:Dynamic, ?inf:haxe.PosInfos ) {
         nodejs.Console.info(v);
     }
 
