@@ -23,6 +23,18 @@ cd node_modules/codeofwar/
 node js/release/Server.js
 ```
 
+Vous pouvez choisir la position de départ des IA
+
+```shell
+node js/release/Server.js -p1_pos 8,8 -p2_pos 12,12 _c_pos 24,24
+```
+
+'-p1_pos' pour la position du joueur 1
+'-p1_pos' pour la position du joueur 2
+'-c_pos' pour la position du poulet
+
+suivi des coordonnées x,y avec x et y compris entre 0 et 24.
+
 * Mettre à jour le serveur
 
 ```shell
@@ -71,7 +83,7 @@ Durant son tour, un joueur peut se déplacer vers une case voisine, et/ou ramass
 
 *La potion d'invisibilité*
 
-Utiliser une potion d'invisibilité va masquer la position du joueur au joueur adverse et au coq pendant [42 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
+Utiliser une potion d'invisibilité va masquer la position du joueur au joueur adverse et au coq pendant [10 tours](https://github.com/damoebius/Cow4/blob/master/src/com/tamina/cow4/model/GameConstants.hx)
 
 *Le piège*
 

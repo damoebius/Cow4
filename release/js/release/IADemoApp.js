@@ -92,7 +92,6 @@ com_tamina_cow4_IADemoApp.prototype = {
 		try {
 			var gameData = com_tamina_cow4_model_GameMap.fromGameMapVO(data.data);
 			console.log("turn : " + gameData.currentTurn);
-			if(gameData.currentTurn <= 1) this._mode = com_tamina_cow4_ia_Mode.GET_A_POTION;
 			var myIa = gameData.getIAById(this._id);
 			console.log("pm : " + myIa.pm);
 			var currentCell = gameData.getCellByIA(this._id);
@@ -167,6 +166,14 @@ com_tamina_cow4_IADemoApp.prototype = {
 		nodejs_NodeJS.get_process().exit(0);
 	}
 	,__class__: com_tamina_cow4_IADemoApp
+};
+var com_tamina_cow4_model_vo_Position = function(x,y) {
+	this.x = x;
+	this.y = y;
+};
+com_tamina_cow4_model_vo_Position.__name__ = true;
+com_tamina_cow4_model_vo_Position.prototype = {
+	__class__: com_tamina_cow4_model_vo_Position
 };
 var com_tamina_cow4_config_Config = function() {
 };
@@ -1580,6 +1587,9 @@ com_tamina_cow4_config_Config.ROOT_PATH = "server/";
 com_tamina_cow4_config_Config.APP_PORT = 3000;
 com_tamina_cow4_config_Config.SOCKET_PORT = 8127;
 com_tamina_cow4_config_Config.WEB_SOCKET_PORT = 8128;
+com_tamina_cow4_config_Config.PLAYER_1_START_POSITION = new com_tamina_cow4_model_vo_Position(0,0);
+com_tamina_cow4_config_Config.PLAYER_2_START_POSITION = new com_tamina_cow4_model_vo_Position(24,24);
+com_tamina_cow4_config_Config.SHEEP_START_POSITION = new com_tamina_cow4_model_vo_Position(12,12);
 com_tamina_cow4_model_ItemPosition.POTION_TOP = new org_tamina_geom_Point(21,4);
 com_tamina_cow4_model_ItemPosition.POTION_BOTTOM = new org_tamina_geom_Point(3,20);
 com_tamina_cow4_model_ItemPosition.TRAP_TOP = new org_tamina_geom_Point(7,3);

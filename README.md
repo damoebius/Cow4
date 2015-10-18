@@ -29,6 +29,12 @@ Vous pouvez choisir la position de départ des IA
 node js/release/Server.js -p1_pos 8,8 -p2_pos 12,12 _c_pos 24,24
 ```
 
+'-p1_pos' pour la position du joueur 1
+'-p1_pos' pour la position du joueur 2
+'-c_pos' pour la position du poulet
+
+suivi des coordonnées x,y avec x et y compris entre 0 et 24.
+
 * Mettre à jour le serveur
 
 ```shell

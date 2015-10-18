@@ -87,9 +87,9 @@ class IADemoApp {
         try {
             var gameData = GameMap.fromGameMapVO(data.data);
             trace('turn : ' + gameData.currentTurn);
-            if ( gameData.currentTurn <= 1 ) {
+            /*if ( gameData.currentTurn <= 1 ) {
                 _mode = Mode.GET_A_POTION;
-            }
+            } */
             var myIa = gameData.getIAById(_id);
             trace('pm : ' + myIa.pm);
             var currentCell = gameData.getCellByIA(_id);
