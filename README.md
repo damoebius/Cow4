@@ -128,7 +128,7 @@ Vous devez par contre choisir le [profil](https://github.com/damoebius/Cow4/blob
 
 ### Les profils
 - le **MASTER_OF_COINS** (le nain) est immunisé contre les pièges : profil 1
-- le **TECH_WIZARD** (l'alchimiste) est immunisé contre la potion d'invisibilité (immunise aussi le poulet) : profil 0
+- le **TECH_WIZARD** (l'alchimiste) est immunisé contre la potion d'invisibilité, mais pas le poulet : profil 0
 - le **HAND_OF_THE_KING** (l'elfe) immunise le poulet contre le parfum de poulette : profil 2
 
 Le serveur répondra avec un message renvoyant l'ID de l'IA ou un message d'erreur.
