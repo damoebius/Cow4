@@ -564,6 +564,19 @@ com_tamina_cow4_model_Path.prototype = {
 	,getItemAt: function(index) {
 		return this._content[index];
 	}
+	,getItemIndex: function(item) {
+		var result = -1;
+		var _g1 = 0;
+		var _g = this._content.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(item.id == this._content[i].id) {
+				result = i;
+				break;
+			}
+		}
+		return result;
+	}
 	,push: function(item) {
 		this._content.push(item);
 	}
@@ -1590,6 +1603,7 @@ com_tamina_cow4_config_Config.WEB_SOCKET_PORT = 8128;
 com_tamina_cow4_config_Config.PLAYER_1_START_POSITION = new com_tamina_cow4_model_vo_Position(0,0);
 com_tamina_cow4_config_Config.PLAYER_2_START_POSITION = new com_tamina_cow4_model_vo_Position(24,24);
 com_tamina_cow4_config_Config.SHEEP_START_POSITION = new com_tamina_cow4_model_vo_Position(12,12);
+com_tamina_cow4_config_Config.MODE_DEBUG = false;
 com_tamina_cow4_model_ItemPosition.POTION_TOP = new org_tamina_geom_Point(21,4);
 com_tamina_cow4_model_ItemPosition.POTION_BOTTOM = new org_tamina_geom_Point(3,20);
 com_tamina_cow4_model_ItemPosition.TRAP_TOP = new org_tamina_geom_Point(7,3);

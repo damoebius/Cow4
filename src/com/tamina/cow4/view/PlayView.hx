@@ -1,5 +1,6 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.config.FrontendConfig;
 import com.tamina.cow4.socket.message.order.EndOrder;
 import com.tamina.cow4.model.IAInfo;
@@ -120,6 +121,12 @@ class PlayView extends HTMLComponent {
 
             } else if (msg.ia.id == _map.iaList[1].id) {
                 _ia2Info.updateData(msg.ia);
+            } else {
+            if(msg.actions.length > 0){
+                var move:MoveOrder = cast msg.actions[0];
+                var cellPos = _map.getCellPosition( _map.getCellById(move.target));
+                QuickLogger.debug('Sheep move to : ' + cellPos.x + '//' + cellPos.y);
+            }
             }
             _stage.updateMap(msg.ia, msg.actions);
         }
@@ -136,8 +143,6 @@ class PlayView extends HTMLComponent {
             case UpdateRender.MESSAGE_TYPE:
                 var update:UpdateRender = cast message;
                 _updatePool.push(update);
-//_stage.updateMap(update.ia,update.actions);
-
             default: QuickLogger.error('message inconnu');
 
         }

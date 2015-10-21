@@ -45,6 +45,17 @@ class Path {
         return _content[index];
     }
 
+    public function getItemIndex(item:Cell):Int {
+        var result = -1;
+        for (i in 0..._content.length) {
+            if (item.id == _content[i].id) {
+                result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
     public function push(item:Cell):Void {
         _content.push(item);
     }

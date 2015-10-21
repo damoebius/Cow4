@@ -43,12 +43,15 @@ class Server {
                 case '-p1_pos':
                     posArg = cast _process.argv[i + 1].split(',');
                     Config.PLAYER_1_START_POSITION = new Position(posArg[0], posArg[1]);
+                    Config.MODE_DEBUG = true;
                 case '-p2_pos':
                     posArg = cast _process.argv[i + 1].split(',');
                     Config.PLAYER_2_START_POSITION = new Position(posArg[0], posArg[1]);
+                    Config.MODE_DEBUG = true;
                 case '-c_pos':
                     posArg = cast _process.argv[i+1].split(',');
                     Config.SHEEP_START_POSITION = new Position(posArg[0],posArg[1]);
+                    Config.MODE_DEBUG = true;
             }
         }
 

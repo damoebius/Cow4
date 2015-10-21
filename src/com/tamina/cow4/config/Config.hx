@@ -11,6 +11,8 @@ class Config {
     public static var PLAYER_2_START_POSITION:Position = new Position(24,24);
     public static var SHEEP_START_POSITION:Position = new Position(12,12);
 
+    public static var MODE_DEBUG:Bool = false;
+
 
     private function new( ) {
     }
