@@ -1,0 +1,474 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,700,900,500,100);
+@-webkit-keyframes characters {
+  0% {
+    margin-top: 0; }
+  50% {
+    margin-top: -10px; }
+  100% {
+    margin-top: 0; } }
+@keyframes characters {
+  0% {
+    margin-top: 0; }
+  50% {
+    margin-top: -10px; }
+  100% {
+    margin-top: 0; } }
+@-webkit-keyframes shadow {
+  0% {
+    opacity: 0.5; }
+  50% {
+    opacity: 0.3; }
+  100% {
+    opacity: 0.5; } }
+@keyframes shadow {
+  0% {
+    opacity: 0.5; }
+  50% {
+    opacity: 0.3; }
+  100% {
+    opacity: 0.5; } }
+/* line 4, ../sass/style.scss */
+html {
+  background: url("../images/bg-cloud.jpg") no-repeat;
+  background-position: center 90%;
+  height: 100%; }
+  @media screen and (max-width: 1000px) {
+    /* line 4, ../sass/style.scss */
+    html {
+      background-attachment: fixed;
+      background-position: left bottom;
+      background-size: 310%; } }
+
+/* line 17, ../sass/style.scss */
+body > img {
+  position: fixed;
+  bottom: 0;
+  z-index: -2;
+  width: 100%;
+  height: 42%;
+  -webkit-filter: drop-shadow(0px -5px 5px #999);
+  filter: drop-shadow(0px -5px 5px #999);
+  opacity: 0.6; }
+  @media screen and (max-width: 1000px) {
+    /* line 17, ../sass/style.scss */
+    body > img {
+      -webkit-filter: drop-shadow(0px -5px 5px #bbb);
+      filter: drop-shadow(0px -5px 5px #bbb); } }
+/* line 33, ../sass/style.scss */
+body > header, body > footer {
+  width: 100%;
+  display: inline-block; }
+  /* line 38, ../sass/style.scss */
+  body > header img, body > footer img {
+    width: 100%; }
+/* line 44, ../sass/style.scss */
+body > header img {
+  height: 82px; }
+/* line 49, ../sass/style.scss */
+body > footer {
+  margin-top: 175px; }
+  @media screen and (min-width: 1001px) {
+    /* line 49, ../sass/style.scss */
+    body > footer {
+      position: absolute;
+      bottom: 0; } }
+  /* line 57, ../sass/style.scss */
+  body > footer img {
+    height: 134px;
+    vertical-align: bottom; }
+/* line 63, ../sass/style.scss */
+body #logoCoW {
+  text-align: center;
+  width: 100%;
+  margin-top: -70px; }
+  /* line 68, ../sass/style.scss */
+  body #logoCoW img {
+    width: 80%;
+    max-width: 278px; }
+/* line 74, ../sass/style.scss */
+body > section {
+  max-width: 1500px;
+  width: 100%;
+  margin: 45px auto 0;
+  text-align: center;
+  font-size: 100%; }
+  /* line 81, ../sass/style.scss */
+  body > section .wrapper {
+    width: 49%;
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
+    position: relative; }
+    @media screen and (max-width: 1120px) {
+      /* line 81, ../sass/style.scss */
+      body > section .wrapper {
+        width: 56%; } }
+    @media screen and (max-width: 1000px) {
+      /* line 81, ../sass/style.scss */
+      body > section .wrapper {
+        margin: 0 auto;
+        width: 80%; } }
+    /* line 97, ../sass/style.scss */
+    body > section .wrapper h2 {
+      font-size: 2em;
+      color: #e53941;
+      font-family: "Roboto", sans-serif;
+      font-weight: 300;
+      padding-top: 5px;
+      margin-bottom: 25px; }
+      @media screen and (max-width: 1000px) {
+        /* line 97, ../sass/style.scss */
+        body > section .wrapper h2 {
+          text-align: center;
+          width: 100%; } }
+    /* line 111, ../sass/style.scss */
+    body > section .wrapper br {
+      line-height: 28px; }
+    /* line 115, ../sass/style.scss */
+    body > section .wrapper p {
+      font-size: 1em;
+      font-family: "Roboto", sans-serif;
+      font-weight: 400;
+      line-height: 23px; }
+    /* line 122, ../sass/style.scss */
+    body > section .wrapper strong {
+      font-weight: 700; }
+      /* line 125, ../sass/style.scss */
+      body > section .wrapper strong.error {
+        color: #e53941; }
+    /* line 130, ../sass/style.scss */
+    body > section .wrapper a {
+      color: #ce081c;
+      text-decoration: none; }
+      /* line 134, ../sass/style.scss */
+      body > section .wrapper a:focus {
+        background-color: #ce081c;
+        color: #fff;
+        outline: none; }
+    /* line 141, ../sass/style.scss */
+    body > section .wrapper #countdown {
+      line-height: inherit;
+      margin-bottom: 20px;
+      text-align: center;
+      white-space: nowrap; }
+      @media screen and (min-width: 1000px) {
+        /* line 141, ../sass/style.scss */
+        body > section .wrapper #countdown {
+          display: inline-block; } }
+      /* line 151, ../sass/style.scss */
+      body > section .wrapper #countdown p {
+        display: inline-block;
+        text-align: center;
+        line-height: 50px;
+        font-size: 95px;
+        color: #c80715;
+        font-weight: 300;
+        margin-right: 15px;
+        cursor: text; }
+        @media screen and (max-width: 640px) {
+          /* line 151, ../sass/style.scss */
+          body > section .wrapper #countdown p {
+            font-size: 80px; } }
+        @media screen and (max-width: 540px) {
+          /* line 151, ../sass/style.scss */
+          body > section .wrapper #countdown p {
+            font-size: 65px;
+            margin-right: 4px; } }
+        @media screen and (max-width: 420px) {
+          /* line 151, ../sass/style.scss */
+          body > section .wrapper #countdown p {
+            font-size: 55px; } }
+        /* line 174, ../sass/style.scss */
+        body > section .wrapper #countdown p:first-child {
+          font-weight: 900;
+          color: #e53941; }
+        /* line 179, ../sass/style.scss */
+        body > section .wrapper #countdown p span {
+          display: block; }
+          /* line 182, ../sass/style.scss */
+          body > section .wrapper #countdown p span:first-child {
+            line-height: 80px; }
+            @media screen and (max-width: 640px) {
+              /* line 182, ../sass/style.scss */
+              body > section .wrapper #countdown p span:first-child {
+                line-height: 65px; } }
+            @media screen and (max-width: 540px) {
+              /* line 182, ../sass/style.scss */
+              body > section .wrapper #countdown p span:first-child {
+                line-height: 45px; } }
+            @media screen and (max-width: 420px) {
+              /* line 182, ../sass/style.scss */
+              body > section .wrapper #countdown p span:first-child {
+                line-height: 30px; } }
+          /* line 198, ../sass/style.scss */
+          body > section .wrapper #countdown p span:last-child {
+            font-size: 25px;
+            font-weight: 300; }
+            @media screen and (max-width: 1300px) {
+              /* line 198, ../sass/style.scss */
+              body > section .wrapper #countdown p span:last-child {
+                font-size: 30px; } }
+            @media screen and (max-width: 1150px) {
+              /* line 198, ../sass/style.scss */
+              body > section .wrapper #countdown p span:last-child {
+                font-size: 30px; } }
+            @media screen and (max-width: 640px) {
+              /* line 198, ../sass/style.scss */
+              body > section .wrapper #countdown p span:last-child {
+                font-size: 25px; } }
+            @media screen and (max-width: 540px) {
+              /* line 198, ../sass/style.scss */
+              body > section .wrapper #countdown p span:last-child {
+                font-size: 20px;
+                font-weight: 400; } }
+            @media screen and (max-width: 420px) {
+              /* line 198, ../sass/style.scss */
+              body > section .wrapper #countdown p span:last-child {
+                font-size: 15px; } }
+    /* line 227, ../sass/style.scss */
+    body > section .wrapper form {
+      width: 50%;
+      min-width: 300px; }
+      @media screen and (max-width: 1000px) {
+        /* line 227, ../sass/style.scss */
+        body > section .wrapper form {
+          margin: 0 auto; } }
+      @media screen and (max-width: 600px) {
+        /* line 227, ../sass/style.scss */
+        body > section .wrapper form {
+          width: 100%; } }
+      /* line 239, ../sass/style.scss */
+      body > section .wrapper form input {
+        width: 100%;
+        font-size: 1em;
+        font-family: "Roboto", sans-serif;
+        font-weight: 500;
+        padding: 11px 15px 10px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box; }
+        /* line 251, ../sass/style.scss */
+        body > section .wrapper form input:focus {
+          outline-color: #45b9b9;
+          outline-style: solid;
+          outline-width: 2px;
+          outline-offset: -1px; }
+      /* line 259, ../sass/style.scss */
+      body > section .wrapper button {
+        width: 100%;
+        font-size: 1.9em;
+        font-family: "Roboto", sans-serif;
+        color: #fff;
+        font-weight: 700;
+        padding: 10px 0 10px;
+        text-align: center;
+        border: none;
+        cursor: pointer;
+        background: -webkit-linear-gradient(80deg, #fb4f6a, #da1d30);
+        /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(80deg, #fb4f6a, #da1d30);
+        /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(80deg, #fb4f6a, #da1d30);
+        /* For Firefox 3.6 to 15 */
+        background: linear-gradient(80deg, #fb4f6a, #da1d30);
+        /* Standard syntax (must be last) */
+        position: relative;
+        -webkit-transition: background 2s;
+        /* Safari */
+        transition: background 2s; }
+        /* line 277, ../sass/style.scss */
+        body > section .wrapper button:hover {
+          background: -webkit-linear-gradient(80deg, #da1d30, #fb4f6a);
+          /* For Safari 5.1 to 6.0 */
+          background: -o-linear-gradient(80deg, #da1d30, #fb4f6a);
+          /* For Opera 11.1 to 12.0 */
+          background: -moz-linear-gradient(80deg, #da1d30, #fb4f6a);
+          /* For Firefox 3.6 to 15 */
+          background: linear-gradient(80deg, #da1d30, #fb4f6a);
+          /* Standard syntax (must be last) */ }
+        /* line 284, ../sass/style.scss */
+        body > section .wrapper form button::after {
+          content: "";
+          width: 100px;
+          height: 25px;
+          background-color: #c8111f;
+          display: block;
+          position: absolute;
+          right: 2px;
+          top: 42px;
+          transform: rotate(-11deg);
+          -ms-transform: rotate(-11deg);
+          -webkit-transform: rotate(-11deg);
+          -webkit-backface-visibility: hidden;
+          z-index: -1;
+          background: -webkit-linear-gradient(11deg, #c8111f, #390b12);
+          background: -o-linear-gradient(11deg, #c8111f, #390b12);
+          background: -moz-linear-gradient(11deg, #c8111f, #390b12);
+          background: linear-gradient(11deg, #c8111f, #390b12); }
+    @media screen and (max-width: 1120px) {
+      /* line 306, ../sass/style.scss */
+      body > section .wrapper.characters {
+        width: 43%; } }
+    @media screen and (max-width: 1000px) {
+      /* line 306, ../sass/style.scss */
+      body > section .wrapper.characters {
+        height: 440px;
+        margin-top: 50px;
+        width: 100%; } }
+    @media screen and (max-width: 600px) {
+      /* line 306, ../sass/style.scss */
+      body > section .wrapper.characters {
+        zoom: 70%; } }
+    @media screen and (max-width: 500px) {
+      /* line 306, ../sass/style.scss */
+      body > section .wrapper.characters {
+        width: 100%;
+        zoom: 60%; } }
+    @media screen and (max-width: 350px) {
+      /* line 306, ../sass/style.scss */
+      body > section .wrapper.characters {
+        zoom: 50%; } }
+    /* line 331, ../sass/style.scss */
+    body > section .wrapper.characters ul li {
+      position: absolute; }
+      /* line 334, ../sass/style.scss */
+      body > section .wrapper.characters ul li::after {
+        content: "";
+        height: 16px;
+        width: 130px;
+        display: inline-block;
+        background: url("../images/shadow.svg") no-repeat;
+        background-size: cover;
+        position: relative;
+        left: 50%;
+        margin-left: -25px;
+        top: 215px;
+        opacity: 0.5;
+        animation-name: shadow;
+        -webkit-animation-name: shadow;
+        /* Chrome, Safari, Opera */
+        animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite; }
+      /* line 352, ../sass/style.scss */
+      body > section .wrapper.characters ul li img {
+        position: inherit;
+        animation-name: characters;
+        -webkit-animation-name: characters;
+        /* Chrome, Safari, Opera */
+        animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite; }
+      /* line 360, ../sass/style.scss */
+      body > section .wrapper.characters ul li#Elf {
+        left: 50%;
+        margin-left: -84px; }
+        /* line 364, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Elf::after,
+        body > section .wrapper.characters ul li#Elf img {
+          animation-duration: 6s;
+          -webkit-animation-duration: 6s;
+          /* Chrome, Safari, Opera */ }
+        /* line 370, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Elf img {
+          height: 400px; }
+        /* line 374, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Elf::after {
+          top: 415px;
+          left: 84px; }
+        @media screen and (max-width: 1120px) {
+          /* line 360, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Elf {
+            margin-left: -54px; } }
+        @media screen and (max-width: 1000px) {
+          /* line 360, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Elf {
+            margin-left: -105px; } }
+      /* line 388, ../sass/style.scss */
+      body > section .wrapper.characters ul li#Wizard {
+        top: 75px;
+        left: 65px; }
+        /* line 392, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Wizard::after,
+        body > section .wrapper.characters ul li#Wizard img {
+          animation-duration: 5s;
+          -webkit-animation-duration: 5s;
+          /* Chrome, Safari, Opera */ }
+        /* line 398, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Wizard img {
+          height: 430px; }
+        /* line 402, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Wizard::after {
+          top: 440px;
+          left: 125px; }
+        @media screen and (max-width: 1120px) {
+          /* line 388, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Wizard {
+            left: 25px; } }
+        @media screen and (max-width: 1000px) {
+          /* line 388, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Wizard {
+            left: 35px; } }
+      /* line 416, ../sass/style.scss */
+      body > section .wrapper.characters ul li#Dwarf {
+        right: 175px;
+        top: 215px; }
+        /* line 420, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Dwarf::after,
+        body > section .wrapper.characters ul li#Dwarf img {
+          animation-duration: 4s;
+          -webkit-animation-duration: 4s;
+          /* Chrome, Safari, Opera */ }
+        /* line 426, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Dwarf img {
+          height: 290px; }
+        /* line 430, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Dwarf::after {
+          top: 300px;
+          left: 70px; }
+        @media screen and (max-width: 1120px) {
+          /* line 416, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Dwarf {
+            right: 145px;
+            top: 255px; } }
+        @media screen and (max-width: 1000px) {
+          /* line 416, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Dwarf {
+            right: 175px;
+            top: 215px; } }
+      /* line 446, ../sass/style.scss */
+      body > section .wrapper.characters ul li#Rooster {
+        top: 400px;
+        left: 50%;
+        margin-left: -50px; }
+        /* line 451, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Rooster::after,
+        body > section .wrapper.characters ul li#Rooster img {
+          animation-duration: 3s;
+          -webkit-animation-duration: 3s;
+          /* Chrome, Safari, Opera */ }
+        /* line 457, ../sass/style.scss */
+        body > section .wrapper.characters ul li#Rooster img {
+          height: 200px; }
+        @media screen and (max-width: 1000px) {
+          /* line 446, ../sass/style.scss */
+          body > section .wrapper.characters ul li#Rooster {
+            margin-left: -80px; } }
+
+/* line 472, ../sass/style.scss */
+*::selection {
+  background-color: #67c6c6;
+  color: #fff; }
+
+
+.iaItem>* {
+    display:inline-block;
+    vertical-align: middle;
+}
+.iaItem{
+    margin-bottom: 15px;
+    font-size: 2em;
+    color: #e53941;
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+}

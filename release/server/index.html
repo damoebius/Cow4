@@ -3,14 +3,35 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Code of War 2015</title>
-    <LINK rel="stylesheet" type="text/css" href="css/frontend.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style-home.css">
 </head>
 <body>
-   Welcome to Code of War
-<img src="images/poulet.jpg">
-<div>
-    <div id="frontend_app"></div>
-</div>
+<header>
+    <img src="images/blue_bar-top.svg" alt="Barre bleu">
+    <h1 id="logoCoW">
+        <a href="#">
+            <img src="images/logo_CoW.svg" alt="Code of War">
+        </a>
+    </h1>
+</header>
+
+<section>
+    <div class="wrapper characters">
+        <ul>
+            <li id="Elf"><img src="images/Elf.png" alt="Elfe"></li>
+            <li id="Wizard"><img src="images/Wizard.png" alt="Magicien"></li>
+            <li id="Dwarf"><img src="images/Dwarf.png" alt="Nain"></li>
+            <li id="Rooster"><img src="images/Rooster.png" alt="Coq"></li>
+        </ul>
+    </div>
+    <div class="wrapper">
+        <div id="frontend_app"></div>
+    </div>
+</section>
+<footer>
+    <img src="images/red_bar-bottom.svg" alt="Barre rouge">
+</footer>
    <script src="js/easeljs-0.7.1.min.js"></script>
    <script src="js/Frontend.js"></script>
    <script>

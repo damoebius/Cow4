@@ -8,7 +8,7 @@
     "gamejam"
   ],
   "author": "David Mouton",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "license": "MIT",
   "engines": {
     "node": ">=0.8.0"
