@@ -1,5 +1,8 @@
 package com.tamina.cow4.view;
 
+import com.tamina.cow4.model.Action;
+import js.html.MouseEvent;
+import org.tamina.events.html.MouseEventType;
 import com.tamina.cow4.socket.message.order.MoveOrder;
 import com.tamina.cow4.config.FrontendConfig;
 import com.tamina.cow4.socket.message.order.EndOrder;
@@ -36,6 +39,9 @@ class PlayView extends HTMLComponent {
     private static inline var APPLICATION_WIDTH:Int = 1000;
     private static inline var APPLICATION_HEIGHT:Int = 1000;
 
+    @skinpart("")
+    private var _logoImage:DivElement;
+
     private var _gameContainer:DivElement;
     private var _applicationCanvas:CanvasElement;
     private var _stage:PlayerMapUI;
@@ -59,8 +65,8 @@ class PlayView extends HTMLComponent {
 
         var containerWidth = Browser.window.innerHeight;
         var containerHeight = Browser.window.innerHeight;
-        _gameContainer.style.width = containerWidth +"px";
-        _gameContainer.style.height = containerHeight +"px";
+        _gameContainer.style.width = containerWidth + "px";
+        _gameContainer.style.height = containerHeight + "px";
         _applicationCanvas = cast Browser.document.createCanvasElement();
         _gameContainer.appendChild(_applicationCanvas);
         _applicationCanvas.width = containerWidth;
@@ -74,15 +80,15 @@ class PlayView extends HTMLComponent {
         QuickLogger.info("canvas initialized");
         _stage = new PlayerMapUI(_applicationCanvas);
         _stage.endSignal.add(endHandler);
-        if(containerWidth != APPLICATION_WIDTH || containerHeight != APPLICATION_HEIGHT){
-            var scale =  containerWidth / APPLICATION_WIDTH;
-            if(containerWidth> containerHeight){
+        if (containerWidth != APPLICATION_WIDTH || containerHeight != APPLICATION_HEIGHT) {
+            var scale = containerWidth / APPLICATION_WIDTH;
+            if (containerWidth > containerHeight) {
                 scale = containerHeight / APPLICATION_HEIGHT ;
             }
-            _stage.scaleX=scale;
-            _stage.scaleY=scale;
+            _stage.scaleX = scale;
+            _stage.scaleY = scale;
         }
-        _socket = new WebSocket( 'ws://'+ Frontend.config.server+':' + Config.WEB_SOCKET_PORT);
+        _socket = new WebSocket( 'ws://' + Frontend.config.server + ':' + Config.WEB_SOCKET_PORT);
 
         _socket.addEventListener('open', socketOpenHandler);
 
@@ -92,18 +98,24 @@ class PlayView extends HTMLComponent {
         var t = new Timer(100);
         t.run = updateHandler;
 
+        _logoImage.addEventListener(MouseEventType.CLICK, logoClickHandler);
+
     }
 
-    public static function getIAIndex(id:Float):Int{
+    public static function getIAIndex(id:Float):Int {
         var result = 0;
-        if(_map.iaList[1].id == id){
+        if (_map.iaList[1].id == id) {
             result = 1;
         }
         return result;
     }
 
-    private function endHandler(ia:IAInfo,message:EndOrder):Void{
-        _endScreen.updateData(ia,message);
+    private function logoClickHandler(event:MouseEvent):Void {
+        Browser.window.location.href = Browser.location.host;
+    }
+
+    private function endHandler(ia:IAInfo, message:EndOrder):Void {
+        _endScreen.updateData(ia, message);
         _endScreen.parent.style.display = "table";
     }
 
@@ -122,11 +134,17 @@ class PlayView extends HTMLComponent {
             } else if (msg.ia.id == _map.iaList[1].id) {
                 _ia2Info.updateData(msg.ia);
             } else {
-            if(msg.actions.length > 0){
-                var move:MoveOrder = cast msg.actions[0];
-                var cellPos = _map.getCellPosition( _map.getCellById(move.target));
-                QuickLogger.debug('Sheep move to : ' + cellPos.x + '//' + cellPos.y);
-            }
+                if (msg.actions.length > 0) {
+                    var action = msg.actions[0];
+                    if (action.type != Action.FAIL) {
+                        var move:MoveOrder = cast action;
+                        var cellPos = _map.getCellPosition(_map.getCellById(move.target));
+                        QuickLogger.debug('Sheep move to : ' + cellPos.x + '//' + cellPos.y);
+                    } else {
+                        var end:EndOrder = cast action;
+                        QuickLogger.warn(msg.ia.name + ' : ' + end.message);
+                    }
+                }
             }
             _stage.updateMap(msg.ia, msg.actions);
         }

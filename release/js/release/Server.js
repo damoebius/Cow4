@@ -1219,17 +1219,18 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 					var i = _g1++;
 					var currentIndex = this._currentPath.getItemIndex(currentCell);
 					var cell = this._currentPath.getItemAt(currentIndex + i + 1);
+					cell = this._data.getCellById(cell.id);
 					if(cell.get_occupant() == null) {
 						var pos = this._data.getCellPosition(cell);
-						haxe_Log.trace("Sheep goto : " + pos.x + "//" + pos.y,{ fileName : "SheepIA.hx", lineNumber : 65, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+						haxe_Log.trace("Sheep goto : " + pos.x + "//" + pos.y,{ fileName : "SheepIA.hx", lineNumber : 66, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 						var order = new com_tamina_cow4_socket_message_order_MoveOrder(cell);
 						result.actions.push(order);
-					} else haxe_Log.trace("case déja occupée",{ fileName : "SheepIA.hx", lineNumber : 69, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+					} else haxe_Log.trace("case déja occupée",{ fileName : "SheepIA.hx", lineNumber : 70, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 				}
-			} else haxe_Log.trace("Sheep : targetCell NULL",{ fileName : "SheepIA.hx", lineNumber : 73, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+			} else haxe_Log.trace("Sheep : targetCell NULL",{ fileName : "SheepIA.hx", lineNumber : 74, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 		} catch( e ) {
 			if( js_Boot.__instanceof(e,Error) ) {
-				haxe_Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 77, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+				haxe_Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 78, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 			} else throw(e);
 		}
 		this.turnComplete.dispatch(result);
@@ -1248,7 +1249,7 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 				if(nextCell.id == fromCell.id) nextCell = neighbors[1];
 				this.getNextIntersection(byCell,nextCell,path);
 			}
-		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 102, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNextIntersection"});
+		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 103, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNextIntersection"});
 	}
 	,hasNextIntersection: function(fromCell,byCell) {
 		var result = false;
@@ -1259,7 +1260,7 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 				if(nextCell.id == fromCell.id) nextCell = neighbors[1];
 				result = this.hasNextIntersection(byCell,nextCell);
 			}
-		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 122, className : "com.tamina.cow4.socket.SheepIA", methodName : "hasNextIntersection"});
+		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 123, className : "com.tamina.cow4.socket.SheepIA", methodName : "hasNextIntersection"});
 		return result;
 	}
 	,getNewDestination: function() {
@@ -1267,18 +1268,18 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 		var currentCell = this._data.getCellByIA(this.id);
 		var ia1Cell = this._data.getCellByIA(this._data.iaList[0].id);
 		var ia1Path = null;
-		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data); else haxe_Log.trace("---------------------------------> IA 1 invisible",{ fileName : "SheepIA.hx", lineNumber : 136, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data); else haxe_Log.trace("---------------------------------> IA 1 invisible",{ fileName : "SheepIA.hx", lineNumber : 137, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var ia2Cell = this._data.getCellByIA(this._data.iaList[1].id);
 		var ia2Path = null;
-		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data); else haxe_Log.trace("--------------------------------------> IA 2 invisible",{ fileName : "SheepIA.hx", lineNumber : 143, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data); else haxe_Log.trace("--------------------------------------> IA 2 invisible",{ fileName : "SheepIA.hx", lineNumber : 144, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var neighbors = currentCell.getNeighboors();
 		var selectedNeighbor = null;
 		var neighborIndex = 0;
-		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 150, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 151, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		while(neighborIndex < neighbors.length) {
 			selectedNeighbor = neighbors[neighborIndex];
 			if((ia1Path == null || ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) && (ia2Path == null || ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id) && this.hasNextIntersection(currentCell,selectedNeighbor)) {
-				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 158, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 159, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 				break;
 			} else neighborIndex++;
 		}

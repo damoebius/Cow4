@@ -966,17 +966,18 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 					var i = _g1++;
 					var currentIndex = this._currentPath.getItemIndex(currentCell);
 					var cell = this._currentPath.getItemAt(currentIndex + i + 1);
+					cell = this._data.getCellById(cell.id);
 					if(cell.get_occupant() == null) {
 						var pos = this._data.getCellPosition(cell);
-						haxe_Log.trace("Sheep goto : " + pos.x + "//" + pos.y,{ fileName : "SheepIA.hx", lineNumber : 65, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+						haxe_Log.trace("Sheep goto : " + pos.x + "//" + pos.y,{ fileName : "SheepIA.hx", lineNumber : 66, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 						var order = new com_tamina_cow4_socket_message_order_MoveOrder(cell);
 						result.actions.push(order);
-					} else haxe_Log.trace("case déja occupée",{ fileName : "SheepIA.hx", lineNumber : 69, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+					} else haxe_Log.trace("case déja occupée",{ fileName : "SheepIA.hx", lineNumber : 70, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 				}
-			} else haxe_Log.trace("Sheep : targetCell NULL",{ fileName : "SheepIA.hx", lineNumber : 73, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+			} else haxe_Log.trace("Sheep : targetCell NULL",{ fileName : "SheepIA.hx", lineNumber : 74, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 		} catch( e ) {
 			if( js_Boot.__instanceof(e,Error) ) {
-				haxe_Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 77, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
+				haxe_Log.trace("error : " + e.message,{ fileName : "SheepIA.hx", lineNumber : 78, className : "com.tamina.cow4.socket.SheepIA", methodName : "getTurnOrder"});
 			} else throw(e);
 		}
 		this.turnComplete.dispatch(result);
@@ -995,7 +996,7 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 				if(nextCell.id == fromCell.id) nextCell = neighbors[1];
 				this.getNextIntersection(byCell,nextCell,path);
 			}
-		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 102, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNextIntersection"});
+		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 103, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNextIntersection"});
 	}
 	,hasNextIntersection: function(fromCell,byCell) {
 		var result = false;
@@ -1006,7 +1007,7 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 				if(nextCell.id == fromCell.id) nextCell = neighbors[1];
 				result = this.hasNextIntersection(byCell,nextCell);
 			}
-		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 122, className : "com.tamina.cow4.socket.SheepIA", methodName : "hasNextIntersection"});
+		} else haxe_Log.trace("byCell NULL",{ fileName : "SheepIA.hx", lineNumber : 123, className : "com.tamina.cow4.socket.SheepIA", methodName : "hasNextIntersection"});
 		return result;
 	}
 	,getNewDestination: function() {
@@ -1014,18 +1015,18 @@ com_tamina_cow4_socket_SheepIA.prototype = {
 		var currentCell = this._data.getCellByIA(this.id);
 		var ia1Cell = this._data.getCellByIA(this._data.iaList[0].id);
 		var ia1Path = null;
-		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data); else haxe_Log.trace("---------------------------------> IA 1 invisible",{ fileName : "SheepIA.hx", lineNumber : 136, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		if(ia1Cell != null) ia1Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia1Cell,this._data); else haxe_Log.trace("---------------------------------> IA 1 invisible",{ fileName : "SheepIA.hx", lineNumber : 137, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var ia2Cell = this._data.getCellByIA(this._data.iaList[1].id);
 		var ia2Path = null;
-		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data); else haxe_Log.trace("--------------------------------------> IA 2 invisible",{ fileName : "SheepIA.hx", lineNumber : 143, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		if(ia2Cell != null) ia2Path = com_tamina_cow4_utils_GameUtils.getPath(currentCell,ia2Cell,this._data); else haxe_Log.trace("--------------------------------------> IA 2 invisible",{ fileName : "SheepIA.hx", lineNumber : 144, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		var neighbors = currentCell.getNeighboors();
 		var selectedNeighbor = null;
 		var neighborIndex = 0;
-		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 150, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+		haxe_Log.trace("SHEEP : recherche de sorties : " + neighbors.length,{ fileName : "SheepIA.hx", lineNumber : 151, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 		while(neighborIndex < neighbors.length) {
 			selectedNeighbor = neighbors[neighborIndex];
 			if((ia1Path == null || ia1Path != null && neighbors[neighborIndex].id != ia1Path.getItemAt(1).id) && (ia2Path == null || ia2Path != null && neighbors[neighborIndex].id != ia2Path.getItemAt(1).id) && this.hasNextIntersection(currentCell,selectedNeighbor)) {
-				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 158, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
+				haxe_Log.trace("sortie trouvée : " + selectedNeighbor.id,{ fileName : "SheepIA.hx", lineNumber : 159, className : "com.tamina.cow4.socket.SheepIA", methodName : "getNewDestination"});
 				break;
 			} else neighborIndex++;
 		}
@@ -1681,7 +1682,7 @@ org_tamina_html_HTMLComponent.prototype = {
 };
 var com_tamina_cow4_view_HomeView = function(containerId) {
 	if(containerId == null) containerId = "";
-	this.view = "<div>\r\n    <button id=\"fightButton\">FIGHT</button>\r\n    IAList :\r\n    <div id=\"iaListContainer\"></div>\r\n</div>";
+	this.view = "<div>\r\n    <div id=\"iaListContainer\"></div>\r\n    <button id=\"fightButton\">FIGHT</button>\r\n</div>";
 	org_tamina_html_HTMLComponent.call(this,window.document.getElementById(containerId));
 	this._iaListContainer = window.document.getElementById("iaListContainer");
 	this._fightButton = window.document.getElementById("fightButton");
@@ -1744,7 +1745,7 @@ var com_tamina_cow4_view_HomeViewElementId = function() { };
 com_tamina_cow4_view_HomeViewElementId.__name__ = ["com","tamina","cow4","view","HomeViewElementId"];
 var com_tamina_cow4_view_PlayView = function(containerId) {
 	if(containerId == null) containerId = "";
-	this.view = "<section class=\"mainContainer\">\r\n    <div id=\"players\">\r\n        <div id=\"logoCow\">\r\n            <img src=\"images/logo_CoW.svg\" alt=\"Code of War\">\r\n        </div>\r\n\r\n        <div id=\"ia1InfoContainer\" class=\"player\">\r\n\r\n        </div>\r\n\r\n        <div id=\"ia2InfoContainer\" class=\"player\">\r\n\r\n        </div>\r\n\r\n    </div>\r\n    <div id=\"gameContainer\">\r\n\r\n    </div>\r\n\r\n\r\n</section>";
+	this.view = "<section class=\"mainContainer\" data-id=\"_logoImage\">\r\n    <div id=\"players\">\r\n        <div id=\"logoCow\" >\r\n            <img src=\"images/logo_CoW.svg\" alt=\"Code of War\" >\r\n        </div>\r\n\r\n        <div id=\"ia1InfoContainer\" class=\"player\">\r\n\r\n        </div>\r\n\r\n        <div id=\"ia2InfoContainer\" class=\"player\">\r\n\r\n        </div>\r\n\r\n    </div>\r\n    <div id=\"gameContainer\">\r\n\r\n    </div>\r\n\r\n\r\n</section>";
 	org_tamina_html_HTMLComponent.call(this,window.document.getElementById(containerId));
 	this._updatePool = [];
 	this._gameContainer = window.document.getElementById("gameContainer");
@@ -1784,6 +1785,7 @@ var com_tamina_cow4_view_PlayView = function(containerId) {
 	this._proxy.messageSignal.add($bind(this,this.serverMessageHandler));
 	var t = new haxe_Timer(100);
 	t.run = $bind(this,this.updateHandler);
+	this._logoImage.addEventListener("click",$bind(this,this.logoClickHandler));
 };
 com_tamina_cow4_view_PlayView.__name__ = ["com","tamina","cow4","view","PlayView"];
 com_tamina_cow4_view_PlayView.getIAIndex = function(id) {
@@ -1793,7 +1795,10 @@ com_tamina_cow4_view_PlayView.getIAIndex = function(id) {
 };
 com_tamina_cow4_view_PlayView.__super__ = org_tamina_html_HTMLComponent;
 com_tamina_cow4_view_PlayView.prototype = $extend(org_tamina_html_HTMLComponent.prototype,{
-	endHandler: function(ia,message) {
+	logoClickHandler: function(event) {
+		window.location.href = window.location.host;
+	}
+	,endHandler: function(ia,message) {
 		this._endScreen.updateData(ia,message);
 		this._endScreen.parent.style.display = "table";
 	}
@@ -1806,9 +1811,15 @@ com_tamina_cow4_view_PlayView.prototype = $extend(org_tamina_html_HTMLComponent.
 		if(this._updatePool.length > 0 && this._stage.get_runningActions() == 0) {
 			var msg = this._updatePool.shift();
 			if(msg.ia.id == com_tamina_cow4_view_PlayView._map.iaList[0].id) this._ia1Info.updateData(msg.ia); else if(msg.ia.id == com_tamina_cow4_view_PlayView._map.iaList[1].id) this._ia2Info.updateData(msg.ia); else if(msg.actions.length > 0) {
-				var move = msg.actions[0];
-				var cellPos = com_tamina_cow4_view_PlayView._map.getCellPosition(com_tamina_cow4_view_PlayView._map.getCellById(move.target));
-				org_tamina_log_QuickLogger.debug("Sheep move to : " + cellPos.x + "//" + cellPos.y);
+				var action = msg.actions[0];
+				if(action.type != "fail") {
+					var move = action;
+					var cellPos = com_tamina_cow4_view_PlayView._map.getCellPosition(com_tamina_cow4_view_PlayView._map.getCellById(move.target));
+					org_tamina_log_QuickLogger.debug("Sheep move to : " + cellPos.x + "//" + cellPos.y);
+				} else {
+					var end = action;
+					org_tamina_log_QuickLogger.warn(msg.ia.name + " : " + end.message);
+				}
 			}
 			this._stage.updateMap(msg.ia,msg.actions);
 		}
@@ -3164,7 +3175,7 @@ com_tamina_cow4_view_HomeView.__meta__ = { obj : { view : ["com/tamina/cow4/view
 com_tamina_cow4_view_HomeView.UPDATE_LIST_TIMER_DURATION = 60000;
 com_tamina_cow4_view_HomeViewElementId.IALIST_CONTAINER = "iaListContainer";
 com_tamina_cow4_view_HomeViewElementId.FIGHT_BUTTON = "fightButton";
-com_tamina_cow4_view_PlayView.__meta__ = { obj : { view : ["com/tamina/cow4/view/PlayView.html"]}};
+com_tamina_cow4_view_PlayView.__meta__ = { obj : { view : ["com/tamina/cow4/view/PlayView.html"]}, fields : { _logoImage : { skinpart : [""]}}};
 com_tamina_cow4_view_PlayView.APPLICATION_WIDTH = 1000;
 com_tamina_cow4_view_PlayView.APPLICATION_HEIGHT = 1000;
 com_tamina_cow4_view_PlayViewElementId.GAME_CONTAINER = "gameContainer";

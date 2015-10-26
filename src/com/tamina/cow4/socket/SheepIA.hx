@@ -60,6 +60,7 @@ class SheepIA implements IIA {
                 for (i in 0...myIa.pm) {
                     var currentIndex = _currentPath.getItemIndex(currentCell);
                     var cell = _currentPath.getItemAt(currentIndex + i + 1);
+                    cell = _data.getCellById(cell.id);
                     if (cell.occupant == null) {
                         var pos = _data.getCellPosition(cell);
                         trace('Sheep goto : ' + pos.x + '//' + pos.y);
@@ -158,7 +159,6 @@ class SheepIA implements IIA {
                 trace('sortie trouvée : ' + selectedNeighbor.id);
                 break;
             } else {
-//selectedNeighbor = null;
                 neighborIndex++;
             }
         }
