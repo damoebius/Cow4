@@ -20,10 +20,10 @@ class IA extends Client implements IIA {
     public var name:String;
     public var avatar:URL;
     public var turnComplete:Signal1<TurnResult>;
-    public var pm:Int=1;
+    public var pm:Int = 1;
     public var items:Array<Item>;
-    public var invisibilityDuration:Int=0;
-    public var trappedDuration:Int=0;
+    public var invisibilityDuration:Int = 0;
+    public var trappedDuration:Int = 0;
     public var profil:Profil;
 
     private var _proxy:ClientProxy;
@@ -39,17 +39,24 @@ class IA extends Client implements IIA {
     }
 
     public function toInfo():IAInfo {
-        return new IAInfo(id, name, avatar.path, pm, items, invisibilityDuration,profil);
+        return new IAInfo(id, name, avatar.path, pm, items, invisibilityDuration, profil);
     }
 
     public function getTurnOrder(data:GameMap):Void {
         _proxy.sendMessage(new GetTurnOrder(data.toGameMapVO()));
     }
 
-    public function getItemByType(type:ItemType):Item{
+    public function reset():Void {
+        pm = 1;
+        items = new Array<Item>();
+        invisibilityDuration = 0;
+        trappedDuration = 0;
+    }
+
+    public function getItemByType(type:ItemType):Item {
         var result:Item = null;
-        for(i in 0...items.length){
-            if(items[i].type == type){
+        for (i in 0...items.length) {
+            if (items[i].type == type) {
                 result = items[i];
             }
         }
