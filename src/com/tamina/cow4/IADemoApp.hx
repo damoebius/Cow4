@@ -84,7 +84,7 @@ class IADemoApp {
         _proxy = new GameServerProxy(_socket);
         _proxy.messageSignal.add(serverMessageHandler);
         _proxy.closeSignal.add(quit);
-        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://3.bp.blogspot.com/_XMH6qEyqIPU/S9YSkGiuZyI/AAAAAAAAB4g/8PoYjbZcNfY/s400/sakura2.jpg', 'tokendemo', Profil.TECH_WIZARD));
+        _proxy.sendMessage(new Authenticate('DemoIA ' + Date.now().getTime(), 'http://3.bp.blogspot.com/_XMH6qEyqIPU/S9YSkGiuZyI/AAAAAAAAB4g/8PoYjbZcNfY/s400/sakura2.jpg', 'tokendemo', Profil.HAND_OF_THE_KING));
         Timer.delay(quit, ALIVE_DURATION);
     }
 
@@ -119,20 +119,25 @@ class IADemoApp {
         var myIa = gameData.getIAById(_id);
         var sheepIa = gameData.iaList[2];
         var currentCell = gameData.getCellByIA(_id);
-        if (currentCell.getNeighboors().length > 2 && myIa.pm < GameConstants.MAX_PM) {
+        var sheepCell = gameData.getCellByIA(sheepIa.id);
+        var sheepPath = GameUtils.getPath(currentCell, sheepCell, gameData);
+        if (currentCell.getNeighboors().length > 2 && myIa.pm < GameConstants.MAX_PM && sheepPath.length > myIa.pm) {
 // on se charge en pm
+            if (sheepCell.getNeighboors().length > 2) {
+                _lastSheepIntersection = sheepCell;
+            } else if (sheepCell.getNeighboorById(_lastSheepIntersection.id) != null) {
+                _nextSheepIntersection = getNextIntersection(_lastSheepIntersection, sheepCell);
+            }
+
         } else {
             var targetCell:Cell = null;
-            var sheepCell = gameData.getCellByIA(sheepIa.id);
-            var sheepPath = GameUtils.getPath(currentCell, sheepCell, gameData);
-
             if (sheepPath.length <= myIa.pm || sheepCell.getNeighboors().length > 2) {
                 targetCell = sheepCell;
                 _lastSheepIntersection = targetCell;
             } else {
                 if (sheepCell.getNeighboorById(_lastSheepIntersection.id) != null) {
 //find next intersection
-                    _nextSheepIntersection = getNextIntersection(_lastSheepIntersection,sheepCell);
+                    _nextSheepIntersection = getNextIntersection(_lastSheepIntersection, sheepCell);
                 }
                 targetCell = _nextSheepIntersection;
             }

@@ -1,5 +1,6 @@
 package com.tamina.cow4;
 
+import com.tamina.cow4.routes.QualifRoute;
 import com.tamina.cow4.model.vo.Position;
 import nodejs.Process;
 import nodejs.NodeJS;
@@ -36,9 +37,9 @@ class Server {
         Config.ROOT_PATH = NodeJS.dirname + '/../../server/';
 
         _process = NodeJS.process;
-        for ( i in 0..._process.argv.length ) {
+        for ( i in 2..._process.argv.length ) {
             var arg = _process.argv[i];
-            var posArg:Array<Int >= null;
+            var posArg:Array<Int>= null;
             switch(arg){
                 case '-p1_pos':
                     posArg = cast _process.argv[i + 1].split(',');
@@ -52,6 +53,13 @@ class Server {
                     posArg = cast _process.argv[i+1].split(',');
                     Config.SHEEP_START_POSITION = new Position(posArg[0],posArg[1]);
                     Config.MODE_DEBUG = true;
+                case '-qualif':
+                    Config.MODE_QUALIF = true;
+                case '-?':
+                    this.displayHelp();
+                default:
+                    nodejs.Console.warn("Unknown argument : " + arg);
+                    this.displayHelp();
             }
         }
 
@@ -71,6 +79,9 @@ class Server {
         var playRoute = new PlayRoute();
         _express.get('/' + Routes.Play, playRoute.succesHandler);
 
+        var qualifRoute = new QualifRoute();
+        _express.get('/' + Routes.Qualif + '/*', qualifRoute.succesHandler);
+
         trace('server listening on ' + Config.APP_PORT);
 
         _socketServer = new SocketServer(Config.SOCKET_PORT);
@@ -81,6 +92,17 @@ class Server {
     public static function main( ) {
         haxe.Log.trace = myTrace;
         _server = new Server();
+    }
+
+    private function displayHelp():Void {
+        nodejs.Console.info("serveur pour code of war 4");
+        nodejs.Console.info("Version : 1.0.1");
+        nodejs.Console.info("Usage :");
+        nodejs.Console.info("-? : display this message");
+        nodejs.Console.info("-qualif : passe le serveur en mode qualif");
+        nodejs.Console.info("-c_pos x,y : pour definir la position de départ du poulet");
+        nodejs.Console.info("-p1_pos x,y : pour definir la position de départ de l'ia 1");
+        nodejs.Console.info("-p2_pos x,y : pour definir la position de départ de l'ia 2");
     }
 
     private static function myTrace( v:Dynamic, ?inf:haxe.PosInfos ) {

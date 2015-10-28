@@ -12,6 +12,7 @@ class Config {
     public static var SHEEP_START_POSITION:Position = new Position(12,12);
 
     public static var MODE_DEBUG:Bool = false;
+    public static var MODE_QUALIF:Bool = false;
 
 
     private function new( ) {
