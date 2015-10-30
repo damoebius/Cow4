@@ -67,6 +67,6 @@ class IAInfoComponent extends HTMLComponent {
         _potion.innerHTML = '' + _potionNumber;
         _parfum.innerHTML = '' + _parfumNumber;
         _profil.innerHTML = '' + _data.profil;
-        _profil.src = "images/profil-"+_data.profil+"-"+_playerIndex+".svg";
+        _profil.src = "/images/profil-"+_data.profil+"-"+_playerIndex+".svg";
     }
 }

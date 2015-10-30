@@ -32,7 +32,7 @@ class PlayerMapUI extends MapUI<PlayerCellSprite> {
         _background = new Shape();
         _backgroundImage = new Image();
         _backgroundImage.addEventListener(ImageEvent.LOAD, backgroundLoadHandler);
-        _backgroundImage.src = "images/background.png";
+        _backgroundImage.src = "/images/background.png";
         //_endScreen = new EndScreen(_width, _height);
         super.addChildAt(_background, 0);
         _cellsContainer.x = 0;

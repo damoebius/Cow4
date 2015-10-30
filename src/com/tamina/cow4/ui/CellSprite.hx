@@ -58,11 +58,11 @@ class CellSprite extends Container {
         if(_data.item != null && !contains(_itemBitmap)){
             switch(_data.item.type){
                 case ItemType.POTION:
-                    _itemBitmap = new Bitmap('images/potion_sprite.png');
+                    _itemBitmap = new Bitmap('/images/potion_sprite.png');
                 case ItemType.TRAP:
-                    _itemBitmap = new Bitmap('images/trap_sprite.png');
+                    _itemBitmap = new Bitmap('/images/trap_sprite.png');
                 case ItemType.PARFUM:
-                    _itemBitmap = new Bitmap('images/parfum_sprite.png');
+                    _itemBitmap = new Bitmap('/images/parfum_sprite.png');
             }
             addChild(_itemBitmap);
         }

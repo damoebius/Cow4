@@ -1,5 +1,6 @@
 package com.tamina.cow4.socket;
 
+import com.tamina.cow4.socket.message.StartQualif;
 import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.message.UpdateRender;
 import com.tamina.cow4.model.TurnAction;
@@ -58,7 +59,19 @@ class Player extends Client {
                    nodejs.Console.error('ia 1 introuvable');
                     _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'ia1 introuvable') );
                 }
-
+            case StartQualif.MESSAGE_TYPE:
+                nodejs.Console.info('StartBattle');
+                var qualifBattle:StartQualif = cast message;
+                var iaList = new Array<IA>();
+                var ia = SocketServer.getIAByToken( qualifBattle.token);
+                if(ia != null){
+                    iaList.push(ia);
+                    var notif = new StartBattleNotification(iaList,this);
+                    NotificationBus.instance.startQualif.dispatch(notif);
+                }  else {
+                    nodejs.Console.error('ia 1 introuvable');
+                    _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'ia1 introuvable') );
+                }
             default: _proxy.sendError( new Error( ErrorCode.UNKNOWN_MESSAGE,'type de message inconnu') );
 
         }

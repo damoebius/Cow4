@@ -25,6 +25,7 @@ class IA extends Client implements IIA {
     public var invisibilityDuration:Int = 0;
     public var trappedDuration:Int = 0;
     public var profil:Profil;
+    public var token:String;
 
     private var _proxy:ClientProxy;
 
@@ -76,6 +77,7 @@ class IA extends Client implements IIA {
                     name = auth.name;
                     avatar = new URL(auth.avatar);
                     profil = auth.profil;
+                    token = auth.token;
                     _proxy.sendMessage(new ID( this.id ));
                 }
             case TurnResult.MESSAGE_TYPE:

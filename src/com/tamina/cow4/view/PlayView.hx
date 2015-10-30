@@ -1,5 +1,7 @@
 package com.tamina.cow4.view;
 
+import org.tamina.utils.UID;
+import com.tamina.cow4.socket.message.StartQualif;
 import com.tamina.cow4.model.Action;
 import js.html.MouseEvent;
 import org.tamina.events.html.MouseEventType;
@@ -122,7 +124,13 @@ class PlayView extends HTMLComponent {
     private function socketOpenHandler(evt:Dynamic):Void {
         QuickLogger.info('Socket Open');
         var url = new URL(Browser.document.URL);
-        _proxy.sendMessage(new StartBattle( url.parameters.get(PlayRequestParam.GAME_ID), url.parameters.get(PlayRequestParam.IA1), url.parameters.get(PlayRequestParam.IA2) ));
+        if(url.parameters.get(PlayRequestParam.IA1) != null){
+            _proxy.sendMessage(new StartBattle( url.parameters.get(PlayRequestParam.GAME_ID), url.parameters.get(PlayRequestParam.IA1), url.parameters.get(PlayRequestParam.IA2) ));
+        } else {
+            var token = url.path.split('/').pop();
+            _proxy.sendMessage(new StartQualif(Std.string( UID.getUID() ), token ));
+        }
+
     }
 
     private function updateHandler():Void {

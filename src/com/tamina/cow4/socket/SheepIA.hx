@@ -26,6 +26,7 @@ class SheepIA implements IIA {
     public var invisibilityDuration:Int = 0;
     public var trappedDuration:Int = 0;
     public var profil:Profil = Profil.SHEEP;
+    public var token:String="";
 
     private var _currentPath:Path;
     private var _isFirstTurn:Bool = true;
@@ -33,6 +34,7 @@ class SheepIA implements IIA {
 
     public function new():Void {
         id = UID.getUID();
+        token = Std.string(id);
         items = new Array<Item>();
         turnComplete = new Signal1<TurnResult>();
         _isFirstTurn = !Config.MODE_DEBUG;

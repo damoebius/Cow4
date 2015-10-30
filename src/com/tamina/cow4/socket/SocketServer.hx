@@ -27,6 +27,19 @@ class SocketServer {
         return result;
     }
 
+    public static function getIAByToken(token:String):IA{
+        var result:IA = null;
+        trace('search IA by token: ' + token);
+        for(i in 0...connections.length){
+            if(connections[i].token == token){
+                result = connections[i];
+                trace('IA found');
+                break;
+            }
+        }
+        return result;
+    }
+
     private function socketServer_connectionHandler( c:TCPSocket ):Void {
         nodejs.Console.info('[socket server] new connection ');
         var ia = new IA(c);

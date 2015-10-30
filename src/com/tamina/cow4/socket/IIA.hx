@@ -16,6 +16,7 @@ interface IIA {
     var invisibilityDuration:Int;
     var trappedDuration:Int=0;
     var profil:Profil;
+    var token:String;
 
 
     function toInfo():IAInfo;

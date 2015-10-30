@@ -16,8 +16,10 @@ class QualifRoute extends Route {
     }
 
     private function _sucessHandler( request:ExpressRequest, response:ExpressResponse ):Void {
-        var token = request.path.split('/').pop();
-        response.send(token);
+        /*var token = request.path.split('/').pop();
+        response.send(token);*/
+        var path:Path = NodeJS.require('path');
+        response.sendfile(path.resolve(Config.ROOT_PATH + 'play.html'));
         /*if ( request.param(PlayRequestParam.IA1) != null && request.param(PlayRequestParam.IA2) != null && request.param(PlayRequestParam.GAME_ID) != null ) {
             var path:Path = NodeJS.require('path');
             response.sendfile(path.resolve(Config.ROOT_PATH + 'play.html'));

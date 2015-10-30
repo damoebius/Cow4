@@ -23,7 +23,7 @@ class PlayerCellSprite extends CellSprite {
         _playerSprite.y = 0;
         addChild(_playerSprite);
 
-        _sheepSprite = new IASprite("images/chicken_sprite.png");
+        _sheepSprite = new IASprite("/images/chicken_sprite.png");
         _sheepSprite.x = 0;
         _sheepSprite.y = 0;
         addChild(_sheepSprite);
@@ -78,31 +78,31 @@ class PlayerCellSprite extends CellSprite {
     }
 
     override private function drawWalls( ):Void {
-        _topWall = new BitmapWallSprite("images/fence_top.png");
+        _topWall = new BitmapWallSprite("/images/fence_top.png");
         addChild(_topWall);
 
-        _leftWall = new BitmapWallSprite("images/fence_left.png");
+        _leftWall = new BitmapWallSprite("/images/fence_left.png");
         addChild(_leftWall);
 
-        _rightWall = new BitmapWallSprite("images/fence_right.png");
+        _rightWall = new BitmapWallSprite("/images/fence_right.png");
         addChild(_rightWall);
 
-        _bottomWall = new BitmapWallSprite("images/fence_bottom.png");
+        _bottomWall = new BitmapWallSprite("/images/fence_bottom.png");
         addChild(_bottomWall);
     }
 
     private function getPictureNameByIA( ia:IAInfo ):String {
-        var result = "images/ia_sprite.png";
+        var result = "/images/ia_sprite.png";
         if ( ia != null ) {
             switch(ia.profil){
                 case Profil.TECH_WIZARD:
-                    result = "images/sorcerer_sprite.png";
+                    result = "/images/sorcerer_sprite.png";
                 case Profil.MASTER_OF_COINS:
-                    result = "images/dwarf_sprite.png";
+                    result = "/images/dwarf_sprite.png";
                 case Profil.HAND_OF_THE_KING:
-                    result = "images/knight_sprite.png";
+                    result = "/images/knight_sprite.png";
                 case Profil.SHEEP:
-                    result = "images/chicken_sprite.png";
+                    result = "/images/chicken_sprite.png";
             }
         }
         return result;
