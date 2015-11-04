@@ -1,5 +1,6 @@
 package com.tamina.cow4;
 
+import com.tamina.cow4.routes.ScoresRoute;
 import com.tamina.cow4.routes.QualifRoute;
 import com.tamina.cow4.model.vo.Position;
 import nodejs.Process;
@@ -81,6 +82,9 @@ class Server {
 
         var qualifRoute = new QualifRoute();
         _express.get('/' + Routes.Qualif + '/*', qualifRoute.succesHandler);
+
+        var scoreRoute = new ScoresRoute();
+        _express.get('/' + Routes.SCORES, scoreRoute.succesHandler);
 
         trace('server listening on ' + Config.APP_PORT);
 

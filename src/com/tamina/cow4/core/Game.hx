@@ -1,6 +1,10 @@
 package com.tamina.cow4.core;
 
 
+import com.tamina.cow4.io.FileExtra;
+import haxe.crypto.Sha1;
+import haxe.Json;
+import com.tamina.cow4.data.Score;
 import com.tamina.cow4.config.Config;
 import com.tamina.cow4.model.Profil;
 import com.tamina.cow4.model.ItemType;
@@ -18,7 +22,6 @@ import com.tamina.cow4.socket.message.TurnResult;
 import com.tamina.cow4.socket.Player;
 import com.tamina.cow4.model.GameConstants;
 import com.tamina.cow4.socket.IA;
-
 import com.tamina.cow4.socket.SheepIA;
 import com.tamina.cow4.data.Mock;
 import com.tamina.cow4.model.GameMap;
@@ -37,8 +40,11 @@ class Game {
     private var _IAList:Array<IIA>;
     private var _iaTurnIndex:Int = 0;
     private var _timeoutWatcher:Timer;
+    private var _modeQualif:Bool = false;
+    private var _scores:Array<IScore>;
 
-    public function new( iaList:Array<IIA>, gameId:Float, player:Player ) {
+    public function new( iaList:Array<IIA>, gameId:Float, player:Player, modeQualif:Bool = false ) {
+        _modeQualif = modeQualif;
         _timeoutWatcher = new Timer(GameConstants.TIMEOUT_DURATION);
         _player = player;
         _IAList = iaList;
@@ -324,6 +330,29 @@ class Game {
         _IAList[0].pm = 1;
         _IAList[1].pm = 1;
         _IAList[2].pm = 1;
+        if(_modeQualif && action == Action.SUCCESS && _iaTurnIndex == 0 ){
+            var ia = _IAList[_iaTurnIndex];
+            _scores = FileExtra.readJsonSync(Config.ROOT_PATH + "score.json");
+            var encodedToken = Sha1.encode(ia.token);
+            var iaScore = new Score();
+            iaScore.token = encodedToken;
+            iaScore.avatar = ia.toInfo().avatar;
+            iaScore.name = ia.name;
+            iaScore.score = 150000 - (_currentTurn * 750);
+            var isNew = true;
+            for(score in _scores){
+                if(score.token == encodedToken){
+                    score.name = iaScore.name;
+                    score.avatar = iaScore.avatar;
+                    score.score = iaScore.score;
+                    isNew = false;
+                }
+            }
+            if(isNew){
+                _scores.push(iaScore);
+            }
+            FileExtra.writeJsonSync(Config.ROOT_PATH + 'score.json', _scores);
+        }
         updatePlayer(result);
         nodejs.Console.info(message);
     }
