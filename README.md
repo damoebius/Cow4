@@ -202,3 +202,13 @@ Vous pouvez remonter des annomalies ou des demandes d'évolution ici : https://g
 Vous pouvez échanger avec la communauté sur notre groupe : https://groups.google.com/forum/#!forum/expantion-origin
 
 Enfin vous pouvez contacter l'équipe à cette adresse : contact@ttfx.fr
+
+### Se qualifier
+
+Pour qualifier votre IA, connectez la sur le serveur [qualif.codeofwar.net](http://qualif.codeofwar.net:3000) puis rendez vous sur la page [http://qualif.codeofwar.net:3000/Qualif/montoken](http://qualif.codeofwar.net:3000/Qualif/montoken) pour assister au match contre notre IA de qualif
+
+En cas de victoire de votre IA un score lui est attribué. Plus la victoire est rapide, plus le score est important.
+
+Les scores sont récupérables ici : [http://qualif.codeofwar.net:3000/SCORES/GET](http://qualif.codeofwar.net:3000/SCORES/GET) 
+
+
