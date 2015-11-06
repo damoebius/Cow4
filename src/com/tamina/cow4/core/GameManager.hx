@@ -26,7 +26,7 @@ class GameManager {
         ia.reset();
         list.push(ia);
         list.push( new QualifIA() );
-        var game = new Game(list, cast battle.gameId, battle.player );
+        var game = new Game(list, cast battle.gameId, battle.player,true );
         _games.push(game);
         game.start();
     }
